@@ -7,6 +7,7 @@ from . import quaternion_util
 from . import ode_solver
 from . import equation_of_motion
 from .inertia_tensor import InertiaTensor
+from . import simulation_result
 
 
 @dataclass
@@ -85,9 +86,21 @@ def air_force_body_frame(
 Gravitational_acceleration = np.array([0, 0, 9.8])
 
 
+def to_simulation_result_row(
+    time: float, state: RocketState
+) -> simulation_result.SimulationResultRow:
+    return simulation_result.SimulationResultRow(
+        time=time,
+        position=state.position,
+        velocity=state.velocity,
+        posture=state.posture,
+        rotation=state.rotation,
+    )
+
+
 def simulate_launcher(
     first_state: RocketState, config: Config, first_time: float
-) -> list[tuple[float, RocketState]]:
+) -> simulation_result.SimulationResult:
     """ランチャー上でのシミュレーションを行う
 
     Args:
@@ -96,7 +109,7 @@ def simulate_launcher(
         first_time (float): 初期時刻
 
     Returns:
-        list[tuple[float,RocketState]]: 時刻とロケットの状態の組のリスト
+        simulation_result.SimulationResult: 時刻とロケットの状態の組のリスト
     """
 
     def derivative(t, state):
@@ -117,14 +130,16 @@ def simulate_launcher(
     def end_condition(t, state):
         return np.linalg.norm(state.position, ord=2) > config.launcher_length
 
-    return ode_solver.runge_kutta4(
+    result = ode_solver.runge_kutta4(
         derivative, first_state, first_time, config.dt, end_condition
     )
+    result = map(lambda row: to_simulation_result_row(*row), result)
+    return simulation_result.SimulationResult(list(result))
 
 
 def simulate_flight(
     first_state: RocketState, config: Config, first_time: float, parachute_on: float
-) -> list[tuple[float, RocketState]]:
+) -> simulation_result.SimulationResult:
     """飛行中のシミュレーションを行う
 
     Args:
@@ -133,7 +148,7 @@ def simulate_flight(
         first_time (float): ランチャーから出た瞬間の時刻
 
     Returns:
-        list[tuple[float,RocketState]]: 時刻とロケットの状態の組のリスト
+        simulation_result.SimulationResult: 時刻とロケットの状態の組のリスト
     """
 
     def derivative(t, state):
@@ -154,14 +169,16 @@ def simulate_flight(
         else:
             raise NotImplementedError("パラシュートを開いた時は未実装")
 
-    return ode_solver.runge_kutta4(
+    result = ode_solver.runge_kutta4(
         derivative, first_state, first_time, config.dt, end_condition
     )
+    result = map(lambda row: to_simulation_result_row(*row), result)
+    return simulation_result.SimulationResult(list(result))
 
 
 def simulate(
     config: Config, parachute_on: float
-) -> list[list[tuple[float, RocketState]]]:
+) -> simulation_result.SimulationResult:
     """全体のシミュレーションを行う
 
     Args:
@@ -169,7 +186,7 @@ def simulate(
         parachute_on (float): パラシュートを開く時刻
 
     Returns:
-        list[list[tuple[float,RocketState]]]: 時刻とロケットの状態の組のリストをモードごとに格納したリスト
+        simulation_result.SimulationResult: 時刻とロケットの状態の組のリストをモードごとに格納したリスト
     """
     first_posture = quaternion_util.from_euler_angle(
         config.first_elevation, config.first_azimuth, config.first_roll
@@ -177,11 +194,18 @@ def simulate(
     first_state = RocketState(np.zeros(3), np.zeros(3), first_posture, np.zeros(3))
     result_launcher = simulate_launcher(first_state, config, 0)
     print("ランチャー上でのシミュレーション終了")
-    print(result_launcher[-1][1])
+    print(result_launcher.last())
+    last = result_launcher.last()
+    first_state = RocketState(
+        last.position,
+        last.velocity,
+        last.posture,
+        last.rotation,
+    )
     result_flight = simulate_flight(
-        result_launcher[-1][1], config, result_launcher[-1][0], parachute_on
+        first_state, config, last.time, parachute_on
     )
     if parachute_on:
         raise NotImplementedError("パラシュートを開いた時は未実装")
     else:
-        return [result_launcher[:-1], result_flight]
+        return result_launcher.join(result_flight)

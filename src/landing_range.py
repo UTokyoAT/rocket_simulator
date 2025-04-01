@@ -20,8 +20,8 @@ def simulate(wind_direction, wind_speed):
 def figure():
     with ProcessPoolExecutor() as e:
         r = list(e.map(simulate, range(0, 360, 45), [6] * 8))
-    x = [r[-1][-1][1].position[1] for r in r]
-    y = [r[-1][-1][1].position[0] for r in r]
+    x = [r.last().position[1] for r in r]
+    y = [r.last().position[0] for r in r]
     plt.plot(x + [x[0]], y + [y[0]])
     plt.show()
 
