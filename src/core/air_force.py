@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def dynamic_pressure(airspeed:np.ndarray, air_density:float) -> float:
+def dynamic_pressure(airspeed: np.ndarray, air_density: float) -> float:
     """動圧を計算する
 
     Args:
@@ -13,7 +13,13 @@ def dynamic_pressure(airspeed:np.ndarray, air_density:float) -> float:
     """
     return 0.5 * air_density * sum(airspeed**2)
 
-def axial_force(airspeed:np.ndarray,air_density:float, body_area:float, axial_force_coefficient:float) -> np.ndarray:
+
+def axial_force(
+    airspeed: np.ndarray,
+    air_density: float,
+    body_area: float,
+    axial_force_coefficient: float,
+) -> np.ndarray:
     """軸方向の力を計算する
 
     Args:
@@ -26,9 +32,15 @@ def axial_force(airspeed:np.ndarray,air_density:float, body_area:float, axial_fo
         float: 軸方向の力
     """
     p = dynamic_pressure(airspeed, air_density)
-    return np.array([-p * body_area * axial_force_coefficient,0,0])
+    return np.array([-p * body_area * axial_force_coefficient, 0, 0])
 
-def normal_force(airspeed:np.ndarray,air_density:float, body_area:float, normal_force_coefficient:float) -> np.ndarray:
+
+def normal_force(
+    airspeed: np.ndarray,
+    air_density: float,
+    body_area: float,
+    normal_force_coefficient: float,
+) -> np.ndarray:
     """法線方向の力を計算する
 
     Args:
@@ -40,14 +52,15 @@ def normal_force(airspeed:np.ndarray,air_density:float, body_area:float, normal_
     Returns:
         float: 法線方向の力
     """
-    normal_velocity_norm = (airspeed[1]**2 + airspeed[2]**2)**0.5
-    if normal_velocity_norm < 1e-4:#０除算を防ぐ
+    normal_velocity_norm = (airspeed[1] ** 2 + airspeed[2] ** 2) ** 0.5
+    if normal_velocity_norm < 1e-4:  # ０除算を防ぐ
         return np.array([0, 0, 0])
     p = dynamic_pressure(airspeed, air_density)
     direction = np.array([0, -airspeed[1], -airspeed[2]]) / normal_velocity_norm
     return p * body_area * normal_force_coefficient * direction
 
-def angle_of_attack(airspeed:np.ndarray) -> float:
+
+def angle_of_attack(airspeed: np.ndarray) -> float:
     """迎角を計算する
 
     Args:
@@ -56,9 +69,19 @@ def angle_of_attack(airspeed:np.ndarray) -> float:
     Returns:
         float: 迎角[rad]（速度ベクトルと機体軸とのなす角度）
     """
-    return np.arctan2(np.linalg.norm(airspeed[1:],ord=2), airspeed[0])
+    return np.arctan2(np.linalg.norm(airspeed[1:], ord=2), airspeed[0])
 
-def air_dumping_moment(rotation:np.ndarray, roll_damping_coefficient:float, pitch_damping_coefficient:float, yaw_damping_coefficient:float,air_velocity:np.ndarray,overall_length:float,air_density:float,body_area:float) -> np.ndarray:
+
+def air_dumping_moment(
+    rotation: np.ndarray,
+    roll_damping_coefficient: float,
+    pitch_damping_coefficient: float,
+    yaw_damping_coefficient: float,
+    air_velocity: np.ndarray,
+    overall_length: float,
+    air_density: float,
+    body_area: float,
+) -> np.ndarray:
     """空気抵抗によるモーメントを計算する
 
     Args:
@@ -75,9 +98,24 @@ def air_dumping_moment(rotation:np.ndarray, roll_damping_coefficient:float, pitc
         np.ndarray: 空気抵抗によるモーメント
     """
     p = dynamic_pressure(air_velocity, air_density)
-    return p * body_area * overall_length**2 /2 / np.linalg.norm(air_velocity,ord=2) * np.array([roll_damping_coefficient, pitch_damping_coefficient, yaw_damping_coefficient]) * rotation
+    return (
+        p
+        * body_area
+        * overall_length**2
+        / 2
+        / np.linalg.norm(air_velocity, ord=2)
+        * np.array(
+            [
+                roll_damping_coefficient,
+                pitch_damping_coefficient,
+                yaw_damping_coefficient,
+            ]
+        )
+        * rotation
+    )
 
-def air_force_moment(force:np.ndarray, wind_center:np.ndarray)-> np.ndarray:
+
+def air_force_moment(force: np.ndarray, wind_center: np.ndarray) -> np.ndarray:
     """力のモーメントを計算する
 
     Args:
@@ -89,7 +127,8 @@ def air_force_moment(force:np.ndarray, wind_center:np.ndarray)-> np.ndarray:
     """
     return np.cross(wind_center, force)
 
-def normal_force_coefficient(angle_of_attack:float,CN_alpha) -> float:
+
+def normal_force_coefficient(angle_of_attack: float, CN_alpha) -> float:
     """法線方向の力係数を計算する
 
     Args:

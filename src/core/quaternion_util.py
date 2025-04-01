@@ -1,7 +1,8 @@
 import quaternion as quart
 import numpy as np
 
-def square_norm(q:quart.quaternion) -> float:
+
+def square_norm(q: quart.quaternion) -> float:
     """クォータニオンのノルムの二乗を計算する
 
     Args:
@@ -12,7 +13,10 @@ def square_norm(q:quart.quaternion) -> float:
     """
     return q.w**2 + q.x**2 + q.y**2 + q.z**2
 
-def quaternion_derivative(q:quart.quaternion, angular_velocity:np.ndarray) -> quart.quaternion:
+
+def quaternion_derivative(
+    q: quart.quaternion, angular_velocity: np.ndarray
+) -> quart.quaternion:
     """クォータニオンの時間微分を計算する
 
     Args:
@@ -24,7 +28,8 @@ def quaternion_derivative(q:quart.quaternion, angular_velocity:np.ndarray) -> qu
     """
     return 0.5 * q * quart.quaternion(0, *angular_velocity)
 
-def inertial_to_body(q:quart.quaternion, v:np.ndarray) -> np.ndarray:
+
+def inertial_to_body(q: quart.quaternion, v: np.ndarray) -> np.ndarray:
     """慣性系から剛体系への座標変換を行う
 
     Args:
@@ -36,7 +41,8 @@ def inertial_to_body(q:quart.quaternion, v:np.ndarray) -> np.ndarray:
     """
     return (q.conj() * quart.quaternion(0, *v) * q).vec / square_norm(q)
 
-def body_to_inertial(q:quart.quaternion, v:np.ndarray) -> np.ndarray:
+
+def body_to_inertial(q: quart.quaternion, v: np.ndarray) -> np.ndarray:
     """剛体系から慣性系への座標変換を行う
 
     Args:
@@ -48,7 +54,8 @@ def body_to_inertial(q:quart.quaternion, v:np.ndarray) -> np.ndarray:
     """
     return (q * quart.quaternion(0, *v) * q.conj()).vec / square_norm(q)
 
-def from_euler_angle(elevation:float, azimuth:float, roll:float) -> quart.quaternion:
+
+def from_euler_angle(elevation: float, azimuth: float, roll: float) -> quart.quaternion:
     """オイラー角からクォータニオンを生成する
 
     Args:
@@ -65,12 +72,21 @@ def from_euler_angle(elevation:float, azimuth:float, roll:float) -> quart.quater
     elevation_rad = np.deg2rad(elevation)
     azimuth_rad = np.deg2rad(azimuth)
     roll_rad = np.deg2rad(roll)
-    azimuth_rotate = quart.quaternion(np.cos(azimuth_rad/2), 0, 0, np.sin(azimuth_rad/2))
-    elevation_rotate = quart.quaternion(np.cos(elevation_rad/2), 0, np.sin(elevation_rad/2), 0)
-    roll_rotate = quart.quaternion(np.cos(roll_rad/2), np.sin(roll_rad/2), 0, 0)
+    azimuth_rotate = quart.quaternion(
+        np.cos(azimuth_rad / 2), 0, 0, np.sin(azimuth_rad / 2)
+    )
+    elevation_rotate = quart.quaternion(
+        np.cos(elevation_rad / 2), 0, np.sin(elevation_rad / 2), 0
+    )
+    roll_rotate = quart.quaternion(np.cos(roll_rad / 2), np.sin(roll_rad / 2), 0, 0)
     return azimuth_rotate * elevation_rotate * roll_rotate
 
-def sum_vector_inertial_frame(vectors_body_frame:list[np.ndarray],vectors_inertial_frame:list[np.ndarray], posture:quart.quaternion) -> np.ndarray:
+
+def sum_vector_inertial_frame(
+    vectors_body_frame: list[np.ndarray],
+    vectors_inertial_frame: list[np.ndarray],
+    posture: quart.quaternion,
+) -> np.ndarray:
     """剛体座標系でのベクトルと慣性座標系でのベクトルを合成して慣性座標系でのベクトルを返す
 
     Args:
@@ -83,9 +99,16 @@ def sum_vector_inertial_frame(vectors_body_frame:list[np.ndarray],vectors_inerti
     """
     vectors_body_frame_sum = np.sum(vectors_body_frame, axis=0)
     vectors_inertial_frame_sum = np.sum(vectors_inertial_frame, axis=0)
-    return vectors_inertial_frame_sum + body_to_inertial(posture, vectors_body_frame_sum)
+    return vectors_inertial_frame_sum + body_to_inertial(
+        posture, vectors_body_frame_sum
+    )
 
-def sum_vector_body_frame(vectos_body_frame:list[np.ndarray], vectors_inertial_frame:list[np.ndarray], posture: quart.quaternion) -> np.ndarray:
+
+def sum_vector_body_frame(
+    vectos_body_frame: list[np.ndarray],
+    vectors_inertial_frame: list[np.ndarray],
+    posture: quart.quaternion,
+) -> np.ndarray:
     """慣性座標系でのベクトルと機体座標系でのベクトルを合成して機体座標系でのベクトルを返す
 
     Args:
@@ -98,4 +121,6 @@ def sum_vector_body_frame(vectos_body_frame:list[np.ndarray], vectors_inertial_f
     """
     vectors_body_frame_sum = np.sum(vectos_body_frame, axis=0)
     vectors_inertial_frame_sum = np.sum(vectors_inertial_frame, axis=0)
-    return vectors_body_frame_sum + inertial_to_body(posture, vectors_inertial_frame_sum)
+    return vectors_body_frame_sum + inertial_to_body(
+        posture, vectors_inertial_frame_sum
+    )
