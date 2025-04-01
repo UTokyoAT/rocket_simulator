@@ -78,17 +78,6 @@ def air_force_body_frame(
     moment = af.air_force_moment(
         air_force,
         config.wind_center,
-        config.propellant_CG_distance,
-        config.nozzle_CG_distance,
-        config.m_dot(t),
-        rocket_state.rotation,
-        config.roll_damping_coefficient,
-        config.pitch_damping_coefficient,
-        config.yaw_damping_coefficient,
-        rocket_state.velocity,
-        config.overall_length,
-        1.204,
-        config.body_area,
     )
     return air_force, moment
 
