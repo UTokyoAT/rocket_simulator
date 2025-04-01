@@ -77,22 +77,17 @@ def air_dumping_moment(rotation:np.ndarray, roll_damping_coefficient:float, pitc
     p = dynamic_pressure(air_velocity, air_density)
     return p * body_area * overall_length**2 /2 / np.linalg.norm(air_velocity,ord=2) * np.array([roll_damping_coefficient, pitch_damping_coefficient, yaw_damping_coefficient]) * rotation
 
-def air_force_moment(force:np.ndarray, wind_center:np.ndarray,propellant_CG_distance:float,nozzle_CG_distance:float,m_dot:float,rotation:np.ndarray,
-                     roll_damping_coefficient:float,pitch_damping_coefficient:float,yaw_damping_coefficient:float,air_velocity:np.ndarray,overall_length:float,air_density:float,body_area:float)-> np.ndarray:
+def air_force_moment(force:np.ndarray, wind_center:np.ndarray)-> np.ndarray:
     """力のモーメントを計算する
 
     Args:
         force (np.ndarray): 剛体系での力
         wind_center (np.ndarray): 重心から見た風圧中心
-        propellant_CG_distance (float): 重心から見た推進剤までの距離
-        nozzle_CG_distance (float): 重心から見たノズルまでの距離
-        m_dot (float): 推進剤の質量流量
-        rotation (np.ndarray): 機体の角速度
 
     Returns:
         np.ndarray: モーメント
     """
-    return np.cross(wind_center, force) - m_dot * (nozzle_CG_distance ** 2 - propellant_CG_distance ** 2) * rotation + air_dumping_moment(rotation, roll_damping_coefficient, pitch_damping_coefficient, yaw_damping_coefficient,air_velocity,overall_length,air_density,body_area)
+    return np.cross(wind_center, force)
 
 def normal_force_coefficient(angle_of_attack:float,CN_alpha) -> float:
     """法線方向の力係数を計算する
