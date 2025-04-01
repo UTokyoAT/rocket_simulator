@@ -1,4 +1,4 @@
-import app.core.interpolation as i
+import src.core.interpolation as i
 import unittest
 import numpy as np
 import pandas as pd

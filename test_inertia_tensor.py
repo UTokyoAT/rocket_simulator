@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-import app.core.inertia_tensor as it
+import src.core.inertia_tensor as it
 
 class TestInertiaTensor(unittest.TestCase):
     def test_init(self):

@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-import app.core.air_force as af
+import src.core.air_force as af
 
 class TestAirForce(unittest.TestCase):
     def test_dynamic_pressure(self):

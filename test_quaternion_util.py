@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import quaternion as quart
-import app.core.quaternion_util as qu
+import src.core.quaternion_util as qu
 
 class TestQuaternionUtil(unittest.TestCase):
     def test_inertial_to_body(self):

@@ -1,5 +1,5 @@
 import unittest
-from app.core.rocket_state import RocketState
+from src.core.rocket_state import RocketState
 import numpy as np
 import quaternion as quart
 

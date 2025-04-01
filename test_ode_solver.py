@@ -1,4 +1,4 @@
-import app.core.ode_solver as s
+import src.core.ode_solver as s
 import unittest
 import numpy as np
 

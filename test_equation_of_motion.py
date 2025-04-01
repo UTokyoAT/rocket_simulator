@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-import app.core.equation_of_motion as qom
-import app.core.inertia_tensor as it
+import src.core.equation_of_motion as qom
+import src.core.inertia_tensor as it
 
 class TestEquationOfMotion(unittest.TestCase):
     def test_angular_acceleration(self):

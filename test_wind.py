@@ -1,4 +1,4 @@
-import app.core.wind as w
+import src.core.wind as w
 import unittest
 import numpy as np
 
