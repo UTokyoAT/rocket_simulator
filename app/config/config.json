@@ -1,0 +1,34 @@
+{
+    "wind_speed": 2.5,
+    "wind_direction": 315,
+    "wind_reference_height": 5,
+    "wind_exponent": 3.75,
+
+    "CA": 0.45,
+    "CN_alpha":7.87,
+    "body_diameter":0.104,
+    "wind_center": [-0.178, 0, 0],
+    "dt":1e-2,
+    "launcher_length": 5,
+
+    "I_xx": 9.784e-3,
+    "I_yy": 5.9e-1,
+    "I_zz": 5.9e-1,
+    "I_zy": 2105.557e-9,
+    "I_xz": 8.263e-4,
+    "I_xy": -42532.376e-9,
+
+    "first_elevation":76,
+    "first_azimuth":35,
+    "first_roll":0,
+
+    "propellant_CG_distance": 0.236,
+    "nozzle_CG_distance":0.571,
+    "m_dot":0.12,
+    "roll_damping_coefficient":-0.05207,
+    "pitch_damping_coefficient":-2.5,
+    "yaw_damping_coefficient":-2.5,
+    "overall_length":1.322
+
+
+}
