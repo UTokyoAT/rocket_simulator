@@ -47,3 +47,14 @@ class TestSimulationResult(unittest.TestCase):
         self.assertEqual(joined_result.result[2], self.row3)
         with self.assertRaises(AssertionError):
             self.sim_result1.join(self.sim_result1)
+
+    def test_last(self):
+        last_row = self.sim_result1.last()
+        self.assertEqual(last_row, self.row2)
+        self.assertNotEqual(last_row, self.row1)
+        self.assertNotEqual(last_row, self.row3)
+    
+    def test_init_empty(self):
+        empty_result = simulation_result.SimulationResult.init_empty()
+        self.assertEqual(len(empty_result.result), 0)
+        self.assertIsInstance(empty_result, simulation_result.SimulationResult)

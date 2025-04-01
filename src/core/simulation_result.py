@@ -25,6 +25,11 @@ class SimulationResult:
     result: list[SimulationResultRow]
     """シミュレーションの結果"""
 
+    @classmethod
+    def init_empty(cls) -> "SimulationResult":
+        """空のシミュレーション結果を初期化する"""
+        return cls(result=[])
+
     def append(self, row: SimulationResultRow):
         """列を追加する
 
@@ -49,3 +54,11 @@ class SimulationResult:
         """
         assert self.result[-1].time == other.result[0].time
         return SimulationResult(self.result[:-1] + other.result)
+
+    def last(self) -> SimulationResultRow:
+        """最後の行を取得する
+
+        Returns:
+            SimulationResultRow: 最後の行
+        """
+        return self.result[-1]
