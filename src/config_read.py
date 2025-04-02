@@ -45,11 +45,4 @@ def read(folder_path: str) -> Config:
         js["first_elevation"],
         js["first_azimuth"],
         js["first_roll"],
-        js["propellant_CG_distance"],
-        js["nozzle_CG_distance"],
-        lambda t: js["m_dot"],
-        js["roll_damping_coefficient"],
-        js["pitch_damping_coefficient"],
-        js["yaw_damping_coefficient"],
-        js["overall_length"],
     )

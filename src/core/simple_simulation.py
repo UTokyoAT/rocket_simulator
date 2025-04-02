@@ -38,20 +38,6 @@ class Config:
     """初期方位角"""
     first_roll: float
     """初期ロール角"""
-    propellant_CG_distance: float
-    """重心から見た推進剤までの距離"""
-    nozzle_CG_distance: float
-    """重心から見たノズルまでの距離"""
-    m_dot: t.Callable[[float], float]
-    """時間->推進剤の質量流量"""
-    roll_damping_coefficient: float
-    """ロール軸周りの減衰モーメント係数"""
-    pitch_damping_coefficient: float
-    """ピッチ軸周りの減衰モーメント係数"""
-    yaw_damping_coefficient: float
-    """ヨー軸周りの減衰モーメント係数"""
-    overall_length: float
-    """機体の全長"""
 
 
 def air_force_body_frame(
