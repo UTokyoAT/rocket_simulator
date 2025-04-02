@@ -20,15 +20,5 @@
 
     "first_elevation":76,
     "first_azimuth":35,
-    "first_roll":0,
-
-    "propellant_CG_distance": 0.236,
-    "nozzle_CG_distance":0.571,
-    "m_dot":0.12,
-    "roll_damping_coefficient":-0.05207,
-    "pitch_damping_coefficient":-2.5,
-    "yaw_damping_coefficient":-2.5,
-    "overall_length":1.322
-
-
+    "first_roll":0
 }
