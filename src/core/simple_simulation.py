@@ -16,7 +16,7 @@ def air_force_body_frame(
 
     Args:
         rocket_state (RocketState): ロケットの状態
-        config (Config): ロケットの設定
+        context (SimulationContext): ロケットの設定
 
     Returns:
         np.ndarray: 機体座標系での風圧による力
@@ -60,7 +60,7 @@ def simulate_launcher(
 
     Args:
         first_state (RocketState): 打ち上げ前のロケットの状態
-        config (Config): ロケットの設定
+        context (SimulationContext): ロケットの設定
         first_time (float): 初期時刻
 
     Returns:
@@ -102,7 +102,7 @@ def simulate_flight(
 
     Args:
         first_state (RocketState): ランチャーから出た瞬間のロケットの状態
-        config (Config): ロケットの設定
+        context (SimulationContext): ロケットの設定
         first_time (float): ランチャーから出た瞬間の時刻
 
     Returns:
