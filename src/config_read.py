@@ -1,8 +1,5 @@
 import pandas as pd
-from core.simple_simulation import Config
-from core import interpolation
-from core import wind
-from core.inertia_tensor import InertiaTensor
+from core.config import Config, WindPowerLow
 import json
 import numpy as np
 import os
@@ -21,27 +18,28 @@ def read(folder_path: str) -> Config:
     thrust_df = pd.read_csv(os.path.join(folder_path, "thrust.csv"), index_col=0)
     with open(os.path.join(folder_path, "config.json"), "r") as file:
         js = json.load(file)
-    mass_func = interpolation.df_to_function_1d(mass_df)
-    thrust_func = interpolation.df_to_function_1d(thrust_df)
-    wind_func = wind.wind_velocity_power(
+    wind = WindPowerLow(
         js["wind_reference_height"],
         js["wind_speed"],
         js["wind_exponent"],
         js["wind_direction"],
     )
     return Config(
-        mass_func,
-        wind_func,
-        thrust_func,
+        mass_df,
+        wind,
+        thrust_df,
         js["CA"],
         js["CN_alpha"],
         js["body_diameter"] ** 2 / 4 * np.pi,
         np.array(js["wind_center"]),
         js["dt"],
         js["launcher_length"],
-        InertiaTensor(
-            js["I_xx"], js["I_yy"], js["I_zz"], js["I_xy"], js["I_zy"], js["I_xz"]
-        ),
+        js["I_xx"],
+        js["I_yy"],
+        js["I_zz"],
+        js["I_zy"],
+        js["I_xz"],
+        js["I_xy"],
         js["first_elevation"],
         js["first_azimuth"],
         js["first_roll"],
