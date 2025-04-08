@@ -1,12 +1,9 @@
-import typing as t
 import numpy as np
-from dataclasses import dataclass
 from . import air_force as af
 from .rocket_state import RocketState
 from . import quaternion_util
 from . import ode_solver
 from . import equation_of_motion
-from .inertia_tensor import InertiaTensor
 from . import simulation_result
 
 
