@@ -57,3 +57,6 @@ class SimulationContext:
             config.inertia_tensor_zy,
             config.inertia_tensor_xz,
         )
+        self.first_elevation = config.first_elevation
+        self.first_azimuth = config.first_azimuth
+        self.first_roll = config.first_roll
