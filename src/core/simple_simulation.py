@@ -6,6 +6,7 @@ from . import ode_solver
 from . import equation_of_motion
 from . import simulation_result
 from .simulation_context import SimulationContext
+from .config import Config
 
 
 def air_force_body_frame(
@@ -133,7 +134,7 @@ def simulate_flight(
     return simulation_result.SimulationResult(list(result))
 
 
-def simulate(context: SimulationContext, parachute_on: float) -> simulation_result.SimulationResult:
+def simulate(config: Config, parachute_on: float) -> simulation_result.SimulationResult:
     """全体のシミュレーションを行う
 
     Args:
@@ -143,6 +144,7 @@ def simulate(context: SimulationContext, parachute_on: float) -> simulation_resu
     Returns:
         simulation_result.SimulationResult: 時刻とロケットの状態の組のリストをモードごとに格納したリスト
     """
+    context = SimulationContext(config)
     first_posture = quaternion_util.from_euler_angle(
         context.first_elevation, context.first_azimuth, context.first_roll
     )
