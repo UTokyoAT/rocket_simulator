@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import numpy as np
 import pandas as pd
 
-
+@dataclass
 class WindPowerLow:
     reference_height: float
     wind_speed: float
