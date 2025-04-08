@@ -1,9 +1,9 @@
 import typing
 import numpy as np
-from inertia_tensor import InertiaTensor
-from config import Config
-import interpolation
-import wind
+from .inertia_tensor import InertiaTensor
+from .config import Config
+from . import interpolation
+from . import wind
 
 
 class SimulationContext:
