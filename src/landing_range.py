@@ -1,7 +1,6 @@
 import config_read
 import os
 from core import simple_simulation
-from core import wind
 from concurrent.futures import ProcessPoolExecutor
 import matplotlib.pyplot as plt
 
@@ -11,9 +10,8 @@ reference_height = 5
 
 def simulate(wind_direction, wind_speed):
     config = config_read.read(os.path.abspath("config"))
-    config.wind = wind.wind_velocity_power(
-        reference_height, wind_speed, exponent, wind_direction
-    )
+    config.wind.wind_direction = wind_direction
+    config.wind.wind_speed = wind_speed
     return simple_simulation.simulate(config, False)
 
 
