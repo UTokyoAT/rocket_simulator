@@ -10,36 +10,6 @@ from .inertia_tensor import InertiaTensor
 from . import simulation_result
 
 
-@dataclass
-class Config:
-    mass: t.Callable[[float], float]
-    """時間->質量"""
-    wind: t.Callable[[float], np.ndarray]
-    """高度->風速ベクトル"""
-    thrust: t.Callable[[float], float]
-    """時間->推力"""
-    CA: float
-    """軸力係数"""
-    CN_alpha: float
-    """単位なす角あたりの法線力係数"""
-    body_area: float
-    """断面積"""
-    wind_center: np.ndarray
-    """風圧中心"""
-    dt: float
-    """時間刻み"""
-    launcher_length: float
-    """ランチャーの長さ"""
-    inertia_tensor: InertiaTensor
-    """慣性テンソル"""
-    first_elevation: float
-    """初期迎角"""
-    first_azimuth: float
-    """初期方位角"""
-    first_roll: float
-    """初期ロール角"""
-
-
 def air_force_body_frame(
     rocket_state: RocketState, config: Config
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -162,9 +132,7 @@ def simulate_flight(
     return simulation_result.SimulationResult(list(result))
 
 
-def simulate(
-    config: Config, parachute_on: float
-) -> simulation_result.SimulationResult:
+def simulate(config: Config, parachute_on: float) -> simulation_result.SimulationResult:
     """全体のシミュレーションを行う
 
     Args:
@@ -188,9 +156,7 @@ def simulate(
         last.posture,
         last.rotation,
     )
-    result_flight = simulate_flight(
-        first_state, config, last.time, parachute_on
-    )
+    result_flight = simulate_flight(first_state, config, last.time, parachute_on)
     if parachute_on:
         raise NotImplementedError("パラシュートを開いた時は未実装")
     else:
