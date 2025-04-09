@@ -1,4 +1,22 @@
 import numpy as np
+from dataclasses import dataclass
+from .rocket_state import RocketState
+from .simulation_context import SimulationContext
+from . import quaternion_util
+
+
+@dataclass
+class AirForceResult:
+    """空気力の計算結果を表すクラス"""
+
+    force: np.ndarray
+    """剛体系での力"""
+
+    moment: np.ndarray
+    """剛体系でのモーメント"""
+
+    dynamic_pressure: float
+    """動圧"""
 
 
 def dynamic_pressure(airspeed: np.ndarray, air_density: float) -> float:
@@ -139,3 +157,43 @@ def normal_force_coefficient(angle_of_attack: float, CN_alpha) -> float:
         float: 法線方向の力係数
     """
     return CN_alpha * angle_of_attack
+
+
+def calculate(rocket_state: RocketState, context: SimulationContext) -> AirForceResult:
+    """空気力を計算する
+
+    Args:
+        rocket_state (RocketState): ロケットの状態
+        context (SimulationContext): ロケットの設定
+
+    Returns:
+        AirForceResult: 空気力の計算結果
+    """
+    z = -rocket_state.position[2]
+    airspeed = quaternion_util.inertial_to_body(
+        rocket_state.posture,
+        rocket_state.velocity - context.wind(z),
+    )
+    angle_of_attack_ = angle_of_attack(airspeed)
+    AIR_DENSITY = 1.204
+    axial_force_ = axial_force(
+        airspeed,
+        AIR_DENSITY,
+        context.body_area,
+        context.CA,
+    )
+    CN = normal_force_coefficient(angle_of_attack_, context.CN_alpha)
+    normal_force_ = normal_force(
+        airspeed,
+        AIR_DENSITY,
+        context.body_area,
+        CN,
+    )
+    air_force = axial_force_ + normal_force_
+    moment = air_force_moment(air_force, context.wind_center)
+    dynamic_pressure_ = dynamic_pressure(airspeed, AIR_DENSITY)
+    return AirForceResult(
+        force=air_force,
+        moment=moment,
+        dynamic_pressure=dynamic_pressure_,
+    )
