@@ -1,5 +1,5 @@
 import numpy as np
-from . import air_force as af
+from . import air_force
 from .rocket_state import RocketState
 from . import quaternion_util
 from . import ode_solver
@@ -7,35 +7,6 @@ from . import equation_of_motion
 from . import simulation_result
 from .simulation_context import SimulationContext
 from .config import Config
-
-
-def air_force_body_frame(
-    rocket_state: RocketState, context: SimulationContext
-) -> tuple[np.ndarray, np.ndarray]:
-    """機体座標系での風圧による力を計算する
-
-    Args:
-        rocket_state (RocketState): ロケットの状態
-        context (SimulationContext): ロケットの設定
-
-    Returns:
-        np.ndarray: 機体座標系での風圧による力
-    """
-    airspeed = quaternion_util.inertial_to_body(
-        rocket_state.posture,
-        rocket_state.velocity - context.wind(-rocket_state.position[2]),
-    )
-    angle_of_attack = af.angle_of_attack(airspeed)
-    air_density = 1.204
-    axial_force = af.axial_force(airspeed, air_density, context.body_area, context.CA)
-    CN = af.normal_force_coefficient(angle_of_attack, context.CN_alpha)
-    normal_force = af.normal_force(airspeed, air_density, context.body_area, CN)
-    air_force = axial_force + normal_force
-    moment = af.air_force_moment(
-        air_force,
-        context.wind_center,
-    )
-    return air_force, moment
 
 
 Gravitational_acceleration = np.array([0, 0, 9.8])
@@ -68,10 +39,10 @@ def simulate_launcher(
     """
 
     def derivative(t, state):
-        air_force, _ = air_force_body_frame(state, context)
+        air_force_result = air_force.calculate(state, context)
         thrust = np.array([context.thrust(t), 0, 0])
         virtual_force_body = quaternion_util.sum_vector_body_frame(
-            [air_force, thrust],
+            [air_force_result.force, thrust],
             [Gravitational_acceleration * context.mass(t)],
             state.posture,
         )
@@ -110,14 +81,14 @@ def simulate_flight(
     """
 
     def derivative(t, state):
-        air_force, moment = air_force_body_frame(state, context)
+        air_force_result = air_force.calculate(state, context)
         thrust = np.array([context.thrust(t), 0, 0])
         force = quaternion_util.sum_vector_inertial_frame(
-            [air_force, thrust], [np.zeros(3)], state.posture
+            [air_force_result.force, thrust], [np.zeros(3)], state.posture
         )
         acceleration = force / context.mass(t) + Gravitational_acceleration
         angular_acceleration = equation_of_motion.angular_acceleration(
-            moment, context.inertia_tensor, state.rotation
+            air_force_result.moment, context.inertia_tensor, state.rotation
         )
         return RocketState.derivative(state, acceleration, angular_acceleration)
 
