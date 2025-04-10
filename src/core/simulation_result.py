@@ -17,7 +17,7 @@ class SimulationResultRow:
     dynamic_pressure: float
     burning: bool
     on_launcher: bool
-    velocity_air: np.ndarray
+    velocity_air_body_frame: np.ndarray
     acceleration_body_frame: np.ndarray
 
 
