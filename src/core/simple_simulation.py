@@ -13,14 +13,24 @@ Gravitational_acceleration = np.array([0, 0, 9.8])
 
 
 def to_simulation_result_row(
-    time: float, state: RocketState
+    time: float,
+    state: RocketState,
+    context: SimulationContext,
+    on_launcher: bool,
+    acceleration_body_frame: np.ndarray,
 ) -> simulation_result.SimulationResultRow:
+    air_force_result = air_force.calculate(state, context)
     return simulation_result.SimulationResultRow(
         time=time,
         position=state.position,
         velocity=state.velocity,
         posture=state.posture,
         rotation=state.rotation,
+        dynamic_pressure=air_force_result.dynamic_pressure,
+        burning=context.thrust(time) < 1e-10,
+        on_launcher=on_launcher,
+        velocity_air_body_frame=air_force_result.velocity_air_body_frame,
+        acceleration_body_frame=acceleration_body_frame,
     )
 
 
@@ -38,7 +48,7 @@ def simulate_launcher(
         simulation_result.SimulationResult: 時刻とロケットの状態の組のリスト
     """
 
-    def derivative(t, state):
+    def acceleration_body_frame(t: float, state: RocketState) -> np.ndarray:
         air_force_result = air_force.calculate(state, context)
         thrust = np.array([context.thrust(t), 0, 0])
         virtual_force_body = quaternion_util.sum_vector_body_frame(
@@ -46,11 +56,15 @@ def simulate_launcher(
             [Gravitational_acceleration * context.mass(t)],
             state.posture,
         )
-        actual_force_inertial = quaternion_util.body_to_inertial(
-            state.posture, np.array([max(0, virtual_force_body[0]), 0, 0])
+        actual_force_body = np.array([max(0, virtual_force_body[0]), 0, 0])
+        return actual_force_body / context.mass(t)
+
+    def derivative(t, state):
+        actual_acceleration_inertial = quaternion_util.body_to_inertial(
+            state.posture, acceleration_body_frame(t, state)
         )
         return RocketState.derivative(
-            state, actual_force_inertial / context.mass(t), np.zeros(3)
+            state, actual_acceleration_inertial, np.zeros(3)
         )
 
     def end_condition(t, state):
@@ -59,7 +73,13 @@ def simulate_launcher(
     result = ode_solver.runge_kutta4(
         derivative, first_state, first_time, context.dt, end_condition
     )
-    result = map(lambda row: to_simulation_result_row(*row), result)
+
+    result = map(
+        lambda row: to_simulation_result_row(
+            *row, context, True, acceleration_body_frame(*row)
+        ),
+        result,
+    )
     return simulation_result.SimulationResult(list(result))
 
 
@@ -80,17 +100,21 @@ def simulate_flight(
         simulation_result.SimulationResult: 時刻とロケットの状態の組のリスト
     """
 
-    def derivative(t, state):
+    def acceleration(t: float, state: RocketState) -> np.ndarray:
         air_force_result = air_force.calculate(state, context)
         thrust = np.array([context.thrust(t), 0, 0])
         force = quaternion_util.sum_vector_inertial_frame(
             [air_force_result.force, thrust], [np.zeros(3)], state.posture
         )
-        acceleration = force / context.mass(t) + Gravitational_acceleration
+        return force / context.mass(t) + Gravitational_acceleration
+
+    def derivative(t, state):
+        air_force_result = air_force.calculate(state, context)
+        acceleration_ = acceleration(t, state)
         angular_acceleration = equation_of_motion.angular_acceleration(
             air_force_result.moment, context.inertia_tensor, state.rotation
         )
-        return RocketState.derivative(state, acceleration, angular_acceleration)
+        return RocketState.derivative(state, acceleration_, angular_acceleration)
 
     def end_condition(t, state):
         if not parachute_on:
@@ -101,7 +125,17 @@ def simulate_flight(
     result = ode_solver.runge_kutta4(
         derivative, first_state, first_time, context.dt, end_condition
     )
-    result = map(lambda row: to_simulation_result_row(*row), result)
+    result = map(
+        lambda row: to_simulation_result_row(
+            *row,
+            context,
+            False,
+            quaternion_util.inertial_to_body(
+                row[1].posture, acceleration(row[0], row[1])
+            ),
+        ),
+        result,
+    )
     return simulation_result.SimulationResult(list(result))
 
 
