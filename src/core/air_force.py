@@ -18,6 +18,9 @@ class AirForceResult:
     dynamic_pressure: float
     """動圧"""
 
+    velocity_air_body_frame: np.ndarray
+    """剛体系での対気速度"""
+
 
 def dynamic_pressure(airspeed: np.ndarray, air_density: float) -> float:
     """動圧を計算する
@@ -170,9 +173,10 @@ def calculate(rocket_state: RocketState, context: SimulationContext) -> AirForce
         AirForceResult: 空気力の計算結果
     """
     z = -rocket_state.position[2]
+    velocity_air_body_frame = rocket_state.velocity - context.wind(z)
     airspeed = quaternion_util.inertial_to_body(
         rocket_state.posture,
-        rocket_state.velocity - context.wind(z),
+        velocity_air_body_frame,
     )
     angle_of_attack_ = angle_of_attack(airspeed)
     AIR_DENSITY = 1.204
@@ -196,4 +200,5 @@ def calculate(rocket_state: RocketState, context: SimulationContext) -> AirForce
         force=air_force,
         moment=moment,
         dynamic_pressure=dynamic_pressure_,
+        velocity_air_body_frame=velocity_air_body_frame,
     )
