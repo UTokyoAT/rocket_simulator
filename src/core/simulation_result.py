@@ -14,6 +14,11 @@ class SimulationResultRow:
     velocity: np.ndarray
     posture: quaternion.quaternion
     rotation: np.ndarray
+    dynamic_pressure: float
+    burning: bool
+    on_launcher: bool
+    velocity_air: np.ndarray
+    acceleration_body_frame: np.ndarray
 
 
 @dataclass
