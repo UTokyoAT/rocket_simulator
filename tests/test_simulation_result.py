@@ -12,6 +12,11 @@ class TestSimulationResult(unittest.TestCase):
             velocity=np.array([4.0, 5.0, 6.0]),
             posture=quaternion.quaternion(0, 0, 0, 1),
             rotation=np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+            dynamic_pressure=1,
+            burning=True,
+            on_launcher=True,
+            velocity_air_body_frame=np.array([0, 0, 0]),
+            acceleration_body_frame=np.array([0, 0, 0]),
         )
         self.row2 = simulation_result.SimulationResultRow(
             time=1.0,
@@ -19,6 +24,11 @@ class TestSimulationResult(unittest.TestCase):
             velocity=np.array([10.0, 11.0, 12.0]),
             posture=quaternion.quaternion(1, 1, 1, 1),
             rotation=np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]]),
+            dynamic_pressure=2,
+            burning=False,
+            on_launcher=False,
+            velocity_air_body_frame=np.array([1, 2, 3]),
+            acceleration_body_frame=np.array([4, 5, 6]),
         )
         self.row3 = simulation_result.SimulationResultRow(
             time=2.0,
@@ -26,6 +36,11 @@ class TestSimulationResult(unittest.TestCase):
             velocity=np.array([16.0, 17.0, 18.0]),
             posture=quaternion.quaternion(1, 2, 3, 4),
             rotation=np.array([[1, 2], [3, 4]]),
+            dynamic_pressure=3,
+            burning=True,
+            on_launcher=True,
+            velocity_air_body_frame=np.array([4, 5, 6]),
+            acceleration_body_frame=np.array([7, 8, 9]),
         )
         self.sim_result1 = simulation_result.SimulationResult(
             result=[self.row1, self.row2]
