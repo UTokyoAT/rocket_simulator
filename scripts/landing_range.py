@@ -1,11 +1,8 @@
-import config_read
+from src import config_read
 import os
-from core import simple_simulation
+from src.core import simple_simulation
 from concurrent.futures import ProcessPoolExecutor
 import matplotlib.pyplot as plt
-
-exponent = 4.5
-reference_height = 5
 
 
 def simulate(wind_direction, wind_speed):

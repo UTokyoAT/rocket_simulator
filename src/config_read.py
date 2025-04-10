@@ -1,5 +1,5 @@
 import pandas as pd
-from core.config import Config, WindPowerLow
+from .core.config import Config, WindPowerLow
 import json
 import numpy as np
 import os
