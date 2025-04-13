@@ -22,6 +22,12 @@ class Setting:
     wind_direction: float
 
 
+def run(config: Config, setting: Setting) -> SimulationResult:
+    config.wind.wind_speed = setting.wind_speed
+    config.wind.wind_direction = setting.wind_direction
+    return simple_simulation.simulate(config, False)
+
+
 def run_concurrent(config: Config, settings: list[Setting]) -> list[SimulationResult]:
     """シミュレーションを並列で実行する
 
@@ -34,13 +40,8 @@ def run_concurrent(config: Config, settings: list[Setting]) -> list[SimulationRe
             wind_speed_direction_pairsの順番に対応している。
     """
 
-    def run(setting: Setting) -> SimulationResult:
-        config.wind.wind_speed = setting.wind_speed
-        config.wind.wind_direction = setting.wind_direction
-        return simple_simulation.simulate(config, False)
-
     with ProcessPoolExecutor() as executor:
-        results = list(executor.map(run, settings))
+        results = list(executor.map(run, [config] * len(settings), settings))
     return results
 
 
