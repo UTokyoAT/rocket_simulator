@@ -54,7 +54,7 @@ def make_result_for_report(
     )
     setting_nominal = Setting(
         wind_speed=report_config.wind_speed_nominal,
-        wind_direction=report_config.wind_direction_ideal,
+        wind_direction=report_config.wind_direction_nominal,
     )
 
     settings_wind_list = list(
