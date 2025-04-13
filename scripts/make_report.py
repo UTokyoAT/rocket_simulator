@@ -9,6 +9,12 @@ def run():
     result = make_result_for_report.make_result_for_report(config, report_config)
     output_dir = os.path.join(os.path.abspath("output"), "report", "row")
     os.makedirs(output_dir, exist_ok=True)
+    result.result_ideal.to_df().to_csv(
+        os.path.join(output_dir, "ideal.json"),
+    )
+    result.result_nominal.to_df().to_csv(
+        os.path.join(output_dir, "nominal.json"),
+    )
     for result_by_wind in result.result_by_wind_speed:
         for result_by_direction in result_by_wind.result:
             result_by_direction.result.to_df().to_csv(
