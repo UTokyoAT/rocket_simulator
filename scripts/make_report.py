@@ -2,6 +2,8 @@ import os
 from src import config_read, report_config_read
 from src.make_report import make_result_for_report
 from src.make_report.result_for_report import ResultForReport
+from src.make_report import make_graph
+from src import graph_writer
 
 
 def write_row_data(result: ResultForReport):
@@ -22,11 +24,24 @@ def write_row_data(result: ResultForReport):
                 )
             )
 
+
 def run():
     config = config_read.read(os.path.abspath("config"))
     report_config = report_config_read.read(os.path.abspath("config"))
     result = make_result_for_report.make_result_for_report(config, report_config)
     write_row_data(result)
+
+    graphs = make_graph.make_graph(result)
+    path_graph = os.path.join(
+        os.path.abspath("output"),
+        "report",
+        "graph",
+    )
+    os.makedirs(path_graph, exist_ok=True)
+    graph_writer.write(
+        path=path_graph,
+        graphs=graphs,
+    )
 
 
 if __name__ == "__main__":
