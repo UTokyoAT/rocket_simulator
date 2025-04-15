@@ -1,12 +1,10 @@
 import os
 from src import config_read, report_config_read
 from src.make_report import make_result_for_report
+from src.make_report.result_for_report import ResultForReport
 
 
-def run():
-    config = config_read.read(os.path.abspath("config"))
-    report_config = report_config_read.read(os.path.abspath("config"))
-    result = make_result_for_report.make_result_for_report(config, report_config)
+def write_row_data(result: ResultForReport):
     output_dir = os.path.join(os.path.abspath("output"), "report", "row")
     os.makedirs(output_dir, exist_ok=True)
     result.result_ideal.to_csv(
@@ -23,6 +21,12 @@ def run():
                     f"wind_speed_{result_by_wind.wind_speed}_wind_direction_{result_by_direction.wind_direction}.json",
                 )
             )
+
+def run():
+    config = config_read.read(os.path.abspath("config"))
+    report_config = report_config_read.read(os.path.abspath("config"))
+    result = make_result_for_report.make_result_for_report(config, report_config)
+    write_row_data(result)
 
 
 if __name__ == "__main__":
