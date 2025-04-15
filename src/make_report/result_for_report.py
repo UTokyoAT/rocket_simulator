@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from ..core.simulation_result import SimulationResult
+import pandas as pd
 from ..core.simulation_context import SimulationContext
 from ..core.config import Config
 
@@ -7,7 +7,7 @@ from ..core.config import Config
 @dataclass
 class ResultByWindDirection:
     wind_direction: float
-    result: SimulationResult
+    result: pd.DataFrame
 
 
 @dataclass
@@ -15,7 +15,7 @@ class ResultByWindSpeed:
     wind_speed: float
     result: list[ResultByWindDirection]
 
-    def append(self, wind_direction: float, result: SimulationResult):
+    def append(self, wind_direction: float, result: pd.DataFrame):
         self.result.append(
             ResultByWindDirection(wind_direction=wind_direction, result=result)
         )
@@ -25,11 +25,11 @@ class ResultByWindSpeed:
 class ResultForReport:
     config: Config
     context: SimulationContext
-    result_ideal: SimulationResult
-    result_nominal: SimulationResult
+    result_ideal: pd.DataFrame
+    result_nominal: pd.DataFrame
     result_by_wind_speed: list[ResultByWindSpeed]
 
-    def append(self, wind_speed: float, wind_direction: float, result: SimulationResult):
+    def append(self, wind_speed: float, wind_direction: float, result: pd.DataFrame):
         for result_by_wind_speed in self.result_by_wind_speed:
             if result_by_wind_speed.wind_speed == wind_speed:
                 result_by_wind_speed.append(wind_direction, result)
