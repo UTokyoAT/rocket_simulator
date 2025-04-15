@@ -27,7 +27,7 @@ def to_simulation_result_row(
         posture=state.posture,
         rotation=state.rotation,
         dynamic_pressure=air_force_result.dynamic_pressure,
-        burning=context.thrust(time) < 1e-10,
+        burning=context.thrust(time) > 1e-10,
         on_launcher=on_launcher,
         velocity_air_body_frame=air_force_result.velocity_air_body_frame,
         acceleration_body_frame=acceleration_body_frame,
