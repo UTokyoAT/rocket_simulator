@@ -7,20 +7,20 @@ from src import graph_writer
 
 
 def write_row_data(result: ResultForReport):
-    output_dir = os.path.join(os.path.abspath("output"), "report", "row")
+    output_dir = os.path.join(os.path.abspath("output"), "report", "raw")
     os.makedirs(output_dir, exist_ok=True)
     result.result_ideal.to_csv(
-        os.path.join(output_dir, "ideal.json"),
+        os.path.join(output_dir, "ideal.csv"),
     )
     result.result_nominal.to_csv(
-        os.path.join(output_dir, "nominal.json"),
+        os.path.join(output_dir, "nominal.csv"),
     )
     for result_by_wind in result.result_by_wind_speed:
         for result_by_direction in result_by_wind.result:
             result_by_direction.result.to_csv(
                 os.path.join(
                     output_dir,
-                    f"wind_speed_{result_by_wind.wind_speed}_wind_direction_{result_by_direction.wind_direction}.json",
+                    f"wind_speed_{result_by_wind.wind_speed}_wind_direction_{result_by_direction.wind_direction}.csv",
                 )
             )
 
