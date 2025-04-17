@@ -75,28 +75,28 @@ def burning_coasting_division(data: pd.DataFrame):
     coasting = data[data['burning'] == False]
     return burning, coasting
 
-def dynamic_pressure(flight_data, all=False):
-    burning, coasting = burning_coasting_division(flight_data)
-    # plt.plot(burning["time"],burning["dynamic_pressure"],label="burning")
-    # plt.plot(coasting["time"],coasting["dynamic_pressure"],label="coasting")
-    # plt.legend()
-    # # plt.title("dynamic pressure")
-    # plt.xlabel("time/s")
-    # plt.ylabel("dynamic pressure/Pa")
-    # plt.grid(which="both")
+#def dynamic_pressure(flight_data, all=False):
+    #burning, coasting = burning_coasting_division(flight_data)
+    ### plt.plot(burning["time"],burning["dynamic_pressure"],label="burning")
+    ### plt.plot(coasting["time"],coasting["dynamic_pressure"],label="coasting")
+    ### plt.legend()
+    ### # plt.title("dynamic pressure")
+    ### plt.xlabel("time/s")
+    ### plt.ylabel("dynamic pressure/Pa")
+    ### plt.grid(which="both")
 
-    # plt.savefig("dynamic_pressure.png")
-    # plt.clf()
-    if all:
-        pressure_max = flight_data.loc[flight_data["dynamic_pressure"].idxmax()]
-    else:
-        pressure_max = burning.loc[burning["dynamic_pressure"].idxmax()]
-    return {
-        "時刻/s": round(pressure_max.time, 2),
-        "高度/m": round(pressure_max.altitude, 2),
-        "動圧/kPa": round(pressure_max.dynamic_pressure / 1000, 2),
-        "対気速度/(m/s)": round(air_velocity_norm(pressure_max), 2),
-    }
+    ### plt.savefig("dynamic_pressure.png")
+    ### plt.clf()
+    #if all:
+        #pressure_max = flight_data.loc[flight_data["dynamic_pressure"].idxmax()]
+    #else:
+        #pressure_max = burning.loc[burning["dynamic_pressure"].idxmax()]
+    #return {
+        #"時刻/s": round(pressure_max.time, 2),
+        #"高度/m": round(pressure_max.altitude, 2),
+        #"動圧/kPa": round(pressure_max.dynamic_pressure / 1000, 2),
+        #"対気速度/(m/s)": round(air_velocity_norm(pressure_max), 2),
+    #}
 def dynamic_pressure_figure(data: pd.DataFrame) -> Figure:
     fig, ax = plt.subplots()
     burning, coasting = burning_coasting_division(data)
