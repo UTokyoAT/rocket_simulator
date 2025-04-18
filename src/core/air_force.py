@@ -173,29 +173,29 @@ def calculate(rocket_state: RocketState, context: SimulationContext) -> AirForce
         AirForceResult: 空気力の計算結果
     """
     z = -rocket_state.position[2]
-    velocity_air_body_frame = rocket_state.velocity - context.wind(z)
-    airspeed = quaternion_util.inertial_to_body(
+    velocity_air_inertial_frame = rocket_state.velocity - context.wind(z)
+    velocity_air_body_frame = quaternion_util.inertial_to_body(
         rocket_state.posture,
-        velocity_air_body_frame,
+        velocity_air_inertial_frame,
     )
-    angle_of_attack_ = angle_of_attack(airspeed)
+    angle_of_attack_ = angle_of_attack(velocity_air_body_frame)
     AIR_DENSITY = 1.204
     axial_force_ = axial_force(
-        airspeed,
+        velocity_air_body_frame,
         AIR_DENSITY,
         context.body_area,
         context.CA,
     )
     CN = normal_force_coefficient(angle_of_attack_, context.CN_alpha)
     normal_force_ = normal_force(
-        airspeed,
+        velocity_air_body_frame,
         AIR_DENSITY,
         context.body_area,
         CN,
     )
     air_force = axial_force_ + normal_force_
     moment = air_force_moment(air_force, context.wind_center)
-    dynamic_pressure_ = dynamic_pressure(airspeed, AIR_DENSITY)
+    dynamic_pressure_ = dynamic_pressure(velocity_air_body_frame, AIR_DENSITY)
     return AirForceResult(
         force=air_force,
         moment=moment,
