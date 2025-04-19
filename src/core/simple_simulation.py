@@ -19,7 +19,9 @@ def to_simulation_result_row(
     on_launcher: bool,
     acceleration_body_frame: np.ndarray,
 ) -> simulation_result.SimulationResultRow:
-    air_force_result = air_force.calculate(state, context, False) # parachute_onは無関係
+    air_force_result = air_force.calculate(
+        state, context, False
+    )  # parachute_onは無関係
     return simulation_result.SimulationResultRow(
         time=time,
         position=state.position,
@@ -43,6 +45,16 @@ def acceleration_inertial_frame(
         [air_force_result.force, thrust], [np.zeros(3)], state.posture
     )
     return force / context.mass(t) + Gravitational_acceleration
+
+
+def angular_acceleration(
+    air_force_result: air_force.AirForceResult,
+    context: SimulationContext,
+    state: RocketState,
+):
+    return equation_of_motion.angular_acceleration(
+        air_force_result.moment, context.inertia_tensor, state.rotation
+    )
 
 
 def simulate_launcher(
@@ -108,10 +120,8 @@ def simulate_flight(
     def derivative(t, state):
         air_force_result = air_force.calculate(state, context, False)
         acceleration_ = acceleration_inertial_frame(t, state, context, False)
-        angular_acceleration = equation_of_motion.angular_acceleration(
-            air_force_result.moment, context.inertia_tensor, state.rotation
-        )
-        return RocketState.derivative(state, acceleration_, angular_acceleration)
+        angular_acceleration_ = angular_acceleration(air_force_result, context, state)
+        return RocketState.derivative(state, acceleration_, angular_acceleration_)
 
     def end_condition(t, state):
         if not parachute_on:
@@ -128,7 +138,8 @@ def simulate_flight(
             context,
             False,
             quaternion_util.inertial_to_body(
-                row[1].posture, acceleration_inertial_frame(row[0], row[1], context, False)
+                row[1].posture,
+                acceleration_inertial_frame(row[0], row[1], context, False),
             ),
         ),
         result,
