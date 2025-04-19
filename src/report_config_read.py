@@ -11,4 +11,5 @@ def read(folder_path: str) -> ReportConfig:
         wind_direction_nominal=js["wind_direction_nominal"],
         wind_speed_list=js["wind_speed_list"],
         wind_direction_list=js["wind_direction_list"],
+        launcher_elevation=js["launcher_elevation_list"]
     )
