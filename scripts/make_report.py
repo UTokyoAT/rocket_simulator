@@ -9,18 +9,30 @@ def run():
     result = make_result_for_report.make_result_for_report(config, report_config)
     output_dir = os.path.join(os.path.abspath("output"), "report", "row")
     os.makedirs(output_dir, exist_ok=True)
-    result.result_ideal.to_df().to_csv(
-        os.path.join(output_dir, "ideal.json"),
+    result.result_ideal_parachute_off.to_df().to_csv(
+        os.path.join(output_dir, "ideal_parachute_off.csv"),
     )
-    result.result_nominal.to_df().to_csv(
-        os.path.join(output_dir, "nominal.json"),
+    result.result_ideal_parachute_on.to_df().to_csv(
+        os.path.join(output_dir, "ideal_parachute_on.csv"),
+    )
+    result.result_nominal_parachute_off.to_df().to_csv(
+        os.path.join(output_dir, "nominal_parachute_off.csv"),
+    )
+    result.result_nominal_parachute_on.to_df().to_csv(
+        os.path.join(output_dir, "nominal_parachute_on.csv"),
     )
     for result_by_wind in result.result_by_wind_speed:
         for result_by_direction in result_by_wind.result:
-            result_by_direction.result.to_df().to_csv(
+            result_by_direction.result_parachute_off.to_df().to_csv(
                 os.path.join(
                     output_dir,
-                    f"wind_speed_{result_by_wind.wind_speed}_wind_direction_{result_by_direction.wind_direction}.json",
+                    f"wind_speed_{result_by_wind.wind_speed}_wind_direction_{result_by_direction.wind_direction}_parachute_off.csv",
+                )
+            )
+            result_by_direction.result_parachute_on.to_df().to_csv(
+                os.path.join(
+                    output_dir,
+                    f"wind_speed_{result_by_wind.wind_speed}_wind_direction_{result_by_direction.wind_direction}_parachute_on.csv",
                 )
             )
 

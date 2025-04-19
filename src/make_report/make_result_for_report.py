@@ -22,13 +22,15 @@ class Setting:
     wind_direction: float
 
 
-def run(config: Config, setting: Setting) -> SimulationResult:
+def run(config: Config, setting: Setting) -> tuple[SimulationResult, SimulationResult]:
     config.wind.wind_speed = setting.wind_speed
     config.wind.wind_direction = setting.wind_direction
     return simple_simulation.simulate(config, False)
 
 
-def run_concurrent(config: Config, settings: list[Setting]) -> list[SimulationResult]:
+def run_concurrent(
+    config: Config, settings: list[Setting]
+) -> list[tuple[SimulationResult, SimulationResult]]:
     """シミュレーションを並列で実行する
 
     Args:
@@ -74,14 +76,17 @@ def make_result_for_report(
     body = ResultForReport(
         config=config,
         context=context,
-        result_ideal=result_ideal,
-        result_nominal=result_nominal,
+        result_ideal_parachute_off=result_ideal[0],
+        result_ideal_parachute_on=result_ideal[1],
+        result_nominal_parachute_off=result_nominal[0],
+        result_nominal_parachute_on=result_nominal[1],
         result_by_wind_speed=[],
     )
     for setting, result in zip(settings[2:], results[2:]):
         body.append(
             wind_speed=setting.wind_speed,
             wind_direction=setting.wind_direction,
-            result=result,
+            result_parachute_off=result[0],
+            result_parachute_on=result[1],
         )
     return body
