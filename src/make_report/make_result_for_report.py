@@ -10,11 +10,12 @@ from ..core.config import Config
 
 @dataclass
 class ReportConfig:
+    launcher_elevation: float
     wind_speed_nominal: float
     wind_direction_nominal: float
     wind_speed_list: list[float]
     wind_direction_list: list[float]
-    launcher_elevation: list[float]
+    launcher_elevation_list: list[float]
 
 
 @dataclass
@@ -55,19 +56,19 @@ def make_result_for_report(
 ) -> ResultForReport:
     context = SimulationContext(config)
     setting_ideal = Setting(
-        launcher_elevation=report_config.launcher_elevation[0],
+        launcher_elevation=report_config.launcher_elevation,
         wind_speed=0,
         wind_direction=0,
     )
     setting_nominal = Setting(
-        launcher_elevation=report_config.launcher_elevation[0],
+        launcher_elevation=report_config.launcher_elevation,
         wind_speed=report_config.wind_speed_nominal,
         wind_direction=report_config.wind_direction_nominal,
     )
 
     settings_list = list(
         itertools.product(
-            report_config.launcher_elevation,
+            report_config.launcher_elevation_list,
             report_config.wind_speed_list,
             report_config.wind_direction_list,
         )
@@ -97,7 +98,7 @@ def make_result_for_report(
         body.append(
             wind_speed=setting.wind_speed,
             wind_direction=setting.wind_direction,
-            launcher_elevation=report_config.launcher_elevation[0],
+            launcher_elevation=setting.launcher_elevation,
             result_parachute_off=result[0],
             result_parachute_on=result[1],
         )

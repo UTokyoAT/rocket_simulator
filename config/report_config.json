@@ -1,4 +1,5 @@
 {
+    "launcher_elevation": 70,
     "wind_speed_nominal": 3,
     "wind_direction_nominal": 45,
     "wind_speed_list": [3, 4, 5, 6],
