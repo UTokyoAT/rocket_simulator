@@ -34,6 +34,17 @@ def to_simulation_result_row(
     )
 
 
+def acceleration_inertial_frame(
+    t: float, state: RocketState, context: SimulationContext
+) -> np.ndarray:
+    air_force_result = air_force.calculate(state, context)
+    thrust = np.array([context.thrust(t), 0, 0])
+    force = quaternion_util.sum_vector_inertial_frame(
+        [air_force_result.force, thrust], [np.zeros(3)], state.posture
+    )
+    return force / context.mass(t) + Gravitational_acceleration
+
+
 def simulate_launcher(
     first_state: RocketState, context: SimulationContext, first_time: float
 ) -> simulation_result.SimulationResult:
@@ -49,23 +60,19 @@ def simulate_launcher(
     """
 
     def acceleration_body_frame(t: float, state: RocketState) -> np.ndarray:
-        air_force_result = air_force.calculate(state, context)
-        thrust = np.array([context.thrust(t), 0, 0])
-        virtual_force_body = quaternion_util.sum_vector_body_frame(
-            [air_force_result.force, thrust],
-            [Gravitational_acceleration * context.mass(t)],
+        acceleration_body_frame_no_constraints = quaternion_util.inertial_to_body(
             state.posture,
+            acceleration_inertial_frame(t, state, context),
         )
-        actual_force_body = np.array([max(0, virtual_force_body[0]), 0, 0])
-        return actual_force_body / context.mass(t)
+        return np.array(
+            [max(0, acceleration_body_frame_no_constraints[0]), 0, 0]
+        )
 
     def derivative(t, state):
         actual_acceleration_inertial = quaternion_util.body_to_inertial(
             state.posture, acceleration_body_frame(t, state)
         )
-        return RocketState.derivative(
-            state, actual_acceleration_inertial, np.zeros(3)
-        )
+        return RocketState.derivative(state, actual_acceleration_inertial, np.zeros(3))
 
     def end_condition(t, state):
         return np.linalg.norm(state.position, ord=2) > context.launcher_length
@@ -100,17 +107,9 @@ def simulate_flight(
         simulation_result.SimulationResult: 時刻とロケットの状態の組のリスト
     """
 
-    def acceleration(t: float, state: RocketState) -> np.ndarray:
-        air_force_result = air_force.calculate(state, context)
-        thrust = np.array([context.thrust(t), 0, 0])
-        force = quaternion_util.sum_vector_inertial_frame(
-            [air_force_result.force, thrust], [np.zeros(3)], state.posture
-        )
-        return force / context.mass(t) + Gravitational_acceleration
-
     def derivative(t, state):
         air_force_result = air_force.calculate(state, context)
-        acceleration_ = acceleration(t, state)
+        acceleration_ = acceleration_inertial_frame(t, state, context)
         angular_acceleration = equation_of_motion.angular_acceleration(
             air_force_result.moment, context.inertia_tensor, state.rotation
         )
@@ -131,7 +130,8 @@ def simulate_flight(
             context,
             False,
             quaternion_util.inertial_to_body(
-                row[1].posture, acceleration(row[0], row[1])
+                row[1].posture,
+                acceleration_inertial_frame(row[0], row[1], context)
             ),
         ),
         result,
