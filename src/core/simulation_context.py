@@ -33,6 +33,10 @@ class SimulationContext:
     """初期方位角"""
     first_roll: float
     """初期ロール角"""
+    parachute_terminal_velocity: float
+    """パラシュートの終端速度"""
+    parachute_delay_time: float
+    """最高高度到達からパラシュート展開までの時間"""
 
     def __init__(self, config: Config):
         self.mass = interpolation.df_to_function_1d(config.mass)
@@ -60,3 +64,6 @@ class SimulationContext:
         self.first_elevation = config.first_elevation
         self.first_azimuth = config.first_azimuth
         self.first_roll = config.first_roll
+
+        self.parachute_terminal_velocity = config.parachute_terminal_velocity
+        self.parachute_delay_time = config.parachute_delay_time

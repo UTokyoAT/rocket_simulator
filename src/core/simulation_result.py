@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import copy
 import numpy as np
 import quaternion
 import pandas as pd
@@ -82,6 +83,14 @@ class SimulationResult:
         """
         assert self.result[-1].time == other.result[0].time
         return SimulationResult(self.result[:-1] + other.result)
+
+    def deepcopy(self) -> "SimulationResult":
+        """シミュレーション結果をディープコピーする
+
+        Returns:
+            SimulationResult: ディープコピーしたシミュレーション結果
+        """
+        return copy.deepcopy(self)
 
     def last(self) -> SimulationResultRow:
         """最後の行を取得する

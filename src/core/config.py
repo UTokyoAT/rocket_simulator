@@ -1,7 +1,7 @@
-import typing as t
 from dataclasses import dataclass
 import numpy as np
 import pandas as pd
+
 
 @dataclass
 class WindPowerLow:
@@ -31,3 +31,5 @@ class Config:
     first_elevation: float
     first_azimuth: float
     first_roll: float
+    parachute_terminal_velocity: float
+    parachute_delay_time: float

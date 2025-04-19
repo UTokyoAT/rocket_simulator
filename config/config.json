@@ -20,5 +20,8 @@
 
     "first_elevation":76,
     "first_azimuth":35,
-    "first_roll":0
+    "first_roll":0,
+
+    "parachute_terminal_velocity": 18,
+    "parachute_delay_time": 2.0
 }
