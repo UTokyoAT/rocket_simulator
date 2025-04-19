@@ -19,11 +19,13 @@ class ReportConfig:
 
 @dataclass
 class Setting:
+    launcher_elevation: float
     wind_speed: float
     wind_direction: float
 
 
 def run(config: Config, setting: Setting) -> tuple[SimulationResult, SimulationResult]:
+    config.first_elevation = setting.launcher_elevation
     config.wind.wind_speed = setting.wind_speed
     config.wind.wind_direction = setting.wind_direction
     return simple_simulation.simulate(config, False)
@@ -53,22 +55,30 @@ def make_result_for_report(
 ) -> ResultForReport:
     context = SimulationContext(config)
     setting_ideal = Setting(
+        launcher_elevation=report_config.launcher_elevation[0],
         wind_speed=0,
         wind_direction=0,
     )
     setting_nominal = Setting(
+        launcher_elevation=report_config.launcher_elevation[0],
         wind_speed=report_config.wind_speed_nominal,
         wind_direction=report_config.wind_direction_nominal,
     )
 
-    settings_wind_list = list(
+    settings_list = list(
         itertools.product(
-            report_config.wind_speed_list, report_config.wind_direction_list
+            report_config.launcher_elevation,
+            report_config.wind_speed_list,
+            report_config.wind_direction_list,
         )
     )
     settings_wind = [
-        Setting(wind_speed=wind_speed, wind_direction=wind_direction)
-        for wind_speed, wind_direction in settings_wind_list
+        Setting(
+            launcher_elevation=launcher_elevation,
+            wind_speed=wind_speed,
+            wind_direction=wind_direction,
+        )
+        for launcher_elevation, wind_speed, wind_direction in settings_list
     ]
     settings = [setting_ideal, setting_nominal] + settings_wind
     results = run_concurrent(config, settings)
@@ -81,12 +91,13 @@ def make_result_for_report(
         result_ideal_parachute_on=result_ideal[1],
         result_nominal_parachute_off=result_nominal[0],
         result_nominal_parachute_on=result_nominal[1],
-        result_by_wind_speed=[],
+        result_by_launcher_elevation=[],
     )
     for setting, result in zip(settings[2:], results[2:]):
         body.append(
             wind_speed=setting.wind_speed,
             wind_direction=setting.wind_direction,
+            launcher_elevation=report_config.launcher_elevation[0],
             result_parachute_off=result[0],
             result_parachute_on=result[1],
         )
