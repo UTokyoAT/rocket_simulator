@@ -43,4 +43,6 @@ def read(folder_path: str) -> Config:
         js["first_elevation"],
         js["first_azimuth"],
         js["first_roll"],
+        js["parachute_terminal_velocity"],
+        js["parachute_delay_time"],
     )
