@@ -127,6 +127,6 @@ def air_velocity_figure(data: pd.DataFrame) -> Figure:
 
 def make_graph(result: ResultForReport) -> Graphs:
     return Graphs(
-        ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal),
-        ideal_air_velocity_figure = air_velocity_figure(result.result_ideal),
+        ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
+        ideal_air_velocity_figure = air_velocity_figure(result.result_ideal_parachute_off),
     )
