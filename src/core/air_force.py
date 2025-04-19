@@ -162,6 +162,18 @@ def normal_force_coefficient(angle_of_attack: float, CN_alpha) -> float:
     return CN_alpha * angle_of_attack
 
 
+def parachute_force(
+    velocity_air: np.ndarray, parachute_terminal_velocity: float, mass: float
+):
+    return (
+        - 9.8
+        * mass
+        / parachute_terminal_velocity**2
+        * np.linalg.norm(velocity_air, ord=2)
+        * velocity_air
+    )
+
+
 def calculate(rocket_state: RocketState, context: SimulationContext) -> AirForceResult:
     """空気力を計算する
 

@@ -51,6 +51,14 @@ class TestAirForce(unittest.TestCase):
         result = af.air_force_moment(force, wind_center)
         self.assertTrue(np.all(result == [3, -6, 3]))
 
+    def test_parachute_force(self):
+        parachute_terminal_velocity = 10
+        mass = 3
+        v = np.array([1, 1, 0])
+        result = af.parachute_force(v, parachute_terminal_velocity, mass)
+        answer = 3 * 9.8 * 2**0.5 / 100 * np.array([-1, -1, 0])
+        self.assertTrue(np.all(np.abs(result - answer) < 1e-10))
+
 
 if __name__ == "__main__":
     unittest.main()
