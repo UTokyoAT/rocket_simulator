@@ -166,7 +166,7 @@ def parachute_force(
     velocity_air: np.ndarray, parachute_terminal_velocity: float, mass: float
 ):
     return (
-        - 9.8
+        -9.8
         * mass
         / parachute_terminal_velocity**2
         * np.linalg.norm(velocity_air, ord=2)
@@ -174,12 +174,15 @@ def parachute_force(
     )
 
 
-def calculate(rocket_state: RocketState, context: SimulationContext) -> AirForceResult:
+def calculate(
+    rocket_state: RocketState, context: SimulationContext, parachute_on: bool
+) -> AirForceResult:
     """空気力を計算する
 
     Args:
         rocket_state (RocketState): ロケットの状態
         context (SimulationContext): ロケットの設定
+        parachute_on (bool): パラシュートが展開されているかどうか
 
     Returns:
         AirForceResult: 空気力の計算結果
@@ -205,7 +208,14 @@ def calculate(rocket_state: RocketState, context: SimulationContext) -> AirForce
         context.body_area,
         CN,
     )
-    air_force = axial_force_ + normal_force_
+    if parachute_on:
+        air_force = axial_force_ + normal_force_ + parachute_force(
+            velocity_air_body_frame,
+            context.parachute_terminal_velocity,
+            context.mass(100),
+        )
+    else:
+        air_force = axial_force_ + normal_force_
     moment = air_force_moment(air_force, context.wind_center)
     dynamic_pressure_ = dynamic_pressure(velocity_air_body_frame, AIR_DENSITY)
     return AirForceResult(

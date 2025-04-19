@@ -19,7 +19,7 @@ def to_simulation_result_row(
     on_launcher: bool,
     acceleration_body_frame: np.ndarray,
 ) -> simulation_result.SimulationResultRow:
-    air_force_result = air_force.calculate(state, context)
+    air_force_result = air_force.calculate(state, context, False) # parachute_onは無関係
     return simulation_result.SimulationResultRow(
         time=time,
         position=state.position,
@@ -35,9 +35,9 @@ def to_simulation_result_row(
 
 
 def acceleration_inertial_frame(
-    t: float, state: RocketState, context: SimulationContext
+    t: float, state: RocketState, context: SimulationContext, parachute_on: bool
 ) -> np.ndarray:
-    air_force_result = air_force.calculate(state, context)
+    air_force_result = air_force.calculate(state, context, parachute_on)
     thrust = np.array([context.thrust(t), 0, 0])
     force = quaternion_util.sum_vector_inertial_frame(
         [air_force_result.force, thrust], [np.zeros(3)], state.posture
@@ -62,11 +62,9 @@ def simulate_launcher(
     def acceleration_body_frame(t: float, state: RocketState) -> np.ndarray:
         acceleration_body_frame_no_constraints = quaternion_util.inertial_to_body(
             state.posture,
-            acceleration_inertial_frame(t, state, context),
+            acceleration_inertial_frame(t, state, context, False),
         )
-        return np.array(
-            [max(0, acceleration_body_frame_no_constraints[0]), 0, 0]
-        )
+        return np.array([max(0, acceleration_body_frame_no_constraints[0]), 0, 0])
 
     def derivative(t, state):
         actual_acceleration_inertial = quaternion_util.body_to_inertial(
@@ -108,8 +106,8 @@ def simulate_flight(
     """
 
     def derivative(t, state):
-        air_force_result = air_force.calculate(state, context)
-        acceleration_ = acceleration_inertial_frame(t, state, context)
+        air_force_result = air_force.calculate(state, context, False)
+        acceleration_ = acceleration_inertial_frame(t, state, context, False)
         angular_acceleration = equation_of_motion.angular_acceleration(
             air_force_result.moment, context.inertia_tensor, state.rotation
         )
@@ -130,8 +128,7 @@ def simulate_flight(
             context,
             False,
             quaternion_util.inertial_to_body(
-                row[1].posture,
-                acceleration_inertial_frame(row[0], row[1], context)
+                row[1].posture, acceleration_inertial_frame(row[0], row[1], context, False)
             ),
         ),
         result,
