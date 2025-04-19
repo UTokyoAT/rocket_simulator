@@ -1,5 +1,4 @@
 import typing as t
-import time
 
 
 def runge_kutta4(
@@ -21,8 +20,6 @@ def runge_kutta4(
     Returns:
         list[tuple[float,t.Any]]: 時刻と状態のリスト
     """
-    t_real = time.perf_counter_ns()
-    t_cpu = time.process_time_ns()
     result = [(initial_time, initial_state)]
     while not end_condition(*result[-1]):
         t_n, y_n = result[-1]
@@ -32,10 +29,4 @@ def runge_kutta4(
         k4 = f(t_n + time_step, y_n + k3 * time_step)
         y_n1 = y_n + (k1 + k2 * 2 + k3 * 2 + k4) * (time_step / 6)
         result.append((t_n + time_step, y_n1))
-        t_real_new = time.perf_counter_ns()
-        print(t_real_new - t_real, end=",")
-        t_real = t_real_new
-        t_cpu_new = time.process_time_ns()
-        print(t_cpu_new - t_cpu)
-        t_cpu = t_cpu_new
     return result
