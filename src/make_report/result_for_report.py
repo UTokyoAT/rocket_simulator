@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from ..core.simulation_result import SimulationResult
+import pandas as pd
 from ..core.simulation_context import SimulationContext
 from ..core.config import Config
 
@@ -7,8 +7,8 @@ from ..core.config import Config
 @dataclass
 class ResultByWindDirection:
     wind_direction: float
-    result_parachute_off: SimulationResult
-    result_parachute_on: SimulationResult
+    result_parachute_off: pd.DataFrame
+    result_parachute_on: pd.DataFrame
 
 
 @dataclass
@@ -19,9 +19,10 @@ class ResultByWindSpeed:
     def append(
         self,
         wind_direction: float,
-        result_parachute_off: SimulationResult,
-        result_parachute_on: SimulationResult,
+        result_parachute_off: pd.DataFrame,
+        result_parachute_on: pd.DataFrame,
     ):
+
         self.result.append(
             ResultByWindDirection(
                 wind_direction=wind_direction,
@@ -40,8 +41,8 @@ class ResultByLauncherElevation:
         self,
         wind_speed: float,
         wind_direction: float,
-        result_parachute_off: SimulationResult,
-        result_parachute_on: SimulationResult,
+        result_parachute_off: pd.DataFrame,
+        result_parachute_on: pd.DataFrame,
     ):
         for result_by_wind_speed in self.result:
             if result_by_wind_speed.wind_speed == wind_speed:
@@ -59,10 +60,10 @@ class ResultByLauncherElevation:
 class ResultForReport:
     config: Config
     context: SimulationContext
-    result_ideal_parachute_off: SimulationResult
-    result_ideal_parachute_on: SimulationResult
-    result_nominal_parachute_off: SimulationResult
-    result_nominal_parachute_on: SimulationResult
+    result_ideal_parachute_off: pd.DataFrame
+    result_ideal_parachute_on: pd.DataFrame
+    result_nominal_parachute_off: pd.DataFrame
+    result_nominal_parachute_on: pd.DataFrame
     result_by_launcher_elevation: list[ResultByLauncherElevation]
 
     def append(
@@ -70,8 +71,8 @@ class ResultForReport:
         wind_speed: float,
         wind_direction: float,
         launcher_elevation: float,
-        result_parachute_off: SimulationResult,
-        result_parachute_on: SimulationResult,
+        result_parachute_off: pd.DataFrame,
+        result_parachute_on: pd.DataFrame,
     ):
         for result_by_launcher_elevation in self.result_by_launcher_elevation:
             if result_by_launcher_elevation.launcher_elevation == launcher_elevation:

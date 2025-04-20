@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from concurrent.futures import ProcessPoolExecutor
 import itertools
+import pandas as pd
 from .result_for_report import ResultForReport
-from ..core.simulation_result import SimulationResult
 from ..core.simulation_context import SimulationContext
 from ..core import simple_simulation
 from ..core.config import Config
@@ -25,16 +25,17 @@ class Setting:
     wind_direction: float
 
 
-def run(config: Config, setting: Setting) -> tuple[SimulationResult, SimulationResult]:
+def run(config: Config, setting: Setting) -> tuple[pd.DataFrame, pd.DataFrame]:
     config.first_elevation = setting.launcher_elevation
     config.wind.wind_speed = setting.wind_speed
     config.wind.wind_direction = setting.wind_direction
-    return simple_simulation.simulate(config, False)
+    results = simple_simulation.simulate(config, False)
+    return (results[0].to_df(), results[1].to_df())
 
 
 def run_concurrent(
     config: Config, settings: list[Setting]
-) -> list[tuple[SimulationResult, SimulationResult]]:
+) -> list[tuple[pd.DataFrame, pd.DataFrame]]:
     """シミュレーションを並列で実行する
 
     Args:
