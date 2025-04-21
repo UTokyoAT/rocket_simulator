@@ -1,9 +1,9 @@
 from src import config_read
-import os
+from pathlib import Path
 from src.core import simple_simulation
 
 
-config = config_read.read(os.path.abspath("config"))
+config = config_read.read(Path("config"))
 result = simple_simulation.simulate(config, False)
-os.makedirs("output", exist_ok=True)
+Path("output").mkdir(exist_ok=True)
 result.to_df().to_csv("output/result.csv")

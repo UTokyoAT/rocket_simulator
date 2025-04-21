@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 def simulate(wind_direction, wind_speed):
-    config_path = Path("config").absolute()
+    config_path = Path("config")
     config = config_read.read(config_path)
     config.wind.wind_direction = wind_direction
     config.wind.wind_speed = wind_speed

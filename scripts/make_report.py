@@ -38,7 +38,7 @@ def write_row_data(result: ResultForReport):
 
 
 def run():
-    config_path = Path("config").absolute()
+    config_path = Path("config")
     config = config_read.read(config_path)
     report_config = report_config_read.read(config_path)
     result = make_result_for_report.make_result_for_report(config, report_config)
