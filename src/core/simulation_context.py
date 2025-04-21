@@ -4,6 +4,7 @@ from .inertia_tensor import InertiaTensor
 from .config import Config
 from . import interpolation
 from . import wind
+from . import gravity_center
 
 
 class SimulationContext:
@@ -13,6 +14,8 @@ class SimulationContext:
     """高度->風速ベクトル"""
     thrust: typing.Callable[[float], float]
     """時間->推力"""
+    gravity_center: typing.Callable[[float], np.ndarray]
+    """時間->重心位置"""
     CA: float
     """軸力係数"""
     CN_alpha: float
@@ -47,6 +50,13 @@ class SimulationContext:
             config.wind.wind_direction,
         )
         self.thrust = interpolation.df_to_function_1d(config.thrust)
+        self.gravity_center = (
+            gravity_center.create_gravity_center_function_from_dataframe(
+                config.first_gravity_center,
+                config.end_gravity_center,
+                config.thrust,
+            )
+        )
         self.CA = config.CA
         self.CN_alpha = config.CN_alpha
         self.body_area = config.body_area

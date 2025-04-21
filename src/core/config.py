@@ -33,3 +33,5 @@ class Config:
     first_roll: float
     parachute_terminal_velocity: float
     parachute_delay_time: float
+    first_gravity_center: np.ndarray
+    end_gravity_center: np.ndarray

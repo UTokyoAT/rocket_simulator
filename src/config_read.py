@@ -14,9 +14,13 @@ def read(folder_path: str) -> Config:
     Returns:
         Config: 設定
     """
-    mass_df = pd.read_csv(os.path.join(folder_path, "mass.csv"), index_col=0)
-    thrust_df = pd.read_csv(os.path.join(folder_path, "thrust.csv"), index_col=0)
-    with open(os.path.join(folder_path, "config.json"), "r") as file:
+    mass_path = os.path.join(folder_path, "mass.csv")
+    thrust_path = os.path.join(folder_path, "thrust.csv")
+    config_path = os.path.join(folder_path, "config.json")
+
+    mass_df = pd.read_csv(mass_path, index_col=0)
+    thrust_df = pd.read_csv(thrust_path, index_col=0)
+    with open(config_path, "r") as file:
         js = json.load(file)
     wind = WindPowerLow(
         js["wind_reference_height"],
@@ -45,4 +49,6 @@ def read(folder_path: str) -> Config:
         js["first_roll"],
         js["parachute_terminal_velocity"],
         js["parachute_delay_time"],
+        np.array(js["first_gravity_center"]),
+        np.array(js["end_gravity_center"]),
     )
