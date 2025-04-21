@@ -2,21 +2,21 @@ import pandas as pd
 from .core.config import Config, WindPowerLow
 import json
 import numpy as np
-import os
+from pathlib import Path
 
 
-def read(folder_path: str) -> Config:
+def read(folder_path: Path) -> Config:
     """フォルダから設定を読み込む
 
     Args:
-        folder_path (str): フォルダのパス
+        folder_path (Path): フォルダのパス
 
     Returns:
         Config: 設定
     """
-    mass_path = os.path.join(folder_path, "mass.csv")
-    thrust_path = os.path.join(folder_path, "thrust.csv")
-    config_path = os.path.join(folder_path, "config.json")
+    mass_path = folder_path / "mass.csv"
+    thrust_path = folder_path / "thrust.csv"
+    config_path = folder_path / "config.json"
 
     mass_df = pd.read_csv(mass_path, index_col=0)
     thrust_df = pd.read_csv(thrust_path, index_col=0)
