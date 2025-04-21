@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 from src import config_read, report_config_read
 from src.make_report import make_result_for_report
 from src.make_report.result_for_report import ResultForReport
@@ -38,6 +39,11 @@ def write_row_data(result: ResultForReport):
 
 
 def run():
+    # 既存のoutputフォルダを削除
+    output_dir = Path("output")
+    if output_dir.exists():
+        shutil.rmtree(output_dir)
+
     config_path = Path("config")
     config = config_read.read(config_path)
     report_config = report_config_read.read(config_path)
