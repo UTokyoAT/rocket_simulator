@@ -20,8 +20,7 @@ def read(folder_path: Path) -> Config:
 
     mass_df = pd.read_csv(mass_path, index_col=0)
     thrust_df = pd.read_csv(thrust_path, index_col=0)
-    with open(config_path, "r") as file:
-        js = json.load(file)
+    js = json.loads(config_path.read_text())
     wind = WindPowerLow(
         js["wind_reference_height"],
         js["wind_speed"],
