@@ -1,12 +1,13 @@
+from pathlib import Path
 from src import config_read
-import os
 from src.core import simple_simulation
 from concurrent.futures import ProcessPoolExecutor
 import matplotlib.pyplot as plt
 
 
 def simulate(wind_direction, wind_speed):
-    config = config_read.read(os.path.abspath("config"))
+    config_path = Path("config")
+    config = config_read.read(config_path)
     config.wind.wind_direction = wind_direction
     config.wind.wind_speed = wind_speed
     return simple_simulation.simulate(config, False)
