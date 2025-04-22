@@ -22,22 +22,21 @@ def to_simulation_result_row(
 ) -> simulation_result.SimulationResultRow:
     # パラシュートは関係なし
     air_force_result = air_force.calculate(state, context, False, time)
-    return simulation_result.SimulationResultRow(
+    return simulation_result.SimulationResultRow.from_state(
         time=time,
-        position=state.position,
-        velocity=state.velocity,
-        posture=state.posture,
-        rotation=state.rotation,
-        dynamic_pressure=air_force_result.dynamic_pressure,
-        burning=context.thrust(time) > 1e-10,
+        state=state,
+        context=context,
         on_launcher=on_launcher,
-        velocity_air_body_frame=air_force_result.velocity_air_body_frame,
         acceleration_body_frame=acceleration_body_frame,
+        air_force_result=air_force_result,
     )
 
 
 def acceleration_inertial_frame(
-    t: float, state: RocketState, context: SimulationContext, parachute_on: bool
+    t: float,
+    state: RocketState,
+    context: SimulationContext,
+    parachute_on: bool,
 ) -> np.ndarray:
     air_force_result = air_force.calculate(state, context, parachute_on, t)
     thrust = np.array([context.thrust(t), 0, 0])
@@ -172,17 +171,6 @@ def simulate_fall(
     return simulate_flight(end_condition, parachute_on)
 
 
-def rocket_state_from_simulation_result_row(
-    row: simulation_result.SimulationResultRow,
-) -> RocketState:
-    return RocketState(
-        row.position,
-        row.velocity,
-        row.posture,
-        row.rotation,
-    )
-
-
 def simulate(
     config: Config, parachute_on: float
 ) -> tuple[simulation_result.SimulationResult, simulation_result.SimulationResult]:
@@ -203,15 +191,15 @@ def simulate(
     first_state = RocketState(np.zeros(3), np.zeros(3), first_posture, np.zeros(3))
     result_launcher = simulate_launcher(first_state, context, 0)
     last = result_launcher.last()
-    first_state = rocket_state_from_simulation_result_row(last)
+    first_state = last.to_rocket_state()
     result_on_rise = simulate_on_rise(first_state, context, last.time)
     last = result_on_rise.last()
-    first_state = rocket_state_from_simulation_result_row(last)
+    first_state = last.to_rocket_state()
     result_waiting_parachute_delay = simulate_waiting_parachute_delay(last.time)(
         first_state, context, last.time
     )
     last = result_waiting_parachute_delay.last()
-    first_state = rocket_state_from_simulation_result_row(last)
+    first_state = last.to_rocket_state()
     result_fall_parachute_on = simulate_fall(True)(first_state, context, last.time)
     result_fall_parachute_off = simulate_fall(False)(first_state, context, last.time)
     result_common = result_launcher.join(result_on_rise).join(

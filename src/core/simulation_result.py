@@ -3,6 +3,9 @@ import copy
 import numpy as np
 import quaternion
 import pandas as pd
+from .rocket_state import RocketState
+from .simulation_context import SimulationContext
+from .air_force import AirForceResult
 
 
 @dataclass
@@ -21,6 +24,57 @@ class SimulationResultRow:
     on_launcher: bool
     velocity_air_body_frame: np.ndarray
     acceleration_body_frame: np.ndarray
+
+    @classmethod
+    def from_state(
+        cls,
+        time: float,
+        state: "RocketState",
+        context: "SimulationContext",
+        on_launcher: bool,
+        acceleration_body_frame: np.ndarray,
+        air_force_result: "AirForceResult",
+    ) -> "SimulationResultRow":
+        """ロケットの状態からSimulationResultRowを作成する
+
+        Args:
+            time (float): 時刻
+            state (RocketState): ロケットの状態
+            context (SimulationContext): シミュレーションコンテキスト
+            on_launcher (bool): ランチャー上にあるかどうか
+            acceleration_body_frame (np.ndarray): ボディフレーム座標系での加速度
+            air_force_result (AirForceResult): 空気力の計算結果
+
+        Returns:
+            SimulationResultRow: シミュレーション結果の行
+        """
+        return cls(
+            time=time,
+            position=state.position,
+            velocity=state.velocity,
+            posture=state.posture,
+            rotation=state.rotation,
+            dynamic_pressure=air_force_result.dynamic_pressure,
+            burning=context.thrust(time) > 1e-10,
+            on_launcher=on_launcher,
+            velocity_air_body_frame=air_force_result.velocity_air_body_frame,
+            acceleration_body_frame=acceleration_body_frame,
+        )
+
+    def to_rocket_state(self) -> "RocketState":
+        """SimulationResultRowからRocketStateを復元する
+
+        Returns:
+            RocketState: 復元されたRocketState
+        """
+        from .rocket_state import RocketState
+
+        return RocketState(
+            self.position,
+            self.velocity,
+            self.posture,
+            self.rotation,
+        )
 
     def to_df_row(self) -> list:
         """DataFrame用の行に変換する
