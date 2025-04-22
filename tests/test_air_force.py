@@ -18,7 +18,8 @@ class TestAirForce(unittest.TestCase):
         result = af.axial_force(
             airspeed, air_density, body_area, axial_force_coefficient
         )
-        self.assertTrue(np.all(np.abs(result - [-840, 0, 0]) < 1e-10))
+        expected = np.array([-840, 0, 0])
+        self.assertTrue(np.allclose(result, expected))
 
     def test_normal_force(self):
         airspeed = np.array([1, 2, 3])
@@ -29,9 +30,10 @@ class TestAirForce(unittest.TestCase):
             airspeed, air_density, body_area, normal_force_coefficient
         )
         norm = np.linalg.norm(result, ord=2)
-        self.assertTrue(np.abs(float(norm) - 840.0) < 1e-10)
+        self.assertTrue(np.isclose(norm, 840.0))
+        cross_product = np.cross(airspeed, np.array([1, 0, 0]))
         self.assertTrue(
-            np.dot(result, np.cross(airspeed, np.array([1, 0, 0]))) < 1e-10
+            np.isclose(np.dot(result, cross_product), 0.0)
         )  # 対気速度と機体軸が張る平面上にある
         self.assertEqual(result[0], 0)
         self.assertLess(result[1], 0)
@@ -41,9 +43,9 @@ class TestAirForce(unittest.TestCase):
         zero = af.angle_of_attack(np.array([1, 0, 0]))
         self.assertTrue(zero == 0)
         ninety = af.angle_of_attack(np.array([0, 1, 3]))
-        self.assertTrue(np.abs(ninety - np.pi / 2) < 1e-10)
+        self.assertTrue(np.isclose(ninety, np.pi / 2))
         fortyfive = af.angle_of_attack(np.array([1, 2**0.5, 1]))
-        self.assertTrue(np.abs(fortyfive - np.pi / 3) < 1e-10)
+        self.assertTrue(np.isclose(fortyfive, np.pi / 3))
 
     def test_air_force_moment(self):
         force = np.array([1, 2, 3])
@@ -57,7 +59,7 @@ class TestAirForce(unittest.TestCase):
         v = np.array([1, 1, 0])
         result = af.parachute_force(v, parachute_terminal_velocity, mass)
         answer = 3 * 9.8 * 2**0.5 / 100 * np.array([-1, -1, 0])
-        self.assertTrue(np.all(np.abs(result - answer) < 1e-10))
+        self.assertTrue(np.allclose(result, answer))
 
 
 if __name__ == "__main__":

@@ -10,7 +10,8 @@ class TestEquationOfMotion(unittest.TestCase):
         inertia = it.InertiaTensor(1, 2, 3, 0, 0, 0)
         rotation = np.array([4, 5, 6])
         result = qom.angular_acceleration(torque, inertia, rotation)
-        self.assertTrue(np.all(np.abs(result - [-29, 25, -17 / 3]) < 1e-10))
+        expected = np.array([-29, 25, -17 / 3])
+        self.assertTrue(np.allclose(result, expected))
 
 
 if __name__ == "__main__":
