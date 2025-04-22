@@ -80,4 +80,6 @@ class TestSimulationResult(unittest.TestCase):
         self.assertEqual(copied_result.result[0].position[0], self.row1.position[0])
         self.assertEqual(copied_result.result[1].velocity[0], self.row2.velocity[0])
         copied_result.result[0].time = 100
-        self.assertNotEqual(self.sim_result1.result[0].time, copied_result.result[0].time)
+        self.assertNotEqual(
+            self.sim_result1.result[0].time, copied_result.result[0].time
+        )

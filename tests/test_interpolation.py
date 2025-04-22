@@ -32,12 +32,12 @@ class TestInterpolation(unittest.TestCase):
 
         # 値が正しく補間されていることを確認
         expected = np.array([1.5, 0.0, 0.0])
-        self.assertTrue(np.allclose(result, expected))
+        np.testing.assert_array_almost_equal(result, expected)
 
         # 整数インデックスでの補間を確認
-        self.assertTrue(np.allclose(f(1), np.array([1.0, 0.0, 0.0])))
-        self.assertTrue(np.allclose(f(2), np.array([2.0, 0.0, 0.0])))
-        self.assertTrue(np.allclose(f(3), np.array([3.0, 0.0, 0.0])))
+        np.testing.assert_array_almost_equal(f(1), np.array([1.0, 0.0, 0.0]))
+        np.testing.assert_array_almost_equal(f(2), np.array([2.0, 0.0, 0.0]))
+        np.testing.assert_array_almost_equal(f(3), np.array([3.0, 0.0, 0.0]))
 
         # 範囲外の値で例外が発生することを確認
         with self.assertRaises(ValueError):

@@ -20,10 +20,10 @@ class TestRocketState(unittest.TestCase):
         )
 
     def assertRocketStateEqual(self, rs, position, velocity, posture, rotation):
-        self.assertTrue(np.array_equal(rs.position, position))
-        self.assertTrue(np.array_equal(rs.velocity, velocity))
-        self.assertTrue(np.array_equal(rs.posture, posture))
-        self.assertTrue(np.array_equal(rs.rotation, rotation))
+        np.testing.assert_array_equal(rs.position, position)
+        np.testing.assert_array_equal(rs.velocity, velocity)
+        np.testing.assert_array_equal(rs.posture, posture)
+        np.testing.assert_array_equal(rs.rotation, rotation)
 
     def test_add(self):
         result = self.rs1 + self.rs2
