@@ -32,12 +32,12 @@ class TestGravityCenter(unittest.TestCase):
         )
 
         # 補間が正しく機能していることを確認
-        self.assertTrue(np.allclose(gc_func(0.0), first_gravity_center))
-        self.assertTrue(np.allclose(gc_func(3.0), end_gravity_center))
+        np.testing.assert_array_almost_equal(gc_func(0.0), first_gravity_center)
+        np.testing.assert_array_almost_equal(gc_func(3.0), end_gravity_center)
 
         # 中間値の補間を確認
         expected_mid = np.array([0.5, 0.5, 0.5])  # 1.5秒時点では中間値
-        self.assertTrue(np.allclose(gc_func(1.5), expected_mid))
+        np.testing.assert_array_almost_equal(gc_func(1.5), expected_mid)
 
 
 if __name__ == "__main__":

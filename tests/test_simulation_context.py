@@ -60,7 +60,7 @@ class TestSimulationContext(unittest.TestCase):
         self.assertEqual(sim_context.CN_alpha, 2.0)
         self.assertEqual(sim_context.body_area, 0.01)
         wind_center_expected = np.array([0.0, 0.0, 0.5])
-        self.assertTrue(np.array_equal(sim_context.wind_center, wind_center_expected))
+        np.testing.assert_array_equal(sim_context.wind_center, wind_center_expected)
         self.assertEqual(sim_context.dt, 0.01)
         self.assertEqual(sim_context.launcher_length, 3.0)
         self.assertEqual(sim_context.first_elevation, 5.0)

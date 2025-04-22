@@ -24,7 +24,7 @@ class TestAirForce(unittest.TestCase):
             airspeed, air_density, body_area, axial_force_coefficient
         )
         expected = np.array([-840, 0, 0])
-        self.assertTrue(np.allclose(result, expected))
+        np.testing.assert_array_almost_equal(result, expected)
 
     def test_normal_force(self):
         airspeed = np.array([1, 2, 3])
@@ -56,7 +56,7 @@ class TestAirForce(unittest.TestCase):
         force = np.array([1, 2, 3])
         wind_center = np.array([4, 5, 6])
         result = af.air_force_moment(force, wind_center)
-        self.assertTrue(np.all(result == [3, -6, 3]))
+        np.testing.assert_array_almost_equal(result, [3, -6, 3])
 
     def test_parachute_force(self):
         parachute_terminal_velocity = 10
@@ -64,7 +64,7 @@ class TestAirForce(unittest.TestCase):
         v = np.array([1, 1, 0])
         result = af.parachute_force(v, parachute_terminal_velocity, mass)
         answer = 3 * 9.8 * 2**0.5 / 100 * np.array([-1, -1, 0])
-        self.assertTrue(np.allclose(result, answer))
+        np.testing.assert_array_almost_equal(result, answer)
 
     def setUp(self):
         # テスト用のSimulationContextを準備
@@ -192,7 +192,9 @@ class TestAirForce(unittest.TestCase):
             * air_velocity
             * np.linalg.norm(air_velocity)
         )
-        self.assertTrue(np.allclose(parachute_force_vector, expected_parachute_force))
+        np.testing.assert_array_almost_equal(
+            parachute_force_vector, expected_parachute_force
+        )
 
     def test_calculate_with_zero_velocity(self):
         """速度がゼロの場合のcalculate関数のテスト"""
