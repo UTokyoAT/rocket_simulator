@@ -49,7 +49,7 @@ python -m scripts.make_report
 べき法則のべき定数
 
 高度z[m]での風速は
-$$ \mathrm{wind\_speed} * (z / \mathrm{wind\_reference\_height})^{1 / \mathrm{wind\_exponent}} $$
+wind_speed * (z / wind_reference_height)^(1 / wind\_exponent)
 
 #### CA
 軸力係数
