@@ -67,7 +67,7 @@ def simulate_launcher(
         first_time (float): 初期時刻
 
     Returns:
-        simulation_result.SimulationResult: 時刻とロケットの状態の組のリスト
+        simulation_result.SimulationResult: シミュレーション結果
     """
 
     def acceleration_body_frame(t: float, state: RocketState) -> np.ndarray:
@@ -108,6 +108,11 @@ def simulate_flight(
 
     Args:
         end_condition (typing.Callable[[float, RocketState], bool]): 終了条件
+        parachute_on (bool): パラシュートが開いているか否か
+
+    Returns:
+        typing.Callable[[RocketState, SimulationContext, float], simulation_result.SimulationResult]:
+            ロケットの初期状態、コンテキスト、初期時刻を受け取り、シミュレーション結果を返す関数
     """
 
     def body(
