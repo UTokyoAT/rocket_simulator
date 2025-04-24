@@ -8,7 +8,9 @@
 Anacondaをインストールしておく。
 
 ```
-conda create -n rocket_simulator python=3.11.9; conda activate rocket_simulator; pip install -r requirements.txt
+conda create -n rocket_simulator python=3.11.9
+conda activate rocket_simulator
+pip install -r requirements.txt
 ```
 次回からは
 ```
