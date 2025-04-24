@@ -99,3 +99,23 @@ I_xx, I_yy, I_zz, I_zy, I_xz, I_xy
 
 #### end_gravity_center
 燃焼終了時の重心の位置[m] 向きはx軸正の向きがロケットの先端を向く。原点はwind_centerと整合していれば良い。
+
+### report_config.json
+
+#### launcher_elevation
+理想フライトとノミナルフライトにおける発射時の機体の迎角[deg]
+
+#### wind_speed_nominal
+ノミナルフライトにおける基準高度での風速[m/s]
+
+#### wind_direction_nominal
+ノミナルフライトにおける風向[deg]
+
+#### wind_speed_list
+風速のリスト[m/s]
+
+#### wind_direction_list
+風向のリスト[deg]
+
+#### launcher_elevation_list
+発射角度のリスト[deg]
