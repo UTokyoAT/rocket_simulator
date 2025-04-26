@@ -7,7 +7,7 @@ import src.core.inertia_tensor as it
 
 
 class TestEquationOfMotion(unittest.TestCase):
-    def test_angular_acceleration(self):
+    def test_angular_acceleration(self) -> None:
         torque = np.array([1, 2, 3])
         inertia = it.InertiaTensor(1, 2, 3, 0, 0, 0)
         rotation = np.array([4, 5, 6])
