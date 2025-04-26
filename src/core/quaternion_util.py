@@ -66,9 +66,18 @@ def from_euler_angle(elevation: float, azimuth: float, roll: float) -> quart.qua
     Returns:
         quart.quaternion: クォータニオン
     """
-    assert 0 <= elevation <= 90
-    assert 0 <= azimuth <= 360
-    assert 0 <= roll <= 360
+    max_elevation = 90
+    max_azimuth = 360
+    max_roll = 360
+    if not (0 <= elevation <= max_elevation):
+        err_msg = f"仰角は0から{max_elevation}の範囲内である必要があります"
+        raise ValueError(err_msg)
+    if not (0 <= azimuth <= max_azimuth):
+        err_msg = f"方位角は0から{max_azimuth}の範囲内である必要があります"
+        raise ValueError(err_msg)
+    if not (0 <= roll <= max_roll):
+        err_msg = f"ロール角は0から{max_roll}の範囲内である必要があります"
+        raise ValueError(err_msg)
     elevation_rad = np.deg2rad(elevation)
     azimuth_rad = np.deg2rad(azimuth)
     roll_rad = np.deg2rad(roll)
@@ -90,8 +99,8 @@ def sum_vector_inertial_frame(
     """剛体座標系でのベクトルと慣性座標系でのベクトルを合成して慣性座標系でのベクトルを返す
 
     Args:
-        vector_body_frame (list[np.ndarray]): 機体座標系でのベクトル
-        vector_inertial_frame (list[np.ndarray]): 慣性系でのベクトル
+        vectors_body_frame (list[np.ndarray]): 機体座標系でのベクトル
+        vectors_inertial_frame (list[np.ndarray]): 慣性系でのベクトル
         posture (quart.quaternion): 機体の姿勢
 
     Returns:
