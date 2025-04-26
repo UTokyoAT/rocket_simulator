@@ -7,7 +7,8 @@ from . import interpolation
 
 
 def thrust_end_time(thrust_df: pd.DataFrame) -> float:
-    return float(thrust_df[thrust_df["thrust"] < 1e-10].index[0])
+    threshold = 1e-10
+    return float(thrust_df[thrust_df["thrust"] < threshold].index[0])
 
 
 def create_gravity_center_function_from_dataframe(
