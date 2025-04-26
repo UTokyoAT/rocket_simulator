@@ -1,42 +1,38 @@
 import json
-import os
 import unittest
+from pathlib import Path
 
 
 class TestConfigDocumentation(unittest.TestCase):
-    """configファイルとREADMEの整合性をテストするクラス"""
+    """READMEとconfigファイルの整合性を検証するテスト"""
 
-    def setUp(self):
-        # READMEファイルを読み込む
-        with open("README.md", encoding="utf-8") as f:
-            self.readme_content = f.read()
+    def setUp(self) -> None:
+        """テスト実行前の準備"""
+        # 必要なファイルパスを定義
+        self.readme_path = Path("README.md")
+        self.config_dir = Path("config")
+        self.config_json_path = self.config_dir / "config.json"
 
-        # config.jsonファイルを読み込む
-        with open("config/config.json", encoding="utf-8") as f:
-            self.config = json.load(f)
+        # READMEの内容を読み込み
+        self.readme_content = self.readme_path.read_text(encoding="utf-8")
+
+        # config.jsonの内容を読み込み
+        self.config = json.loads(self.config_json_path.read_text(encoding="utf-8"))
 
         # configフォルダ内のファイル一覧を取得
-        self.config_files = [
-            f for f in os.listdir("config") if os.path.isfile(os.path.join("config", f))
-        ]
+        self.config_files = [f.name for f in self.config_dir.iterdir() if f.is_file()]
 
-    def test_config_keys_in_readme(self):
-        """config.jsonのすべてのキーがREADME.mdに含まれることを確認するテスト"""
-        for key in self.config.keys():
-            self.assertIn(
-                key,
-                self.readme_content,
-                f"config.jsonのキー '{key}' がREADME.mdに記載されていません",
-            )
+    def test_config_keys_in_readme(self) -> None:
+        """config.jsonのすべてのキーがREADME.mdに記載されていることを確認"""
+        for key in self.config:
+            err_msg = f"config.jsonのキー '{key}' がREADME.mdに記載されていません"
+            self.assertIn(key, self.readme_content, err_msg)
 
-    def test_config_files_in_readme(self):
-        """configフォルダにある全ファイルの名前がREADME.mdに含まれることを確認するテスト"""
+    def test_config_files_in_readme(self) -> None:
+        """configフォルダ内の全ファイル名がREADME.mdに記載されていることを確認"""
         for filename in self.config_files:
-            self.assertIn(
-                filename,
-                self.readme_content,
-                f"configフォルダのファイル '{filename}' がREADME.mdに記載されていません",
-            )
+            err_msg = f"configフォルダのファイル '{filename}' がREADME.mdに記載されていません"
+            self.assertIn(filename, self.readme_content, err_msg)
 
 
 if __name__ == "__main__":
