@@ -18,7 +18,7 @@ def to_simulation_result_row(
     acceleration_body_frame: np.ndarray,
 ) -> simulation_result.SimulationResultRow:
     # パラシュートは関係なし
-    air_force_result = air_force.calculate(state, context, False, time)
+    air_force_result = air_force.calculate(state, context, time, parachute_on=False)
     return simulation_result.SimulationResultRow.from_state(
         time=time,
         state=state,
@@ -35,7 +35,7 @@ def acceleration_inertial_frame(
     context: SimulationContext,
     parachute_on: bool,
 ) -> np.ndarray:
-    air_force_result = air_force.calculate(state, context, parachute_on, t)
+    air_force_result = air_force.calculate(state, context, t, parachute_on=parachute_on)
     thrust = np.array([context.thrust(t), 0, 0])
     force = quaternion_util.sum_vector_inertial_frame(
         [air_force_result.force, thrust], [np.zeros(3)], state.posture,
@@ -120,7 +120,7 @@ def simulate_flight(
 
         def derivative(t, state):
             # 空気力の計算
-            air_force_result = air_force.calculate(state, context, parachute_on, t)
+            air_force_result = air_force.calculate(state, context, t, parachute_on=parachute_on)
             # 加速度の計算
             acceleration_ = acceleration_inertial_frame(t, state, context, parachute_on)
             angular_acceleration_ = angular_acceleration(
