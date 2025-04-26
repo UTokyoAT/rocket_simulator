@@ -31,7 +31,7 @@ def run(config: Config, setting: Setting) -> tuple[pd.DataFrame, pd.DataFrame]:
     config.first_elevation = setting.launcher_elevation
     config.wind.wind_speed = setting.wind_speed
     config.wind.wind_direction = setting.wind_direction
-    results = simple_simulation.simulate(config, False)
+    results = simple_simulation.simulate(config)
     return (results[0].to_df(), results[1].to_df())
 
 

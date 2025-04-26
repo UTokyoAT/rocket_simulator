@@ -13,7 +13,7 @@ def simulate(wind_direction: float, wind_speed: float) -> tuple[SimulationResult
     config = config_read.read(config_path)
     config.wind.wind_direction = wind_direction
     config.wind.wind_speed = wind_speed
-    return simple_simulation.simulate(config, parachute_on=False)
+    return simple_simulation.simulate(config)
 
 
 def figure() -> None:

@@ -14,8 +14,9 @@ def to_simulation_result_row(
     time: float,
     state: RocketState,
     context: SimulationContext,
-    on_launcher: bool,
     acceleration_body_frame: np.ndarray,
+    *,
+    on_launcher: bool,
 ) -> simulation_result.SimulationResultRow:
     # パラシュートは関係なし
     air_force_result = air_force.calculate(state, context, time, parachute_on=False)
@@ -33,6 +34,7 @@ def acceleration_inertial_frame(
     t: float,
     state: RocketState,
     context: SimulationContext,
+    *,
     parachute_on: bool,
 ) -> np.ndarray:
     air_force_result = air_force.calculate(state, context, t, parachute_on=parachute_on)
@@ -47,7 +49,7 @@ def angular_acceleration(
     air_force_result: air_force.AirForceResult,
     context: SimulationContext,
     state: RocketState,
-):
+) -> np.ndarray:
     return equation_of_motion.angular_acceleration(
         air_force_result.moment, context.inertia_tensor, state.rotation,
     )
@@ -70,34 +72,31 @@ def simulate_launcher(
     def acceleration_body_frame(t: float, state: RocketState) -> np.ndarray:
         acceleration_body_frame_no_constraints = quaternion_util.inertial_to_body(
             state.posture,
-            acceleration_inertial_frame(t, state, context, False),
+            acceleration_inertial_frame(t, state, context, parachute_on=False),
         )
         return np.array([max(0, acceleration_body_frame_no_constraints[0]), 0, 0])
 
-    def derivative(t, state):
+    def derivative(t: float, state: RocketState) -> RocketState:
         actual_acceleration_inertial = quaternion_util.body_to_inertial(
             state.posture, acceleration_body_frame(t, state),
         )
         return RocketState.derivative(state, actual_acceleration_inertial, np.zeros(3))
 
-    def end_condition(t, state):
+    def end_condition(_: float, state: RocketState) -> bool:
         return np.linalg.norm(state.position, ord=2) > context.launcher_length
 
     result = ode_solver.runge_kutta4(
         derivative, first_state, first_time, context.dt, end_condition,
     )
 
-    result = map(
-        lambda row: to_simulation_result_row(
-            *row, context, True, acceleration_body_frame(*row),
-        ),
-        result,
-    )
+    result = (to_simulation_result_row(
+            *row, context, acceleration_body_frame(*row), on_launcher=True,
+        ) for row in result)
     return simulation_result.SimulationResult(list(result))
 
 
 def simulate_flight(
-    end_condition: typing.Callable[[float, RocketState], bool], parachute_on: bool,
+    end_condition: typing.Callable[[float, RocketState], bool], *, parachute_on: bool,
 ) -> typing.Callable[
     [RocketState, SimulationContext, float], simulation_result.SimulationResult,
 ]:
@@ -118,11 +117,11 @@ def simulate_flight(
         first_time: float,
     ) -> simulation_result.SimulationResult:
 
-        def derivative(t, state):
+        def derivative(t: float, state: RocketState) -> RocketState:
             # 空気力の計算
             air_force_result = air_force.calculate(state, context, t, parachute_on=parachute_on)
             # 加速度の計算
-            acceleration_ = acceleration_inertial_frame(t, state, context, parachute_on)
+            acceleration_ = acceleration_inertial_frame(t, state, context, parachute_on=parachute_on)
             angular_acceleration_ = angular_acceleration(
                 air_force_result, context, state,
             )
@@ -131,24 +130,21 @@ def simulate_flight(
         result = ode_solver.runge_kutta4(
             derivative, first_state, first_time, context.dt, end_condition,
         )
-        result = map(
-            lambda row: to_simulation_result_row(
+        result = (to_simulation_result_row(
                 *row,
                 context,
-                False,
                 quaternion_util.inertial_to_body(
                     row[1].posture,
-                    acceleration_inertial_frame(row[0], row[1], context, parachute_on),
+                    acceleration_inertial_frame(row[0], row[1], context, parachute_on=parachute_on),
                 ),
-            ),
-            result,
-        )
+                on_launcher=False,
+            ) for row in result)
         return simulation_result.SimulationResult(list(result))
 
     return body
 
 
-simulate_on_rise = simulate_flight(lambda t, state: state.velocity[2] > 0, False)
+simulate_on_rise = simulate_flight(lambda _, state: state.velocity[2] > 0, parachute_on=False)
 
 
 def simulate_waiting_parachute_delay(
@@ -156,25 +152,25 @@ def simulate_waiting_parachute_delay(
 ) -> typing.Callable[
     [RocketState, SimulationContext, float], simulation_result.SimulationResult,
 ]:
-    def end_condition(t, state):
+    def end_condition(t: float, _: RocketState) -> bool:
         return t > time_fall_start
 
-    return simulate_flight(end_condition, False)
+    return simulate_flight(end_condition, parachute_on=False)
 
 
 def simulate_fall(
-    parachute_on: bool,
+    *, parachute_on: bool,
 ) -> typing.Callable[
     [RocketState, SimulationContext, float], simulation_result.SimulationResult,
 ]:
-    def end_condition(t, state):
+    def end_condition(_: float, state: RocketState) -> bool:
         return state.position[2] > 0
 
     return simulate_flight(end_condition, parachute_on)
 
 
 def simulate(
-    config: Config, parachute_on: float,
+    config: Config,
 ) -> tuple[simulation_result.SimulationResult, simulation_result.SimulationResult]:
     """全体のシミュレーションを行う
 
@@ -202,8 +198,8 @@ def simulate(
     )
     last = result_waiting_parachute_delay.last()
     first_state = last.to_rocket_state()
-    result_fall_parachute_on = simulate_fall(True)(first_state, context, last.time)
-    result_fall_parachute_off = simulate_fall(False)(first_state, context, last.time)
+    result_fall_parachute_on = simulate_fall(parachute_on=True)(first_state, context, last.time)
+    result_fall_parachute_off = simulate_fall(parachute_on=False)(first_state, context, last.time)
     result_common = result_launcher.join(result_on_rise).join(
         result_waiting_parachute_delay,
     )
