@@ -1,0 +1,42 @@
+# Ruff設定ファイル
+# https://docs.astral.sh/ruff/
+
+# ターゲットPythonバージョン
+target-version = "py311"
+
+line-length = 120
+# lint設定
+[lint]
+# すべてのルールを有効化
+select = ["ALL"]
+
+# 無効化するルール
+ignore = [
+    # 一般的に無視されることの多いルール
+    "D203",  # one-blank-line-before-class (競合するルール)
+    "D212",  # multi-line-summary-first-line (競合するルール)
+    "ANN101",  # Missing type annotation for `self` in method
+    "FIX002",  # Line contains TODO, consider resolving the issue
+]
+
+# flake8互換の設定
+fixable = ["ALL"]
+unfixable = []
+
+# 警告を出すruleの優先度
+[lint.pydocstyle]
+convention = "google"  # Googleスタイルのdocstring
+
+# 相対インポートの設定
+[lint.isort]
+known-first-party = ["src", "scripts", "tests"]
+
+# formatter設定
+[format]
+# Quotes
+quote-style = "double"
+# Indent
+indent-style = "space"
+# ダブルクォート内のシングルクォートをエスケープしない
+skip-magic-trailing-comma = false
+docstring-code-format = true
