@@ -1,7 +1,7 @@
 [project]
 name = "rocket-simulator"
 version = "0.1.0"
-description = "Add your description here"
+description = "主にハイブリッドロケットの陸打ちを想定したシミュレータです。"
 readme = "README.md"
 requires-python = ">=3.11.9"
 dependencies = [
