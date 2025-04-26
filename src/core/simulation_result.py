@@ -1,20 +1,20 @@
 import copy
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 import quaternion
 
-from .air_force import AirForceResult
-from .rocket_state import RocketState
-from .simulation_context import SimulationContext
+if TYPE_CHECKING:
+    from .air_force import AirForceResult
+    from .rocket_state import RocketState
+    from .simulation_context import SimulationContext
 
 
 @dataclass
 class SimulationResultRow:
-    """
-    ある時刻でのロケットの状態を表す
-    """
+    """ある時刻でのロケットの状態を表す"""
 
     time: float
     position: np.ndarray
@@ -33,9 +33,10 @@ class SimulationResultRow:
         time: float,
         state: "RocketState",
         context: "SimulationContext",
-        on_launcher: bool,
         acceleration_body_frame: np.ndarray,
         air_force_result: "AirForceResult",
+        *,
+        on_launcher: bool,
     ) -> "SimulationResultRow":
         """ロケットの状態からSimulationResultRowを作成する
 
@@ -50,6 +51,7 @@ class SimulationResultRow:
         Returns:
             SimulationResultRow: シミュレーション結果の行
         """
+        thrust_threshold = 1e-10
         return cls(
             time=time,
             position=state.position,
@@ -57,7 +59,7 @@ class SimulationResultRow:
             posture=state.posture,
             rotation=state.rotation,
             dynamic_pressure=air_force_result.dynamic_pressure,
-            burning=context.thrust(time) > 1e-10,
+            burning=context.thrust(time) > thrust_threshold,
             on_launcher=on_launcher,
             velocity_air_body_frame=air_force_result.velocity_air_body_frame,
             acceleration_body_frame=acceleration_body_frame,
@@ -103,9 +105,7 @@ class SimulationResultRow:
 
 @dataclass
 class SimulationResult:
-    """
-    シミュレーションの結果を表すクラス
-    """
+    """シミュレーションの結果を表すクラス"""
 
     result: list[SimulationResultRow]
     """シミュレーションの結果"""
@@ -115,7 +115,7 @@ class SimulationResult:
         """空のシミュレーション結果を初期化する"""
         return cls(result=[])
 
-    def append(self, row: SimulationResultRow):
+    def append(self, row: SimulationResultRow) -> None:
         """列を追加する
 
         Args:
@@ -128,6 +128,7 @@ class SimulationResult:
         other: "SimulationResult",
     ) -> "SimulationResult":
         """他のシミュレーション結果と結合する
+
         このインスタンスが前、otherが後ろに結合される
         このインスタンスの最後の要素は除かれる
 
@@ -137,7 +138,9 @@ class SimulationResult:
         Returns:
             SimulationResult: 結合したシミュレーション結果
         """
-        assert self.result[-1].time == other.result[0].time
+        if self.result[-1].time != other.result[0].time:
+            err_msg = "selfの最後の時刻とotherの最初の時刻が一致しません"
+            raise ValueError(err_msg)
         return SimulationResult(self.result[:-1] + other.result)
 
     def deepcopy(self) -> "SimulationResult":
@@ -162,8 +165,8 @@ class SimulationResult:
         Returns:
             pd.DataFrame: DataFrame
         """
-        df = pd.DataFrame([row.to_df_row() for row in self.result])
-        df.columns = [
+        body = pd.DataFrame([row.to_df_row() for row in self.result])
+        body.columns = [
             "time",
             "position_n",
             "position_e",
@@ -188,4 +191,4 @@ class SimulationResult:
             "acceleration_body_frame_y",
             "acceleration_body_frame_z",
         ]
-        return df
+        return body
