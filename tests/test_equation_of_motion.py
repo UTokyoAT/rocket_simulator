@@ -1,5 +1,7 @@
 import unittest
+
 import numpy as np
+
 import src.core.equation_of_motion as qom
 import src.core.inertia_tensor as it
 

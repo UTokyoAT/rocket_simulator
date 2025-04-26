@@ -1,6 +1,8 @@
-import src.core.wind as w
 import unittest
+
 import numpy as np
+
+import src.core.wind as w
 
 
 class TestWind(unittest.TestCase):

@@ -1,7 +1,7 @@
-from src import config_read
 from pathlib import Path
-from src.core import simple_simulation
 
+from src import config_read
+from src.core import simple_simulation
 
 config = config_read.read(Path("config"))
 result = simple_simulation.simulate(config, False)

@@ -1,6 +1,8 @@
-import src.core.ode_solver as s
 import unittest
+
 import numpy as np
+
+import src.core.ode_solver as s
 
 
 class TestOdeSolver(unittest.TestCase):

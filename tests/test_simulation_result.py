@@ -1,6 +1,8 @@
 import unittest
+
 import numpy as np
 import quaternion
+
 from src.core import simulation_result
 
 
@@ -43,10 +45,10 @@ class TestSimulationResult(unittest.TestCase):
             acceleration_body_frame=np.array([7, 8, 9]),
         )
         self.sim_result1 = simulation_result.SimulationResult(
-            result=[self.row1, self.row2]
+            result=[self.row1, self.row2],
         )
         self.sim_result2 = simulation_result.SimulationResult(
-            result=[self.row2, self.row3]
+            result=[self.row2, self.row3],
         )
 
     def test_append(self):
@@ -81,5 +83,5 @@ class TestSimulationResult(unittest.TestCase):
         self.assertEqual(copied_result.result[1].velocity[0], self.row2.velocity[0])
         copied_result.result[0].time = 100
         self.assertNotEqual(
-            self.sim_result1.result[0].time, copied_result.result[0].time
+            self.sim_result1.result[0].time, copied_result.result[0].time,
         )

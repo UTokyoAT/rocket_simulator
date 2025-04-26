@@ -1,7 +1,9 @@
 import unittest
-from src.core.rocket_state import RocketState
+
 import numpy as np
 import quaternion as quart
+
+from src.core.rocket_state import RocketState
 
 
 class TestRocketState(unittest.TestCase):
@@ -38,7 +40,7 @@ class TestRocketState(unittest.TestCase):
     def test_mul(self):
         result = self.rs1 * 2
         self.assertRocketStateEqual(
-            result, [2, 4, 6], [4, 6, 8], quart.quaternion(2, 4, 6, 8), [8, 10, 12]
+            result, [2, 4, 6], [4, 6, 8], quart.quaternion(2, 4, 6, 8), [8, 10, 12],
         )
 
 

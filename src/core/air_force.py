@@ -1,8 +1,10 @@
-import numpy as np
 from dataclasses import dataclass
+
+import numpy as np
+
+from . import quaternion_util
 from .rocket_state import RocketState
 from .simulation_context import SimulationContext
-from . import quaternion_util
 
 
 @dataclass
@@ -130,7 +132,7 @@ def air_dumping_moment(
                 roll_damping_coefficient,
                 pitch_damping_coefficient,
                 yaw_damping_coefficient,
-            ]
+            ],
         )
         * rotation
     )
@@ -163,7 +165,7 @@ def normal_force_coefficient(angle_of_attack: float, CN_alpha) -> float:
 
 
 def parachute_force(
-    velocity_air: np.ndarray, parachute_terminal_velocity: float, mass: float
+    velocity_air: np.ndarray, parachute_terminal_velocity: float, mass: float,
 ):
     return (
         -9.8
@@ -175,7 +177,7 @@ def parachute_force(
 
 
 def calculate(
-    rocket_state: RocketState, context: SimulationContext, parachute_on: bool, t: float
+    rocket_state: RocketState, context: SimulationContext, parachute_on: bool, t: float,
 ) -> AirForceResult:
     """空気力を計算する
 

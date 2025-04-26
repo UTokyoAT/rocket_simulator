@@ -1,6 +1,8 @@
 import unittest
+
 import numpy as np
 import quaternion as quart
+
 import src.core.quaternion_util as qu
 
 

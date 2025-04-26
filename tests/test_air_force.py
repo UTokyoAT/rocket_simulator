@@ -1,11 +1,13 @@
 import unittest
+
 import numpy as np
+import pandas as pd
+
 import src.core.air_force as af
+import src.core.quaternion_util as qu
+from src.core.config import Config, WindPowerLow
 from src.core.rocket_state import RocketState
 from src.core.simulation_context import SimulationContext
-from src.core.config import Config, WindPowerLow
-import pandas as pd
-import src.core.quaternion_util as qu
 
 
 class TestAirForce(unittest.TestCase):
@@ -21,7 +23,7 @@ class TestAirForce(unittest.TestCase):
         body_area = 5
         axial_force_coefficient = 6
         result = af.axial_force(
-            airspeed, air_density, body_area, axial_force_coefficient
+            airspeed, air_density, body_area, axial_force_coefficient,
         )
         expected = np.array([-840, 0, 0])
         np.testing.assert_array_almost_equal(result, expected)
@@ -32,13 +34,13 @@ class TestAirForce(unittest.TestCase):
         body_area = 5
         normal_force_coefficient = 6
         result = af.normal_force(
-            airspeed, air_density, body_area, normal_force_coefficient
+            airspeed, air_density, body_area, normal_force_coefficient,
         )
         norm = np.linalg.norm(result, ord=2)
         self.assertTrue(np.isclose(norm, 840.0))
         cross_product = np.cross(airspeed, np.array([1, 0, 0]))
         self.assertTrue(
-            np.isclose(np.dot(result, cross_product), 0.0)
+            np.isclose(np.dot(result, cross_product), 0.0),
         )  # 対気速度と機体軸が張る平面上にある
         self.assertEqual(result[0], 0)
         self.assertLess(result[1], 0)
@@ -72,7 +74,7 @@ class TestAirForce(unittest.TestCase):
         thrust_df = pd.DataFrame({"thrust": [100.0, 50.0, 0.0]}, index=[0.0, 1.0, 2.0])
 
         wind_config = WindPowerLow(
-            reference_height=10.0, wind_speed=5.0, exponent=7.0, wind_direction=45.0
+            reference_height=10.0, wind_speed=5.0, exponent=7.0, wind_direction=45.0,
         )
 
         # 重心位置
@@ -115,12 +117,12 @@ class TestAirForce(unittest.TestCase):
         rotation = np.array([0.0, 0.0, 0.0])  # 回転なし
 
         rocket_state = RocketState(
-            position=position, velocity=velocity, posture=posture, rotation=rotation
+            position=position, velocity=velocity, posture=posture, rotation=rotation,
         )
 
         # calculate関数の実行
         result = af.calculate(
-            rocket_state=rocket_state, context=self.context, parachute_on=False, t=0.0
+            rocket_state=rocket_state, context=self.context, parachute_on=False, t=0.0,
         )
 
         # 結果の検証
@@ -136,7 +138,7 @@ class TestAirForce(unittest.TestCase):
         # 対気速度を剛体系に変換したものと近似的に一致するはず
         body_velocity = qu.inertial_to_body(posture, expected_velocity_inertial)
         np.testing.assert_array_almost_equal(
-            result.velocity_air_body_frame, body_velocity
+            result.velocity_air_body_frame, body_velocity,
         )
 
         # 力が発生しているか確認
@@ -157,17 +159,17 @@ class TestAirForce(unittest.TestCase):
         rotation = np.array([0.0, 0.0, 0.0])  # 回転なし
 
         rocket_state = RocketState(
-            position=position, velocity=velocity, posture=posture, rotation=rotation
+            position=position, velocity=velocity, posture=posture, rotation=rotation,
         )
 
         # パラシュートなしの場合
         result_without_parachute = af.calculate(
-            rocket_state=rocket_state, context=self.context, parachute_on=False, t=0.0
+            rocket_state=rocket_state, context=self.context, parachute_on=False, t=0.0,
         )
 
         # パラシュートありの場合
         result_with_parachute = af.calculate(
-            rocket_state=rocket_state, context=self.context, parachute_on=True, t=0.0
+            rocket_state=rocket_state, context=self.context, parachute_on=True, t=0.0,
         )
 
         # パラシュートの影響で力が増加しているか確認
@@ -193,7 +195,7 @@ class TestAirForce(unittest.TestCase):
             * np.linalg.norm(air_velocity)
         )
         np.testing.assert_array_almost_equal(
-            parachute_force_vector, expected_parachute_force
+            parachute_force_vector, expected_parachute_force,
         )
 
     def test_calculate_with_zero_velocity(self):
@@ -205,7 +207,7 @@ class TestAirForce(unittest.TestCase):
         rotation = np.array([0.0, 0.0, 0.0])  # 回転なし
 
         rocket_state = RocketState(
-            position=position, velocity=velocity, posture=posture, rotation=rotation
+            position=position, velocity=velocity, posture=posture, rotation=rotation,
         )
 
         # 風速がある場合、対気速度は風速の逆ベクトルになる
@@ -213,14 +215,14 @@ class TestAirForce(unittest.TestCase):
 
         # calculate関数の実行
         result = af.calculate(
-            rocket_state=rocket_state, context=self.context, parachute_on=False, t=0.0
+            rocket_state=rocket_state, context=self.context, parachute_on=False, t=0.0,
         )
 
         # 結果の検証
         # 対気速度が風速の逆ベクトルと近似的に一致するはず
         body_velocity = qu.inertial_to_body(posture, -wind_at_100m)
         np.testing.assert_array_almost_equal(
-            result.velocity_air_body_frame, body_velocity
+            result.velocity_air_body_frame, body_velocity,
         )
 
         # 力が発生しているか確認

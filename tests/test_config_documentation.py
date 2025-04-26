@@ -1,6 +1,6 @@
-import unittest
 import json
 import os
+import unittest
 
 
 class TestConfigDocumentation(unittest.TestCase):
@@ -8,11 +8,11 @@ class TestConfigDocumentation(unittest.TestCase):
 
     def setUp(self):
         # READMEファイルを読み込む
-        with open("README.md", "r", encoding="utf-8") as f:
+        with open("README.md", encoding="utf-8") as f:
             self.readme_content = f.read()
 
         # config.jsonファイルを読み込む
-        with open("config/config.json", "r", encoding="utf-8") as f:
+        with open("config/config.json", encoding="utf-8") as f:
             self.config = json.load(f)
 
         # configフォルダ内のファイル一覧を取得

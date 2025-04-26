@@ -1,11 +1,13 @@
-from dataclasses import dataclass
 import copy
+from dataclasses import dataclass
+
 import numpy as np
-import quaternion
 import pandas as pd
+import quaternion
+
+from .air_force import AirForceResult
 from .rocket_state import RocketState
 from .simulation_context import SimulationContext
-from .air_force import AirForceResult
 
 
 @dataclass

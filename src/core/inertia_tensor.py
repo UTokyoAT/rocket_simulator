@@ -12,6 +12,6 @@ class InertiaTensor:
     def __init__(self, I_xx: float, I_yy: float, I_zz: float, I_xy, I_yz, I_zx):
 
         self.tensor = np.array(
-            [[I_xx, I_xy, I_zx], [I_xy, I_yy, I_yz], [I_zx, I_yz, I_zz]]
+            [[I_xx, I_xy, I_zx], [I_xy, I_yy, I_yz], [I_zx, I_yz, I_zz]],
         )
         self.inverse = np.linalg.inv(self.tensor)

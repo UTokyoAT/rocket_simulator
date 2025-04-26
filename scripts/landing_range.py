@@ -1,8 +1,10 @@
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+
 from src import config_read
 from src.core import simple_simulation
-from concurrent.futures import ProcessPoolExecutor
-import matplotlib.pyplot as plt
 
 
 def simulate(wind_direction, wind_speed):

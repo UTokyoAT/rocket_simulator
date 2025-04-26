@@ -1,9 +1,10 @@
-import numpy as np
 import typing as t
+
+import numpy as np
 
 
 def wind_velocity_power(
-    reference_height: float, wind_speed: float, exponent: float, wind_direction: float
+    reference_height: float, wind_speed: float, exponent: float, wind_direction: float,
 ) -> t.Callable[[float], np.ndarray]:
     """風速を計算する関数を生成する
 

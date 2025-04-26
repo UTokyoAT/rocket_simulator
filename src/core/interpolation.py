@@ -1,6 +1,7 @@
+import typing as t
+
 import numpy as np
 import pandas as pd
-import typing as t
 
 
 def df_to_function_1d(df: pd.DataFrame) -> t.Callable[[float], float]:

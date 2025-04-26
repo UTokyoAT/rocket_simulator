@@ -1,7 +1,9 @@
-import src.core.interpolation as i
 import unittest
+
 import numpy as np
 import pandas as pd
+
+import src.core.interpolation as i
 
 
 class TestInterpolation(unittest.TestCase):
@@ -18,7 +20,7 @@ class TestInterpolation(unittest.TestCase):
                     np.array([1.0, 0.0, 0.0]),
                     np.array([2.0, 0.0, 0.0]),
                     np.array([3.0, 0.0, 0.0]),
-                ]
+                ],
             },
             index=[1, 2, 3],
         )

@@ -1,5 +1,6 @@
-from pathlib import Path
 import json
+from pathlib import Path
+
 from .make_report.make_result_for_report import ReportConfig
 
 

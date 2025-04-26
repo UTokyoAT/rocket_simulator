@@ -1,10 +1,10 @@
 import typing
+
 import numpy as np
-from .inertia_tensor import InertiaTensor
+
+from . import gravity_center, interpolation, wind
 from .config import Config
-from . import interpolation
-from . import wind
-from . import gravity_center
+from .inertia_tensor import InertiaTensor
 
 
 class SimulationContext:
