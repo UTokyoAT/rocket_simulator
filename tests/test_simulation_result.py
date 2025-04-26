@@ -62,7 +62,7 @@ class TestSimulationResult(unittest.TestCase):
         self.assertEqual(joined_result.result[0], self.row1)
         self.assertEqual(joined_result.result[1], self.row2)
         self.assertEqual(joined_result.result[2], self.row3)
-        with self.assertRaises(AssertionError):
+        with self.assertRaises(ValueError):
             self.sim_result1.join(self.sim_result1)
 
     def test_last(self) -> None:
