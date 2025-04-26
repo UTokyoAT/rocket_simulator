@@ -12,11 +12,11 @@ select = ["ALL"]
 
 # 無効化するルール
 ignore = [
-    # 一般的に無視されることの多いルール
+    "PLR0913",
     "D100", "D101", "D103", "D104", "D107", "D105", "D102", #docstring
     "PT009", "PT027", #unittest
     "RUF003", #カタカナのノ
-    "D415",
+    "D415", #ピリオドで終わる
     "D203",  # one-blank-line-before-class (競合するルール)
     "D212",  # multi-line-summary-first-line (競合するルール)
     "ANN101",  # Missing type annotation for `self` in method
@@ -27,7 +27,6 @@ ignore = [
 fixable = ["ALL"]
 unfixable = []
 
-# 警告を出すruleの優先度
 [lint.pydocstyle]
 convention = "google"  # Googleスタイルのdocstring
 
