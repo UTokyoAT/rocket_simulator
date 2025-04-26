@@ -1,7 +1,9 @@
 from dataclasses import dataclass
-import pandas as pd
+
 import matplotlib.pyplot as plt
+import pandas as pd
 from matplotlib.figure import Figure
+
 from .result_for_report import ResultForReport
 
 
@@ -71,8 +73,8 @@ class Graphs:
         #"風速制限/(m/s)": round(min(w_alpha, w_beta), 2),
     #}
 def burning_coasting_division(data: pd.DataFrame):
-    burning = data[data['burning'] == True]
-    coasting = data[data['burning'] == False]
+    burning = data[data["burning"] == True]
+    coasting = data[data["burning"] == False]
     return burning, coasting
 
 #def dynamic_pressure(flight_data, all=False):

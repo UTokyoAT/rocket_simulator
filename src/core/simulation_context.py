@@ -1,10 +1,10 @@
 import typing
+
 import numpy as np
-from .inertia_tensor import InertiaTensor
+
+from . import gravity_center, interpolation, wind
 from .config import Config
-from . import interpolation
-from . import wind
-from . import gravity_center
+from .inertia_tensor import InertiaTensor
 
 
 class SimulationContext:
@@ -41,7 +41,7 @@ class SimulationContext:
     parachute_delay_time: float
     """最高高度到達からパラシュート展開までの時間"""
 
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
         self.mass = interpolation.df_to_function_1d(config.mass)
         self.wind = wind.wind_velocity_power(
             config.wind.reference_height,

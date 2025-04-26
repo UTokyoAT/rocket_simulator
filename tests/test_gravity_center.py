@@ -1,11 +1,13 @@
 import unittest
+
 import numpy as np
 import pandas as pd
+
 from src.core import gravity_center
 
 
 class TestGravityCenter(unittest.TestCase):
-    def test_thrust_end_time(self):
+    def test_thrust_end_time(self) -> None:
         # テスト用の推力データフレームを作成
         thrust_df = pd.DataFrame(
             {"thrust": [100.0, 50.0, 1.0, 0.0, 0.0]},
@@ -17,8 +19,8 @@ class TestGravityCenter(unittest.TestCase):
         self.assertEqual(result, 3.0)
         self.assertIsInstance(result, float)
 
-    def test_create_gravity_center_function_from_dataframe_interpolation(self):
-        # テスト用のデータを作成（3次元ベクトル）
+    def test_create_gravity_center_function_from_dataframe_interpolation(self) -> None:
+        # テスト用のデータを作成(3次元ベクトル)
         first_gravity_center = np.array([0.0, 0.0, 0.0])
         end_gravity_center = np.array([1.0, 1.0, 1.0])
         thrust_df = pd.DataFrame(
@@ -28,7 +30,7 @@ class TestGravityCenter(unittest.TestCase):
 
         # 関数を作成
         gc_func = gravity_center.create_gravity_center_function_from_dataframe(
-            first_gravity_center, end_gravity_center, thrust_df
+            first_gravity_center, end_gravity_center, thrust_df,
         )
 
         # 補間が正しく機能していることを確認

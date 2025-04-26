@@ -1,8 +1,10 @@
-import numpy as np
 from dataclasses import dataclass
+
+import numpy as np
+
+from . import quaternion_util
 from .rocket_state import RocketState
 from .simulation_context import SimulationContext
-from . import quaternion_util
 
 
 @dataclass
@@ -74,7 +76,8 @@ def normal_force(
         float: 法線方向の力
     """
     normal_velocity_norm = (airspeed[1] ** 2 + airspeed[2] ** 2) ** 0.5
-    if normal_velocity_norm < 1e-4:  # ０除算を防ぐ
+    zero_division_threshold = 1e-4
+    if normal_velocity_norm < zero_division_threshold:
         return np.array([0, 0, 0])
     p = dynamic_pressure(airspeed, air_density)
     direction = np.array([0, -airspeed[1], -airspeed[2]]) / normal_velocity_norm
@@ -88,52 +91,9 @@ def angle_of_attack(airspeed: np.ndarray) -> float:
         airspeed (np.ndarray): 剛体系での機体速度
 
     Returns:
-        float: 迎角[rad]（速度ベクトルと機体軸とのなす角度）
+        float: 迎角[rad](速度ベクトルと機体軸とのなす角度)
     """
     return np.arctan2(np.linalg.norm(airspeed[1:], ord=2), airspeed[0])
-
-
-def air_dumping_moment(
-    rotation: np.ndarray,
-    roll_damping_coefficient: float,
-    pitch_damping_coefficient: float,
-    yaw_damping_coefficient: float,
-    air_velocity: np.ndarray,
-    overall_length: float,
-    air_density: float,
-    body_area: float,
-) -> np.ndarray:
-    """空気抵抗によるモーメントを計算する
-
-    Args:
-        rotation (np.ndarray): 機体の角速度
-        roll_damping_coefficient (float): ロール軸周りの空気抵抗係数
-        pitch_damping_coefficient (float): ピッチ軸周りの空気抵抗係数
-        yaw_damping_coefficient (float): ヨー軸周りの空気抵抗係数
-        air_velocity (np.ndarray): 剛体系での機体速度
-        overall_length (float): 機体の全長
-        air_density (float): 空気密度
-        body_area (float): 断面積
-
-    Returns:
-        np.ndarray: 空気抵抗によるモーメント
-    """
-    p = dynamic_pressure(air_velocity, air_density)
-    return (
-        p
-        * body_area
-        * overall_length**2
-        / 2
-        / np.linalg.norm(air_velocity, ord=2)
-        * np.array(
-            [
-                roll_damping_coefficient,
-                pitch_damping_coefficient,
-                yaw_damping_coefficient,
-            ]
-        )
-        * rotation
-    )
 
 
 def air_force_moment(force: np.ndarray, wind_center: np.ndarray) -> np.ndarray:
@@ -149,22 +109,22 @@ def air_force_moment(force: np.ndarray, wind_center: np.ndarray) -> np.ndarray:
     return np.cross(wind_center, force)
 
 
-def normal_force_coefficient(angle_of_attack: float, CN_alpha) -> float:
+def normal_force_coefficient(angle_of_attack: float, cn_alpha: float) -> float:
     """法線方向の力係数を計算する
 
     Args:
         angle_of_attack (float): 迎角[rad]
-        CN_alpha (float): 法線方向の力係数の迎角に対する傾き
+        cn_alpha (float): 法線方向の力係数の迎角に対する傾き
 
     Returns:
         float: 法線方向の力係数
     """
-    return CN_alpha * angle_of_attack
+    return cn_alpha * angle_of_attack
 
 
 def parachute_force(
-    velocity_air: np.ndarray, parachute_terminal_velocity: float, mass: float
-):
+    velocity_air: np.ndarray, parachute_terminal_velocity: float, mass: float,
+) -> np.ndarray:
     return (
         -9.8
         * mass
@@ -175,7 +135,7 @@ def parachute_force(
 
 
 def calculate(
-    rocket_state: RocketState, context: SimulationContext, parachute_on: bool, t: float
+    rocket_state: RocketState, context: SimulationContext, t: float, *, parachute_on: bool,
 ) -> AirForceResult:
     """空気力を計算する
 
@@ -195,19 +155,19 @@ def calculate(
         velocity_air_inertial_frame,
     )
     angle_of_attack_ = angle_of_attack(velocity_air_body_frame)
-    AIR_DENSITY = 1.204
+    air_density = 1.204
     axial_force_ = axial_force(
         velocity_air_body_frame,
-        AIR_DENSITY,
+        air_density,
         context.body_area,
         context.CA,
     )
-    CN = normal_force_coefficient(angle_of_attack_, context.CN_alpha)
+    cn = normal_force_coefficient(angle_of_attack_, context.CN_alpha)
     normal_force_ = normal_force(
         velocity_air_body_frame,
-        AIR_DENSITY,
+        air_density,
         context.body_area,
-        CN,
+        cn,
     )
     if parachute_on:
         air_force = (
@@ -226,7 +186,7 @@ def calculate(
     # 風圧中心から重心位置へのベクトルを計算
     wind_center_from_gravity = context.wind_center - gravity_center_pos
     moment = air_force_moment(air_force, wind_center_from_gravity)
-    dynamic_pressure_ = dynamic_pressure(velocity_air_body_frame, AIR_DENSITY)
+    dynamic_pressure_ = dynamic_pressure(velocity_air_body_frame, air_density)
     return AirForceResult(
         force=air_force,
         moment=moment,

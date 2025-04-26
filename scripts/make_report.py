@@ -1,13 +1,12 @@
-from pathlib import Path
 import shutil
-from src import config_read, report_config_read
-from src.make_report import make_result_for_report
+from pathlib import Path
+
+from src import config_read, graph_writer, report_config_read
+from src.make_report import make_graph, make_result_for_report
 from src.make_report.result_for_report import ResultForReport
-from src.make_report import make_graph
-from src import graph_writer
 
 
-def write_row_data(result: ResultForReport):
+def write_row_data(result: ResultForReport) -> None:
     output_dir = Path("output") / "report" / "raw"
     output_dir.mkdir(parents=True, exist_ok=True)
     result.result_ideal_parachute_off.to_csv(
@@ -38,7 +37,7 @@ def write_row_data(result: ResultForReport):
                 )
 
 
-def run():
+def run() -> None:
     # 既存のoutputフォルダを削除
     output_dir = Path("output")
     if output_dir.exists():
