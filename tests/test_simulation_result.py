@@ -7,7 +7,7 @@ from src.core import simulation_result
 
 
 class TestSimulationResult(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.row1 = simulation_result.SimulationResultRow(
             time=0.0,
             position=np.array([1.0, 2.0, 3.0]),
@@ -51,12 +51,12 @@ class TestSimulationResult(unittest.TestCase):
             result=[self.row2, self.row3],
         )
 
-    def test_append(self):
+    def test_append(self) -> None:
         self.sim_result1.append(self.row3)
         self.assertEqual(len(self.sim_result1.result), 3)
         self.assertEqual(self.sim_result1.result[-1], self.row3)
 
-    def test_join(self):
+    def test_join(self) -> None:
         joined_result = self.sim_result1.join(self.sim_result2)
         self.assertEqual(len(joined_result.result), 3)
         self.assertEqual(joined_result.result[0], self.row1)
@@ -65,18 +65,18 @@ class TestSimulationResult(unittest.TestCase):
         with self.assertRaises(AssertionError):
             self.sim_result1.join(self.sim_result1)
 
-    def test_last(self):
+    def test_last(self) -> None:
         last_row = self.sim_result1.last()
         self.assertEqual(last_row, self.row2)
         self.assertNotEqual(last_row, self.row1)
         self.assertNotEqual(last_row, self.row3)
 
-    def test_init_empty(self):
+    def test_init_empty(self) -> None:
         empty_result = simulation_result.SimulationResult.init_empty()
         self.assertEqual(len(empty_result.result), 0)
         self.assertIsInstance(empty_result, simulation_result.SimulationResult)
 
-    def test_deepcopy(self):
+    def test_deepcopy(self) -> None:
         copied_result = self.sim_result1.deepcopy()
         self.assertEqual(len(copied_result.result), 2)
         self.assertEqual(copied_result.result[0].position[0], self.row1.position[0])
