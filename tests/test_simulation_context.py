@@ -8,7 +8,7 @@ from src.core.config import Config, WindPowerLow
 
 
 class TestSimulationContext(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         # テスト用のモックデータを作成
         mass_data = {"mass": [10.0, 9.0, 8.0]}
         mass_index = [0.0, 1.0, 2.0]
@@ -53,7 +53,7 @@ class TestSimulationContext(unittest.TestCase):
             end_gravity_center=self.end_gravity_center,
         )
 
-    def test_init(self):
+    def test_init(self) -> None:
         """SimulationContextの初期化テスト"""
         sim_context = sc.SimulationContext(self.config)
 
