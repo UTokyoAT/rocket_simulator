@@ -123,7 +123,6 @@ def air_velocity_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
-
 def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
 
