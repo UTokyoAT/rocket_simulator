@@ -13,6 +13,7 @@ select = ["ALL"]
 # 無効化するルール
 ignore = [
     # 一般的に無視されることの多いルール
+    "D100", "D103", #docstring
     "D203",  # one-blank-line-before-class (競合するルール)
     "D212",  # multi-line-summary-first-line (競合するルール)
     "ANN101",  # Missing type annotation for `self` in method
