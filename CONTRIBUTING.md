@@ -21,7 +21,7 @@ Black Formatterを使用してください。
 プルリクエストを提出する前に、すべてのテストが通ることを確認してください：
 
 ```bash
-python -m unittest discover -s tests
+uv run python -m unittest discover -s tests
 ```
 
 ## コミットメッセージのガイドライン
@@ -43,7 +43,7 @@ python -m unittest discover -s tests
 ### scripts
 直接実行できるスクリプト
 ```bash
-python -m scripts.<script_name>
+uv run python -m scripts.<script_name>
 ```
 
 ### src
