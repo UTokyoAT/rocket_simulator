@@ -9,6 +9,7 @@ from .result_for_report import ResultForReport
 class Graphs:
     ideal_dynamic_pressure: Figure
     ideal_air_velocity_figure: Figure
+    ideal_time_altitude_figure: Figure   
 
 #def velocity_norm(row):
     #return (row.vel_NED_x**2 + row.vel_NED_y**2 + row.vel_NED_z**2) ** 0.5
@@ -44,11 +45,6 @@ class Graphs:
         #return json.load(f)
 
 
-#def to_image(ax):
-    #buf = BytesIO()
-    #ax.figure.savefig(buf, format="png")
-    #buf.seek(0)
-    #return Image.open(buf)
 
 
 #def launch_clear(data: pd.DataFrame):
@@ -124,9 +120,56 @@ def air_velocity_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
+#def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
+    #burning, coasting = burning_coasting_division(data)
+
+    #def downrange(row):
+        #return geography.distance(
+            #data.lat[0], data.lon[0], row.lat, row.lon
+        #)
+
+    # plt.plot(burning.apply(downrange,axis=1),burning.altitude,label="burning")
+    # plt.plot(coasting.apply(downrange,axis=1),coasting.altitude,label="coasting")
+    # plt.legend()
+    # # plt.title("altitude-downrange")
+    # plt.xlabel("downrange/m")
+    # plt.ylabel("altitude/m")
+    # plt.grid(which="both")
+    # plt.savefig("altitude-downrange.png")
+    # plt.clf()
+    
+    
+    #fig, ax = plt.subplots()
+    #ax.plot(burning.apply(downrange, axis=1), burning.altitude, label="burning")
+    #ax.plot(coasting.apply(downrange, axis=1), coasting.altitude, label="coasting")
+    #ax.legend()
+    #ax.set_xlabel("downrange/m")
+    #ax.set_ylabel("altitude/m")
+    #ax.grid(which="both")
+    #return fig
+
+def time_altitude_figure(data: pd.DataFrame) -> Figure:
+    burning, coasting = burning_coasting_division(data)
+    # plt.plot(burning["time"],burning["altitude"],label="burning")
+    # plt.plot(coasting["time"],coasting["altitude"],label="coasting")
+    # plt.xlabel("time/s")
+    # plt.ylabel("altitude/m")
+    # plt.legend()
+    # plt.grid(which="both")
+    # plt.savefig("time-altitude.png")
+    # plt.clf()
+    fig, ax = plt.subplots()
+    ax.plot(burning["time"], -burning["position_d"], label="burning")
+    ax.plot(coasting["time"], -coasting["position_d"], label="coasting")
+    ax.set_xlabel("time/s")
+    ax.set_ylabel("altitude/m")
+    ax.legend()
+    ax.grid(which="both")
+    return fig
 
 def make_graph(result: ResultForReport) -> Graphs:
     return Graphs(
         ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
         ideal_air_velocity_figure = air_velocity_figure(result.result_ideal_parachute_off),
+        ideal_time_altitude_figure = time_altitude_figure(result.result_ideal_parachute_off),
     )
