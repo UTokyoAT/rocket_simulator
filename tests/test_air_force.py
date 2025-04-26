@@ -11,11 +11,12 @@ from src.core.simulation_context import SimulationContext
 
 
 class TestAirForce(unittest.TestCase):
-    def test_dynamic_pressure(self):
+    def test_dynamic_pressure(self) -> None:
         airspeed = np.array([1, 2, 3])
         air_density = 4
         result = af.dynamic_pressure(airspeed, air_density)
-        self.assertTrue(result == 28)
+        expected = 28
+        self.assertTrue(result == expected)
 
     def test_axial_force(self):
         airspeed = np.array([1, 2, 3])

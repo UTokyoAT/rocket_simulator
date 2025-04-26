@@ -13,7 +13,8 @@ select = ["ALL"]
 # 無効化するルール
 ignore = [
     # 一般的に無視されることの多いルール
-    "D100", "D101", "D103", "D104", "D107", "D105", #docstring
+    "D100", "D101", "D103", "D104", "D107", "D105", "D102", #docstring
+    "PT009" #unittest
     "D415",
     "D203",  # one-blank-line-before-class (競合するルール)
     "D212",  # multi-line-summary-first-line (競合するルール)
