@@ -19,7 +19,7 @@ class RocketState:
     rotation: np.ndarray
     """剛体系でのロケットの角速度"""
 
-    def __add__(self, other):
+    def __add__(self, other: "RocketState") -> "RocketState":
 
         return RocketState(
             self.position + other.position,
@@ -28,7 +28,7 @@ class RocketState:
             self.rotation + other.rotation,
         )
 
-    def __mul__(self, other: float):
+    def __mul__(self, other: float) -> "RocketState":
 
         return RocketState(
             self.position * other,
@@ -39,8 +39,8 @@ class RocketState:
 
     @classmethod
     def derivative(
-        cls, rocket_state, acceleration: np.ndarray, angular_acceleration: np.ndarray,
-    ):
+        cls, rocket_state: "RocketState", acceleration: np.ndarray, angular_acceleration: np.ndarray,
+    ) -> "RocketState":
         """時間微分を計算する
 
         Args:
