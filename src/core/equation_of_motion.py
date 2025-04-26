@@ -4,13 +4,13 @@ from . import inertia_tensor as it
 
 
 def angular_acceleration(
-    moment: np.ndarray, inertia: it.InertiaTensor, rotation,
+    moment: np.ndarray, inertia: it.InertiaTensor, rotation: np.ndarray,
 ) -> np.ndarray:
     """慣性系での角加速度を計算する
 
     Args:
         moment (np.ndarray): 静止系でのトルク
-        inertia_inverse (np.ndarray): 慣性テンソルの逆行列
+        inertia (it.InertiaTensor): 慣性テンソル
         rotation (np.ndarray): 剛体系での角速度
 
     Returns:
