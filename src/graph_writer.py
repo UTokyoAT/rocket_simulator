@@ -3,7 +3,7 @@ from pathlib import Path
 from .make_report.make_graph import Graphs
 
 
-def write(path: Path, graphs: Graphs):
+def write(path: Path, graphs: Graphs) -> None:
     graphs.ideal_dynamic_pressure.savefig(
         path / "ideal_dynamic_pressure.png",
     )
