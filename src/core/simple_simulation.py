@@ -166,7 +166,7 @@ def simulate_fall(
     def end_condition(_: float, state: RocketState) -> bool:
         return state.position[2] > 0
 
-    return simulate_flight(end_condition, parachute_on)
+    return simulate_flight(end_condition, parachute_on=parachute_on)
 
 
 def simulate(
