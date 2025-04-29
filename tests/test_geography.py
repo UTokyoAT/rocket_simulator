@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from src.make_report.geography import from_lat_lon_to_north_east, from_north_east_to_lat_lon
+from src.geography.geography import from_lat_lon_to_north_east, from_north_east_to_lat_lon
 
 
 class TestGeography(unittest.TestCase):
