@@ -5,6 +5,7 @@ description = "主にハイブリッドロケットの陸打ちを想定した�
 readme = "README.md"
 requires-python = ">=3.11.9"
 dependencies = [
+    "fastkml>=1.1.0",
     "matplotlib>=3.10.1",
     "numpy>=2.2.5",
     "numpy-quaternion>=2024.0.8",
