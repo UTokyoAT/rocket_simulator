@@ -31,7 +31,7 @@ TEST_LAUNCH_SITE_KML = """<?xml version="1.0" encoding="UTF-8"?>
 			</Polygon>
 		</Placemark>
 	</Document>
-</kml>"""
+</kml>"""  # noqa: E501
 
 expected_landing_range_kml = """<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -59,7 +59,7 @@ expected_landing_range_kml = """<?xml version="1.0" encoding="UTF-8"?>
 </LineString>
 </Placemark>
 </Document>
-</kml>"""
+</kml>"""  # noqa: E501
 
 class TestKml(unittest.TestCase):
     """KMLファイルのテスト"""

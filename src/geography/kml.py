@@ -36,7 +36,7 @@ kml_template = """<?xml version="1.0" encoding="UTF-8"?>
 <open>1</open>
 {place_marks}
 </Document>
-</kml>"""
+</kml>"""  # noqa: E501
 kml_place_mark_template = """<Placemark>
 <name>{name}</name>
 <LineString>
