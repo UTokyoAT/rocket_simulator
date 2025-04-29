@@ -22,7 +22,7 @@ class TestLaunchSite(unittest.TestCase):
             (36.2, 140.2),
             (36.2, 140.0),
             (36.0, 140.0),
-            (36.0, 140.2)
+            (36.0, 140.2),
         ]
 
         # LaunchSiteの作成
@@ -36,7 +36,7 @@ class TestLaunchSite(unittest.TestCase):
 
         # 許可エリアの確認
         self.assertEqual(len(launch_site.allowed_area), len(allowed_area))
-        for point, (lat, lon) in zip(launch_site.allowed_area, allowed_area):
+        for point, (lat, lon) in zip(launch_site.allowed_area, allowed_area, strict=False):
             self.assertAlmostEqual(point.latitude, lat, delta=self.tolerance)
             self.assertAlmostEqual(point.longitude, lon, delta=self.tolerance)
             north, east = from_lat_lon_to_north_east(lat, lon, launch_lat, launch_lon)
@@ -45,4 +45,4 @@ class TestLaunchSite(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main() 
+    unittest.main()
