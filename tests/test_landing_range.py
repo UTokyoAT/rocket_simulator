@@ -9,6 +9,7 @@ class TestLandingRange(unittest.TestCase):
 
     def setUp(self) -> None:
         """テストで使用する基準点"""
+        self.name = "Test Landing Range"
         self.lat_0 = 36
         self.lon_0 = 140
         self.tolerance = 1e-5
@@ -16,9 +17,10 @@ class TestLandingRange(unittest.TestCase):
     def test_init(self) -> None:
         """初期化テスト"""
         # LandingRangeの作成
-        landing_range = LandingRange(self.lat_0, self.lon_0)
+        landing_range = LandingRange(self.name, self.lat_0, self.lon_0)
 
         # 発射地点の確認
+        self.assertEqual(landing_range.name, self.name)
         self.assertAlmostEqual(landing_range.launch_point.latitude, self.lat_0, delta=self.tolerance)
         self.assertAlmostEqual(landing_range.launch_point.longitude, self.lon_0, delta=self.tolerance)
         self.assertAlmostEqual(landing_range.launch_point.north, 0, delta=self.tolerance)
@@ -30,7 +32,7 @@ class TestLandingRange(unittest.TestCase):
     def test_append_loop(self) -> None:
         """ループの追加テスト"""
         # LandingRangeの作成
-        landing_range = LandingRange(self.lat_0, self.lon_0)
+        landing_range = LandingRange(self.name, self.lat_0, self.lon_0)
 
         # ループの座標
         loop_name = "Test Loop"
@@ -38,7 +40,7 @@ class TestLandingRange(unittest.TestCase):
             (1000, 1000),
             (1000, -1000),
             (-1000, -1000),
-            (-1000, 1000)
+            (-1000, 1000),
         ]
 
         # ループの追加

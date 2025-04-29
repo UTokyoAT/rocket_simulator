@@ -11,10 +11,12 @@ class Loop:
 
 @dataclass
 class LandingRange:
+    name: str
     launch_point: Point
     loops: list[Loop]
 
-    def __init__(self, launch_point_latitude: float, launch_point_longitude: float) -> None:
+    def __init__(self, name: str, launch_point_latitude: float, launch_point_longitude: float) -> None:
+        self.name = name
         self.launch_point = Point.from_lat_lon(launch_point_latitude, launch_point_longitude, launch_point_latitude, launch_point_longitude)
         self.loops = []
 
