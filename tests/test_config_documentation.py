@@ -10,7 +10,7 @@ class TestConfigDocumentation(unittest.TestCase):
         """テスト実行前の準備"""
         # 必要なファイルパスを定義
         self.readme_path = Path("README.md")
-        self.config_dir = Path("config")
+        self.config_dir = Path("config_sample")
         self.config_json_path = self.config_dir / "config.json"
 
         # READMEの内容を読み込み
