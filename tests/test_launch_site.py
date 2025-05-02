@@ -43,6 +43,35 @@ class TestLaunchSite(unittest.TestCase):
             self.assertAlmostEqual(point.north, north, delta=self.tolerance)
             self.assertAlmostEqual(point.east, east, delta=self.tolerance)
 
+    def test_points_north_east(self) -> None:
+        """points_northとpoints_eastのテスト"""
+        # 発射地点と許可エリアの座標
+        launch_lat = 36.1
+        launch_lon = 140.1
+        allowed_area = [
+            (36.2, 140.2),  # 北東
+            (36.2, 140.0),  # 北西
+            (36.0, 140.0),  # 南西
+            (36.0, 140.2),  # 南東
+        ]
+
+        # LaunchSiteの作成
+        launch_site = LaunchSite.from_lat_lon(launch_lat, launch_lon, allowed_area)
+
+        # points_northの確認
+        north_points = launch_site.points_north()
+        self.assertEqual(len(north_points), len(allowed_area))
+        for north, (lat, lon) in zip(north_points, allowed_area, strict=True):
+            expected_north, _ = from_lat_lon_to_north_east(lat, lon, launch_lat, launch_lon)
+            self.assertAlmostEqual(north, expected_north, delta=self.tolerance)
+
+        # points_eastの確認
+        east_points = launch_site.points_east()
+        self.assertEqual(len(east_points), len(allowed_area))
+        for east, (lat, lon) in zip(east_points, allowed_area, strict=True):
+            _, expected_east = from_lat_lon_to_north_east(lat, lon, launch_lat, launch_lon)
+            self.assertAlmostEqual(east, expected_east, delta=self.tolerance)
+
 
 if __name__ == "__main__":
     unittest.main()

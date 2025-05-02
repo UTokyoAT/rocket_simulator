@@ -28,3 +28,9 @@ class LaunchSite:
             for latitude, longitude in allowed_area
         ]
         return cls(launch_point, allowed_area)
+
+    def points_north(self) -> list[float]:
+        return [point.north for point in self.allowed_area]
+
+    def points_east(self) -> list[float]:
+        return [point.east for point in self.allowed_area]
