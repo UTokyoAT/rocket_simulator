@@ -66,13 +66,13 @@ class TestLandingRange(unittest.TestCase):
     def test_get_last_position(self) -> None:
         """get_last_position関数のテスト"""
         # テスト用のDataFrameを作成
-        df = pd.DataFrame({
+        test_result = pd.DataFrame({
             "position_n": [100, 200, 300],
             "position_e": [400, 500, 600],
         })
 
         # 最後の位置を取得
-        position = get_last_position(df)
+        position = get_last_position(test_result)
 
         # 位置の確認
         self.assertEqual(position, (300, 600))
