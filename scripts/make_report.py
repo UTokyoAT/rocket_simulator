@@ -2,6 +2,8 @@ import shutil
 from pathlib import Path
 
 from src import config_read, graph_writer, report_config_read
+from src.geography.kml import landing_range_to_kml
+from src.geography.landing_range import LandingRange
 from src.make_report import make_graph, make_result_for_report
 from src.make_report.result_for_report import ResultForReport
 
@@ -37,6 +39,30 @@ def write_row_data(result: ResultForReport) -> None:
                 )
 
 
+def write_landing_range_kml(result: ResultForReport, launch_point_latitude: float, launch_point_longitude: float) -> None:
+    """着陸範囲をKMLファイルとして出力する
+
+    Args:
+        result: シミュレーション結果
+        launch_point_latitude: 発射地点の緯度
+        launch_point_longitude: 発射地点の経度
+    """
+    output_dir = Path("output") / "report" / "kml"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # 各発射角度ごとにLandingRangeを作成
+    for elev_result in result.result_by_launcher_elevation:
+        landing_range = LandingRange.from_result_by_launcher_elevation(
+            launch_point_latitude,
+            launch_point_longitude,
+            elev_result,
+        )
+        # KMLファイルとして出力
+        kml_str = landing_range_to_kml(landing_range)
+        output_path = output_dir / f"landing_range_elevation_{elev_result.launcher_elevation}.kml"
+        output_path.write_text(kml_str)
+
+
 def run() -> None:
     # 既存のoutputフォルダを削除
     output_dir = Path("output")
@@ -55,6 +81,13 @@ def run() -> None:
     graph_writer.write(
         path=path_graph,
         graphs=graphs,
+    )
+
+    # 着陸範囲をKMLファイルとして出力
+    write_landing_range_kml(
+        result,
+        report_config.launch_point_latitude,
+        report_config.launch_point_longitude,
     )
 
 
