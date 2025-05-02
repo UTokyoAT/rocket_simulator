@@ -101,6 +101,12 @@ I_xx, I_yy, I_zz, I_zy, I_xz, I_xy
 #### launcher_elevation_list
 発射角度のリスト[deg]
 
+####　launch_point_latitude
+ランチャーがある地点の緯度[deg]
+
+#### launch_point_longitude
+ランチャーがある地点の経度[deg]
+
 ### mass.csv
 必要なカラム
 - time: 燃焼開始からの時間[s]
@@ -115,3 +121,10 @@ I_xx, I_yy, I_zz, I_zy, I_xz, I_xy
 ただし、thrustはtime=0の時すでに1e-10 N以上となるようにしなければならない。
 
 シミュレーターは内挿しか行わないため、十分大きな時間までのデータを入力する必要がある。
+
+### launch_site.kml
+射場情報
+必要なPlacemark
+- 発射地点: 座標を一つ含まなければならない
+- 落下可能範囲: 複数の座標を含む。
+

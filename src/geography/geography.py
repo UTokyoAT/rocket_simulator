@@ -1,4 +1,5 @@
-import numpy as np
+from dataclasses import dataclass
+
 import pymap3d as pm
 
 
@@ -37,3 +38,20 @@ def from_lat_lon_to_north_east(lat: float, lon: float, lat_0: float, lon_0: floa
     north, east, _ = pm.geodetic2ned(lat, lon, 0, lat_0, lon_0, 0)
     return north, east
 
+
+@dataclass
+class Point:
+    latitude: float
+    longitude: float
+    north: float
+    east: float
+
+    @classmethod
+    def from_lat_lon(cls, latitude: float, longitude: float, lat_0: float, lon_0: float) -> "Point":
+        north, east = from_lat_lon_to_north_east(latitude, longitude, lat_0, lon_0)
+        return cls(latitude, longitude, north, east)
+
+    @classmethod
+    def from_north_east(cls, north: float, east: float, lat_0: float, lon_0: float) -> "Point":
+        latitude, longitude = from_north_east_to_lat_lon(north, east, lat_0, lon_0)
+        return cls(latitude, longitude, north, east)

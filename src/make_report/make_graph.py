@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.figure import Figure
 
+from src.geography.launch_site import LaunchSite
+
 from .result_for_report import ResultForReport
 
 
@@ -146,7 +148,7 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     return fig
 
 
-def make_graph(result: ResultForReport) -> Graphs:
+def make_graph(result: ResultForReport, launch_site: LaunchSite) -> Graphs:
     return Graphs(
         ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
         ideal_air_velocity_figure = air_velocity_figure(result.result_ideal_parachute_off),
