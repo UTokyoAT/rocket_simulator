@@ -12,6 +12,7 @@
 uv run python -m scripts.make_report
 ```
 ## コンフィグ設定方法
+下記のファイルをconfig/に配置する。
 
 ### config.json
 
