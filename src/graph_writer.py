@@ -12,3 +12,6 @@ def write(path: Path, graphs: Graphs):
     graphs.ideal_time_altitude_figure.savefig(
         path / "ideal_time_altitude_figure.png",
     )
+    graphs.ideal_altitude_downrange_figure.savefig(
+        path / "ideal_altitude_downrange_figure.png",
+    )
