@@ -79,7 +79,7 @@ def run() -> None:
     result = make_result_for_report.make_result_for_report(config, report_config)
     write_row_data(result)
 
-    graphs = make_graph.make_graph(result)
+    graphs = make_graph.make_graph(result, launch_site)
     path_graph = Path("output") / "report" / "graph"
     path_graph.mkdir(parents=True, exist_ok=True)
     graph_writer.write(
