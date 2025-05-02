@@ -2,7 +2,7 @@ import shutil
 from pathlib import Path
 
 from src import config_read, graph_writer, report_config_read
-from src.geography.kml import landing_range_to_kml
+from src.geography.kml import landing_range_to_kml, parse_launch_site
 from src.geography.landing_range import LandingRange
 from src.make_report import make_graph, make_result_for_report
 from src.make_report.result_for_report import ResultForReport
@@ -39,13 +39,12 @@ def write_row_data(result: ResultForReport) -> None:
                 )
 
 
-def write_landing_range_kml(result: ResultForReport, launch_point_latitude: float, launch_point_longitude: float) -> None:
+def write_landing_range_kml(result: ResultForReport, launch_site) -> None:
     """着陸範囲をKMLファイルとして出力する
 
     Args:
         result: シミュレーション結果
-        launch_point_latitude: 発射地点の緯度
-        launch_point_longitude: 発射地点の経度
+        launch_site: 発射地点情報
     """
     output_dir = Path("output") / "report" / "kml"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -53,8 +52,8 @@ def write_landing_range_kml(result: ResultForReport, launch_point_latitude: floa
     # 各発射角度ごとにLandingRangeを作成
     for elev_result in result.result_by_launcher_elevation:
         landing_range = LandingRange.from_result_by_launcher_elevation(
-            launch_point_latitude,
-            launch_point_longitude,
+            launch_site.launch_point.latitude,
+            launch_site.launch_point.longitude,
             elev_result,
         )
         # KMLファイルとして出力
@@ -72,6 +71,11 @@ def run() -> None:
     config_path = Path("config")
     config = config_read.read(config_path)
     report_config = report_config_read.read(config_path)
+
+    # launch_site.kmlから発射地点情報を読み込む
+    launch_site_kml = (config_path / "launch_site.kml").read_text()
+    launch_site = parse_launch_site(launch_site_kml, "発射地点", "落下可能域")
+
     result = make_result_for_report.make_result_for_report(config, report_config)
     write_row_data(result)
 
@@ -84,11 +88,7 @@ def run() -> None:
     )
 
     # 着陸範囲をKMLファイルとして出力
-    write_landing_range_kml(
-        result,
-        report_config.launch_point_latitude,
-        report_config.launch_point_longitude,
-    )
+    write_landing_range_kml(result, launch_site)
 
 
 if __name__ == "__main__":

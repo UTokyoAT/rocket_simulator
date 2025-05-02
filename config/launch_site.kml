@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml>
+<Document>
+<Placemark>
+<name>発射地点</name>
+<Point>
+<coordinates>140.1,36.1,0</coordinates>
+</Point>
+</Placemark>
+<Placemark>
+<name>落下可能域</name>
+<Polygon>
+<coordinates>
+140.2,36.2,0
+140.0,36.2,0
+140.0,36.0,0
+140.2,36.0,0
+140.2,36.2,0
+</coordinates>
+</Polygon>
+</Placemark>
+</Document>
+</kml>
