@@ -9,6 +9,7 @@ dependencies = [
     "numpy>=2.2.5",
     "numpy-quaternion>=2024.0.8",
     "pandas>=2.2.3",
+    "pymap3d>=3.1.0",
 ]
 
 [dependency-groups]
