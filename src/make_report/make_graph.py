@@ -12,7 +12,7 @@ from .result_for_report import ResultForReport
 class Graphs:
     ideal_dynamic_pressure: Figure
     ideal_air_velocity_figure: Figure
-ideal_time_altitude_figure: Figure 
+    ideal_time_altitude_figure: Figure 
     ideal_altitude_downrange_figure: Figure  
 #def velocity_norm(row):
     #return (row.vel_NED_x**2 + row.vel_NED_y**2 + row.vel_NED_z**2) ** 0.5
