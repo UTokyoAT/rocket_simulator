@@ -170,7 +170,7 @@ def time_altitude_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
-def make_graph(result: ResultForReport) -> Graphs:
+
 def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
 
@@ -189,20 +189,10 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
-def time_altitude_figure(data: pd.DataFrame) -> Figure:
-    burning, coasting = burning_coasting_division(data)
-    fig, ax = plt.subplots()
-    ax.plot(burning["time"], -burning["position_d"], label="burning")
-    ax.plot(coasting["time"], -coasting["position_d"], label="coasting")
-    ax.set_xlabel("time/s")
-    ax.set_ylabel("altitude/m")
-    ax.legend()
-    ax.grid(which="both")
-    return fig
 
-
-def make_graph(result: ResultForReport) -> Graphs:
+def make_graph(result: ResultForReport, launch_site: LaunchSite) -> Graphs:
     return Graphs(
         ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
         ideal_air_velocity_figure = air_velocity_figure(result.result_ideal_parachute_off),
+        ideal_altitude_downrange_figure = altitude_downrange_figure(result.result_ideal_parachute_off),
     )
