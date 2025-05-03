@@ -205,7 +205,4 @@ def make_graph(result: ResultForReport) -> Graphs:
     return Graphs(
         ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
         ideal_air_velocity_figure = air_velocity_figure(result.result_ideal_parachute_off),
-        ideal_altitude_downrange_figure = altitude_downrange_figure(result.result_ideal_parachute_off),
-        ideal_time_altitude_figure = time_altitude_figure(result.result_ideal_parachute_off),
-        ideal_altitude_downrange_figure = altitude_downrange_figure(result.result_ideal_parachute_off),
     )
