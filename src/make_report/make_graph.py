@@ -12,7 +12,8 @@ from .result_for_report import ResultForReport
 class Graphs:
     ideal_dynamic_pressure: Figure
     ideal_air_velocity_figure: Figure
-    ideal_altitude_downrange_figure: Figure  
+    ideal_altitude_downrange_figure: Figure 
+    ideal_time_altitude_figure: Figure 
 #def velocity_norm(row):
     #return (row.vel_NED_x**2 + row.vel_NED_y**2 + row.vel_NED_z**2) ** 0.5
 
@@ -122,6 +123,7 @@ def air_velocity_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
+
 def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
 
@@ -140,10 +142,21 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
+def time_altitude_figure(data: pd.DataFrame) -> Figure:
+    burning, coasting = burning_coasting_division(data)
+    fig, ax = plt.subplots()
+    ax.plot(burning["time"], -burning["position_d"], label="burning")
+    ax.plot(coasting["time"], -coasting["position_d"], label="coasting")
+    ax.set_xlabel("time/s")
+    ax.set_ylabel("altitude/m")
+    ax.legend()
+    ax.grid(which="both")
+    return fig
 
 def make_graph(result: ResultForReport) -> Graphs:
     return Graphs(
         ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
         ideal_air_velocity_figure = air_velocity_figure(result.result_ideal_parachute_off),
         ideal_altitude_downrange_figure = altitude_downrange_figure(result.result_ideal_parachute_off),
+        ideal_time_altitude_figure = time_altitude_figure(result.result_ideal_parachute_off),
     )
