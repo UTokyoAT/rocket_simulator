@@ -1,6 +1,7 @@
+import typing as t
+
 import numpy as np
 import pandas as pd
-import typing as t
 
 
 def df_to_function_1d(df: pd.DataFrame) -> t.Callable[[float], float]:
@@ -21,7 +22,7 @@ def df_to_function_1d_array(
     """インデックスから1番目のカラムへの関数をnumpy配列で返す
 
     DataFrameから線形補間により関数を作成し、結果をnumpy配列として返します。
-    注意: 範囲外の値（外挿）に対してはValueErrorが発生します。
+    注意: 範囲外の値(外挿)に対してはValueErrorが発生します。
 
     Args:
         df (pd.DataFrame): DataFrame
@@ -34,7 +35,7 @@ def df_to_function_1d_array(
     """
     # DataFrameからデータを取得
     indices = np.array(df.index)
-    values = df.iloc[:, 0].values
+    values = df.iloc[:, 0].to_numpy()
 
     min_x = float(indices[0])
     max_x = float(indices[-1])
@@ -42,7 +43,8 @@ def df_to_function_1d_array(
     def interpolate_array(x: float) -> np.ndarray:
         # x値がインデックスの範囲外の場合はエラー
         if x < min_x or x > max_x:
-            raise ValueError(f"補間範囲外の値です: {x}, 有効範囲: [{min_x}, {max_x}]")
+            err_msg = "補間範囲外の値です"
+            raise ValueError(err_msg, x, min_x, max_x)
 
         # 境界値の場合はその値を返す
         if x == min_x:
@@ -58,7 +60,6 @@ def df_to_function_1d_array(
         t = (x - indices[idx]) / (indices[idx_next] - indices[idx])
 
         # 線形補間を実行
-        result = (1 - t) * values[idx] + t * values[idx_next]
-        return result
+        return (1 - t) * values[idx] + t * values[idx_next]
 
     return interpolate_array

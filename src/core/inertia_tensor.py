@@ -9,9 +9,9 @@ class InertiaTensor:
     inverse: np.ndarray
     """慣性テンソルの逆行列"""
 
-    def __init__(self, I_xx: float, I_yy: float, I_zz: float, I_xy, I_yz, I_zx):
+    def __init__(self, i_xx: float, i_yy: float, i_zz: float, i_xy: float, i_yz: float, i_zx: float) -> None:
 
         self.tensor = np.array(
-            [[I_xx, I_xy, I_zx], [I_xy, I_yy, I_yz], [I_zx, I_yz, I_zz]]
+            [[i_xx, i_xy, i_zx], [i_xy, i_yy, i_yz], [i_zx, i_yz, i_zz]],
         )
         self.inverse = np.linalg.inv(self.tensor)

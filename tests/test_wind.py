@@ -1,10 +1,12 @@
-import src.core.wind as w
 import unittest
+
 import numpy as np
+
+import src.core.wind as w
 
 
 class TestWind(unittest.TestCase):
-    def test_init(self):
+    def test_init(self) -> None:
         wind = w.wind_velocity_power(2, 3, 5, 30)
         wind_10 = wind(10)
         expected = 4.139188984383644 * np.array([-((3) ** 0.5) / 2, -0.5, 0])

@@ -1,5 +1,5 @@
-import quaternion as quart
 import numpy as np
+import quaternion as quart
 
 
 def square_norm(q: quart.quaternion) -> float:
@@ -15,7 +15,7 @@ def square_norm(q: quart.quaternion) -> float:
 
 
 def quaternion_derivative(
-    q: quart.quaternion, angular_velocity: np.ndarray
+    q: quart.quaternion, angular_velocity: np.ndarray,
 ) -> quart.quaternion:
     """クォータニオンの時間微分を計算する
 
@@ -66,17 +66,26 @@ def from_euler_angle(elevation: float, azimuth: float, roll: float) -> quart.qua
     Returns:
         quart.quaternion: クォータニオン
     """
-    assert 0 <= elevation <= 90
-    assert 0 <= azimuth <= 360
-    assert 0 <= roll <= 360
+    max_elevation = 90
+    max_azimuth = 360
+    max_roll = 360
+    if not (0 <= elevation <= max_elevation):
+        err_msg = f"仰角は0から{max_elevation}の範囲内である必要があります"
+        raise ValueError(err_msg)
+    if not (0 <= azimuth <= max_azimuth):
+        err_msg = f"方位角は0から{max_azimuth}の範囲内である必要があります"
+        raise ValueError(err_msg)
+    if not (0 <= roll <= max_roll):
+        err_msg = f"ロール角は0から{max_roll}の範囲内である必要があります"
+        raise ValueError(err_msg)
     elevation_rad = np.deg2rad(elevation)
     azimuth_rad = np.deg2rad(azimuth)
     roll_rad = np.deg2rad(roll)
     azimuth_rotate = quart.quaternion(
-        np.cos(azimuth_rad / 2), 0, 0, np.sin(azimuth_rad / 2)
+        np.cos(azimuth_rad / 2), 0, 0, np.sin(azimuth_rad / 2),
     )
     elevation_rotate = quart.quaternion(
-        np.cos(elevation_rad / 2), 0, np.sin(elevation_rad / 2), 0
+        np.cos(elevation_rad / 2), 0, np.sin(elevation_rad / 2), 0,
     )
     roll_rotate = quart.quaternion(np.cos(roll_rad / 2), np.sin(roll_rad / 2), 0, 0)
     return azimuth_rotate * elevation_rotate * roll_rotate
@@ -90,8 +99,8 @@ def sum_vector_inertial_frame(
     """剛体座標系でのベクトルと慣性座標系でのベクトルを合成して慣性座標系でのベクトルを返す
 
     Args:
-        vector_body_frame (list[np.ndarray]): 機体座標系でのベクトル
-        vector_inertial_frame (list[np.ndarray]): 慣性系でのベクトル
+        vectors_body_frame (list[np.ndarray]): 機体座標系でのベクトル
+        vectors_inertial_frame (list[np.ndarray]): 慣性系でのベクトル
         posture (quart.quaternion): 機体の姿勢
 
     Returns:
@@ -100,7 +109,7 @@ def sum_vector_inertial_frame(
     vectors_body_frame_sum = np.sum(vectors_body_frame, axis=0)
     vectors_inertial_frame_sum = np.sum(vectors_inertial_frame, axis=0)
     return vectors_inertial_frame_sum + body_to_inertial(
-        posture, vectors_body_frame_sum
+        posture, vectors_body_frame_sum,
     )
 
 
@@ -122,5 +131,5 @@ def sum_vector_body_frame(
     vectors_body_frame_sum = np.sum(vectos_body_frame, axis=0)
     vectors_inertial_frame_sum = np.sum(vectors_inertial_frame, axis=0)
     return vectors_body_frame_sum + inertial_to_body(
-        posture, vectors_inertial_frame_sum
+        posture, vectors_inertial_frame_sum,
     )

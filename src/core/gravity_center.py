@@ -1,11 +1,14 @@
-import numpy as np
 import typing
+
+import numpy as np
 import pandas as pd
+
 from . import interpolation
 
 
 def thrust_end_time(thrust_df: pd.DataFrame) -> float:
-    return float(thrust_df[thrust_df["thrust"] < 1e-10].index[0])
+    threshold = 1e-10
+    return float(thrust_df[thrust_df["thrust"] < threshold].index[0])
 
 
 def create_gravity_center_function_from_dataframe(
@@ -35,7 +38,7 @@ def create_gravity_center_function_from_dataframe(
                 end_gravity_center,
                 end_gravity_center,
             ],
-        }
+        },
     ).set_index("time")
 
     # 補間関数を取得
@@ -49,7 +52,6 @@ def create_gravity_center_function_from_dataframe(
             # 範囲外の値の場合は適切な値を返す
             if time < 0:
                 return first_gravity_center
-            else:
-                return end_gravity_center
+            return end_gravity_center
 
     return gravity_center_func

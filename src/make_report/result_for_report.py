@@ -1,7 +1,9 @@
 from dataclasses import dataclass
+
 import pandas as pd
-from ..core.simulation_context import SimulationContext
+
 from ..core.config import Config
+from ..core.simulation_context import SimulationContext
 
 
 @dataclass
@@ -28,7 +30,7 @@ class ResultByWindSpeed:
                 wind_direction=wind_direction,
                 result_parachute_off=result_parachute_off,
                 result_parachute_on=result_parachute_on,
-            )
+            ),
         )
 
 
@@ -47,12 +49,12 @@ class ResultByLauncherElevation:
         for result_by_wind_speed in self.result:
             if result_by_wind_speed.wind_speed == wind_speed:
                 result_by_wind_speed.append(
-                    wind_direction, result_parachute_off, result_parachute_on
+                    wind_direction, result_parachute_off, result_parachute_on,
                 )
                 return
         self.result.append(ResultByWindSpeed(wind_speed=wind_speed, result=[]))
         self.result[-1].append(
-            wind_direction, result_parachute_off, result_parachute_on
+            wind_direction, result_parachute_off, result_parachute_on,
         )
 
 
@@ -84,7 +86,7 @@ class ResultForReport:
                 )
                 return
         self.result_by_launcher_elevation.append(
-            ResultByLauncherElevation(launcher_elevation=launcher_elevation, result=[])
+            ResultByLauncherElevation(launcher_elevation=launcher_elevation, result=[]),
         )
         self.result_by_launcher_elevation[-1].append(
             wind_speed,

@@ -1,0 +1,18 @@
+[project]
+name = "rocket-simulator"
+version = "0.1.0"
+description = "主にハイブリッドロケットの陸打ちを想定したシミュレータです。"
+readme = "README.md"
+requires-python = ">=3.11.9"
+dependencies = [
+    "matplotlib>=3.10.1",
+    "numpy>=2.2.5",
+    "numpy-quaternion>=2024.0.8",
+    "pandas>=2.2.3",
+    "pymap3d>=3.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.7",
+]
