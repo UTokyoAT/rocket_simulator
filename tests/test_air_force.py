@@ -105,6 +105,7 @@ class TestAirForce(unittest.TestCase):
             parachute_delay_time=3.0,
             first_gravity_center=first_gravity_center,
             end_gravity_center=end_gravity_center,
+            length=1.0,
         )
 
         self.context = SimulationContext(self.config)

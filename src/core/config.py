@@ -36,3 +36,4 @@ class Config:
     parachute_delay_time: float
     first_gravity_center: np.ndarray
     end_gravity_center: np.ndarray
+    length: float
