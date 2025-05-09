@@ -52,4 +52,5 @@ def read(folder_path: Path) -> Config:
         js["parachute_delay_time"],
         np.array(js["first_gravity_center"]),
         np.array(js["end_gravity_center"]),
+        js["length"],
     )
