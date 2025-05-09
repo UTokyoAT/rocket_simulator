@@ -22,3 +22,9 @@ def write(path: Path, graphs: Graphs) -> None:
     graphs.ideal_landing_figure.savefig(
         path / "ideal_landing_figure.png",
     )
+    graphs.ideal_stability_figure.savefig(
+        path / "deal_stability_figure.png",
+    )
+    graphs.ideal_wind_figure.savefig(
+        path / "ideal_wind_figure.png",
+    )
