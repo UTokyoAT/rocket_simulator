@@ -2,10 +2,9 @@ from dataclasses import dataclass
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.figure import Figure
-
 from src.geography.launch_site import LaunchSite
-
 from .result_for_report import ResultForReport
+
 
 
 @dataclass
@@ -14,6 +13,7 @@ class Graphs:
     ideal_air_velocity_figure: Figure
     ideal_altitude_downrange_figure: Figure 
     ideal_time_altitude_figure: Figure 
+    ideal_landing_figure: Figure
 #def velocity_norm(row):
     #return (row.vel_NED_x**2 + row.vel_NED_y**2 + row.vel_NED_z**2) ** 0.5
 
@@ -189,11 +189,24 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
+def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
+    fig, ax = plt.subplots()
+    ax.plot(site.points_east() + [site.points_east()[0]],  
+            site.points_north() + [site.points_north()[0]],
+            label="allowed area", linestyle="--", color="gray")
+    landing = data.iloc[-1]
+    ax.scatter(landing["position_e"], landing["position_n"], label="landing point")
+    ax.legend()
+    ax.grid(which="both")
+    ax.set_xlabel("East/m")
+    ax.set_ylabel("North/m")
+    return fig
 
-def make_graph(result: ResultForReport, launch_site: LaunchSite) -> Graphs:
+def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
     return Graphs(
         ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
         ideal_air_velocity_figure = air_velocity_figure(result.result_ideal_parachute_off),
         ideal_altitude_downrange_figure = altitude_downrange_figure(result.result_ideal_parachute_off),
         ideal_time_altitude_figure = time_altitude_figure(result.result_ideal_parachute_off),
+        ideal_landing_figure = landing_figure(result.result_ideal_parachute_off, site), 
     )

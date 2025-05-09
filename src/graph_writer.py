@@ -19,3 +19,6 @@ def write(path: Path, graphs: Graphs) -> None:
     graphs.ideal_altitude_downrange_figure.savefig(
         path / "ideal_altitude_downrange_figure.png",
     )
+    graphs.ideal_landing_figure.savefig(
+        path / "ideal_landing_figure.png",
+    )
