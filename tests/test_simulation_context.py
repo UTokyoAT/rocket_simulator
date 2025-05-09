@@ -51,6 +51,7 @@ class TestSimulationContext(unittest.TestCase):
             parachute_delay_time=3.0,
             first_gravity_center=self.first_gravity_center,
             end_gravity_center=self.end_gravity_center,
+            length=1.0,
         )
 
     def test_init(self) -> None:
