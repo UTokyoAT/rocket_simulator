@@ -153,6 +153,7 @@ def time_altitude_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
+
 def make_graph(result: ResultForReport) -> Graphs:
     return Graphs(
         ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
