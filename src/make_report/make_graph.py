@@ -6,7 +6,6 @@ from src.geography.launch_site import LaunchSite
 from .result_for_report import ResultForReport
 
 
-
 @dataclass
 class Graphs:
     ideal_dynamic_pressure: Figure
@@ -30,24 +29,6 @@ class Graphs:
 
 #def mode_change_row(data: pd.DataFrame, mode):
     #return data[data["mode"] == mode].iloc[0]
-
-
-#def thrust_end_time():
-    #thrust = pd.read_csv("simulator/files/thrust.csv")
-    #thrust_not_first = thrust.iloc[10:]
-    #return thrust_not_first[thrust_not_first["thrust"] == 0].iloc[0]["time"]
-
-
-#def document_config():
-    #with open("simulator/files/審査書用コンフィグ.json") as f:
-        #return json.load(f)
-
-
-#def flst():
-    #with open("simulator/files/flst.json") as f:
-        #return json.load(f)
-
-
 
 
 #def launch_clear(data: pd.DataFrame):
@@ -201,6 +182,7 @@ def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     ax.set_xlabel("East/m")
     ax.set_ylabel("North/m")
     return fig
+
 
 def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
     return Graphs(
