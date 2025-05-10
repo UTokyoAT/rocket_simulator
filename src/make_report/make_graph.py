@@ -183,6 +183,36 @@ def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     ax.set_ylabel("North/m")
     return fig
 
+def stability_figure(data: pd.DataFrame, ):
+    fig, ax = plt.subplots()
+    ax.plot([0, thrust_end_time], [first_stability, end_stability], label="burning")
+    ax.plot(
+        [thrust_end_time, data["time"].iloc[-1]],
+        [end_stability, end_stability],
+        label="coasting",
+    )
+    ax.legend()
+    ax.set_xlabel("time/s")
+    ax.set_ylabel("stable ratio")
+    ax.grid(which="both")
+    return fig
+
+def wind_figure(wind_df):
+    wind_df.to_csv("wind.csv")
+    # plt.plot(wind_df["wind_speed"],wind_df["altitude"])
+    # # plt.title("wind speed")
+    # plt.ylabel("altitude/m")
+    # plt.xlabel("wind speed/m/s")
+    # plt.grid(which="both")
+    # plt.savefig("wind_speed.png")
+    # plt.clf()
+    wind_low = wind_df[wind_df["altitude"] < 500]
+    fig, ax = plt.subplots()
+    ax.plot(wind_low["wind_speed"], wind_low["altitude"])
+    ax.set_ylabel("altitude/m")
+    ax.set_xlabel("wind speed/m/s")
+    ax.grid(which="both")
+    return to_image(ax)
 
 def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
     return Graphs(
