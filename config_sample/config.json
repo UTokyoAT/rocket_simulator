@@ -26,5 +26,6 @@
     "parachute_delay_time": 2.0,
 
     "first_gravity_center": [0.57138,0,0],
-    "end_gravity_center": [0.582,0,0]
+    "end_gravity_center": [0.582,0,0],
+    "length": 1.322
 }
