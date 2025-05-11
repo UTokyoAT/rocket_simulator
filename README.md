@@ -82,6 +82,9 @@ I_xx, I_yy, I_zz, I_zy, I_xz, I_xy
 #### end_gravity_center
 燃焼終了時の重心の位置[m] 向きはx軸正の向きがロケットの先端を向く。原点はwind_centerと整合していれば良い。
 
+#### length
+ロケットの全長[m]
+
 ### report_config.json
 
 #### launcher_elevation
