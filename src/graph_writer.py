@@ -28,3 +28,6 @@ def write(path: Path, graphs: Graphs) -> None:
     graphs.ideal_wind_figure.savefig(
         path / "ideal_wind_figure.png",
     )
+    graphs.ideal_acceleration_figure.savefig(
+        path / "ideal_acceleration_figure.png",
+    )
