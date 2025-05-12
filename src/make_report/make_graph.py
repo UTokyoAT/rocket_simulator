@@ -18,6 +18,7 @@ class Graphs:
     ideal_landing_figure: Figure
     ideal_stability_figure: Figure
     ideal_wind_figure: Figure
+    ideal_acceleration_figure: Figure
 
 #def velocity_norm(row):
     #return (row.vel_NED_x**2 + row.vel_NED_y**2 + row.vel_NED_z**2) ** 0.5
@@ -234,6 +235,21 @@ def wind_figure(context: SimulationContext) -> Figure:
     ax.grid(which="both")
     return fig
 
+def acceleration_figure(data: pd.DataFrame) -> Figure:
+    burning, coasting = burning_coasting_division(data)
+    fig, ax = plt.subplots()
+    ax.plot(burning["time"], burning["acceleration_body_frame_x"], label="x burning")
+    ax.plot(burning["time"], burning["acceleration_body_frame_y"], label="y burning")
+    ax.plot(burning["time"], burning["acceleration_body_frame_z"], label="z burning")
+    ax.plot(coasting["time"], coasting["acceleration_body_frame_x"], label="x coasting")
+    ax.plot(coasting["time"], coasting["acceleration_body_frame_y"], label="y coasting")
+    ax.plot(coasting["time"], coasting["acceleration_body_frame_z"], label="z coasting")
+    ax.legend()
+    ax.set_ylabel("accelaration body flame/(m/s^2)")
+    ax.set_xlabel("time/s")
+    ax.grid(which="both")
+    return fig
+
 def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
     return Graphs(
         ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
@@ -243,4 +259,5 @@ def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
         ideal_landing_figure = landing_figure(result.result_ideal_parachute_off, site),
         ideal_stability_figure = stability_figure(result),
         ideal_wind_figure = wind_figure(result.context),
+        ideal_acceleration_figure = acceleration_figure(result.result_ideal_parachute_off),
     )
