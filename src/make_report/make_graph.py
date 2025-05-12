@@ -1,12 +1,14 @@
 from dataclasses import dataclass
-import matplotlib.pyplot as plt
-import pandas as pd
+
 import numpy as np
+import pandas as pd
+from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
-from src.geography.launch_site import LaunchSite
-from .result_for_report import ResultForReport
-from .result_for_report import SimulationContext
+
 from src.core.gravity_center import thrust_end_time
+from src.geography.launch_site import LaunchSite
+
+from .result_for_report import ResultForReport, SimulationContext
 
 
 @dataclass
@@ -21,71 +23,11 @@ class Graphs:
     ideal_acceleration_figure: Figure
     ideal_rotation_figure: Figure
 
-#def velocity_norm(row):
-    #return (row.vel_NED_x**2 + row.vel_NED_y**2 + row.vel_NED_z**2) ** 0.5
-
-
-#def acc_norm(row):
-    #return (row.acc_BODY_x**2 + row.acc_BODY_y**2 + row.acc_BODY_z**2) ** 0.5
-
-
-#def air_velocity_norm(row):
-    #return (
-       #row.vel_AIR_BODY_x**2 + row.vel_AIR_BODY_y**2 + row.vel_AIR_BODY_z**2
-    #) ** 0.5
-
-
-#def mode_change_row(data: pd.DataFrame, mode):
-    #return data[data["mode"] == mode].iloc[0]
-
-
-#def launch_clear(data: pd.DataFrame):
-    """ランチクリア時の情報"""
-
-    #launch_clear = mode_change_row(flight_data, 1)
-    #v = velocity_norm(launch_clear)
-    #theta = np.deg2rad(document_config()["最小射角"])
-    #alpha = np.deg2rad(21)
-    #beta = np.deg2rad(20)
-    #w_alpha = v * np.tan(alpha) / (np.sin(theta) + np.cos(theta) * np.tan(alpha))
-    #w_beta = v * np.tan(beta)
-    #if v < 15:
-        #print("ランチクリア速度が遅すぎます．打ち上げできません")
-    #return {
-        #"時刻/s": round(launch_clear.time, 2),
-        #"速度/(m/s)": round(v, 2),
-        #"順風迎角21degの時の風速/(m/s)": round(w_alpha, 2),
-        #"側風迎角20degの時の風速/(m/s)": round(w_beta, 2),
-        #"風速制限/(m/s)": round(min(w_alpha, w_beta), 2),
-    #}
-
-def burning_coasting_division(data: pd.DataFrame):
-    burning = data[data["burning"] == True]
-    coasting = data[data["burning"] == False]
+def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
+    burning = data[data["burning"]]
+    coasting = data[~data["burning"]]
     return burning, coasting
 
-#def dynamic_pressure(flight_data, all=False):
-    #burning, coasting = burning_coasting_division(flight_data)
-    ### plt.plot(burning["time"],burning["dynamic_pressure"],label="burning")
-    ### plt.plot(coasting["time"],coasting["dynamic_pressure"],label="coasting")
-    ### plt.legend()
-    ### # plt.title("dynamic pressure")
-    ### plt.xlabel("time/s")
-    ### plt.ylabel("dynamic pressure/Pa")
-    ### plt.grid(which="both")
-
-    ### plt.savefig("dynamic_pressure.png")
-    ### plt.clf()
-    #if all:
-        #pressure_max = flight_data.loc[flight_data["dynamic_pressure"].idxmax()]
-    #else:
-        #pressure_max = burning.loc[burning["dynamic_pressure"].idxmax()]
-    #return {
-        #"時刻/s": round(pressure_max.time, 2),
-        #"高度/m": round(pressure_max.altitude, 2),
-        #"動圧/kPa": round(pressure_max.dynamic_pressure / 1000, 2),
-        #"対気速度/(m/s)": round(air_velocity_norm(pressure_max), 2),
-    #}
 def dynamic_pressure_figure(data: pd.DataFrame) -> Figure:
     fig, ax = plt.subplots()
     burning, coasting = burning_coasting_division(data)
@@ -113,44 +55,8 @@ def air_velocity_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
-#def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
-    #burning, coasting = burning_coasting_division(data)
-
-    #def downrange(row):
-        #return geography.distance(
-            #data.lat[0], data.lon[0], row.lat, row.lon
-        #)
-
-    # plt.plot(burning.apply(downrange,axis=1),burning.altitude,label="burning")
-    # plt.plot(coasting.apply(downrange,axis=1),coasting.altitude,label="coasting")
-    # plt.legend()
-    # # plt.title("altitude-downrange")
-    # plt.xlabel("downrange/m")
-    # plt.ylabel("altitude/m")
-    # plt.grid(which="both")
-    # plt.savefig("altitude-downrange.png")
-    # plt.clf()
-    
-    
-    #fig, ax = plt.subplots()
-    #ax.plot(burning.apply(downrange, axis=1), burning.altitude, label="burning")
-    #ax.plot(coasting.apply(downrange, axis=1), coasting.altitude, label="coasting")
-    #ax.legend()
-    #ax.set_xlabel("downrange/m")
-    #ax.set_ylabel("altitude/m")
-    #ax.grid(which="both")
-    #return fig
-
 def time_altitude_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
-    # plt.plot(burning["time"],burning["altitude"],label="burning")
-    # plt.plot(coasting["time"],coasting["altitude"],label="coasting")
-    # plt.xlabel("time/s")
-    # plt.ylabel("altitude/m")
-    # plt.legend()
-    # plt.grid(which="both")
-    # plt.savefig("time-altitude.png")
-    # plt.clf()
     fig, ax = plt.subplots()
     ax.plot(burning["time"], -burning["position_d"], label="burning")
     ax.plot(coasting["time"], -coasting["position_d"], label="coasting")
@@ -181,8 +87,8 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
 
 def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     fig, ax = plt.subplots()
-    ax.plot(site.points_east() + [site.points_east()[0]],  
-            site.points_north() + [site.points_north()[0]],
+    ax.plot([*site.points_east(), site.points_east()[0]],
+            [*site.points_north(), site.points_north()[0]],
             label="allowed area", linestyle="--", color="gray")
     landing = data.iloc[-1]
     ax.scatter(landing["position_e"], landing["position_n"], label="landing point")
@@ -219,16 +125,9 @@ def stability_figure(result: ResultForReport) -> Figure:
     return fig
 
 def wind_figure(context: SimulationContext) -> Figure:
-    altitude = np.arange(0, 500, 1) 
+    altitude = np.arange(0, 500, 1)
     # 各高度における風速ベクトルの絶対値（速さ）を計算
     wind_speed = np.array([np.linalg.norm(context.wind(alt)) for alt in altitude])
-    # plt.plot(wind_df["wind_speed"],wind_df["altitude"])
-    # # plt.title("wind speed")
-    # plt.ylabel("altitude/m")
-    # plt.xlabel("wind speed/m/s")
-    # plt.grid(which="both")
-    # plt.savefig("wind_speed.png")
-    # plt.clf()
     fig, ax = plt.subplots()
     ax.plot(altitude, wind_speed)
     ax.set_ylabel("altitude/m")
