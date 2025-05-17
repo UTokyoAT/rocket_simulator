@@ -130,8 +130,8 @@ def wind_figure(context: SimulationContext) -> Figure:
     wind_speed = np.array([np.linalg.norm(context.wind(alt)) for alt in altitude])
     fig, ax = plt.subplots()
     ax.plot(altitude, wind_speed)
-    ax.set_ylabel("altitude/m")
-    ax.set_xlabel("wind speed/m/s")
+    ax.set_xlabel("altitude/m")
+    ax.set_ylabel("wind speed/m/s")
     ax.grid(which="both")
     return fig
 
