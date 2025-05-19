@@ -5,7 +5,6 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 
-from src.core.gravity_center import thrust_end_time
 from src.geography.launch_site import LaunchSite
 
 from .result_for_report import ResultForReport, SimulationContext
@@ -19,9 +18,16 @@ class Graphs:
     ideal_time_altitude_figure: Figure
     ideal_landing_figure: Figure
     ideal_stability_figure: Figure
-    ideal_wind_figure: Figure
     ideal_acceleration_figure: Figure
     ideal_rotation_figure: Figure
+    nominal_dynamic_pressure: Figure
+    nominal_air_velocity_figure: Figure
+    nominal_altitude_downrange_figure: Figure
+    nominal_time_altitude_figure: Figure
+    nominal_landing_figure: Figure
+    nominal_acceleration_figure: Figure
+    nominal_rotation_figure: Figure
+    nominal_wind_figure: Figure
 
 def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
     burning = data[data["burning"]]
@@ -87,6 +93,7 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
 
 def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     fig, ax = plt.subplots()
+    ax.plot(0,0, label="launch point")
     ax.plot([*site.points_east(), site.points_east()[0]],
             [*site.points_north(), site.points_north()[0]],
             label="allowed area", linestyle="--", color="gray")
@@ -98,12 +105,11 @@ def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     ax.set_ylabel("North/m")
     return fig
 
-def stability_figure(result: ResultForReport) -> Figure:
+def stability_figure(result: ResultForReport, data:pd.DataFrame) -> Figure:
     fig, ax = plt.subplots()
-    tet = thrust_end_time(result.config.thrust)
-    end_time = result.result_ideal_parachute_off["time"].iloc[-1]
-    times_burning = np.linspace(0, tet, int(tet/result.config.dt))
-    times_coasting = np.linspace(tet, end_time, int((end_time-tet)/result.config.dt))
+    burning, coasting = burning_coasting_division(data)
+    times_burning = burning["time"]
+    times_coasting = coasting["time"]
     # 各時刻における重心位置を取得
     gravity_centers_burning = np.array([result.context.gravity_center(t)[0] for t in times_burning])
     gravity_centers_coasting = np.array([result.context.gravity_center(t)[0] for t in times_coasting])
@@ -173,7 +179,14 @@ def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
         ideal_time_altitude_figure = time_altitude_figure(result.result_ideal_parachute_off),
         ideal_landing_figure = landing_figure(result.result_ideal_parachute_off, site),
         ideal_stability_figure = stability_figure(result),
-        ideal_wind_figure = wind_figure(result.context),
         ideal_acceleration_figure = acceleration_figure(result.result_ideal_parachute_off),
         ideal_rotation_figure = rotation_figure(result.result_ideal_parachute_off),
-    )
+        nominal_dynamic_pressure = dynamic_pressure_figure(result.result_nominal_parachute_off),
+        nominal_air_velocity_figure = air_velocity_figure(result.result_nominal_parachute_off),
+        nominal_altitude_downrange_figure = altitude_downrange_figure(result.result_nominal_parachute_off),
+        nominal_time_altitude_figure = time_altitude_figure(result.result_nominal_parachute_off),
+        nominal_landing_figure = landing_figure(result.result_nominal_parachute_off, site),
+        nominal_acceleration_figure = acceleration_figure(result.result_nominal_parachute_off),
+        nominal_rotation_figure = rotation_figure(result.result_nominal_parachute_off),
+        nominal_wind_figure = wind_figure(result.context),
+        )
