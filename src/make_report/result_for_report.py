@@ -2,8 +2,9 @@ from dataclasses import dataclass
 
 import pandas as pd
 
+from src.core.simulation_context import SimulationContext
+
 from ..core.config import Config
-from ..core.simulation_context import SimulationContext
 
 
 @dataclass
