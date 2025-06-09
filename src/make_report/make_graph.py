@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 
 from src.geography.launch_site import LaunchSite
 
-from .result_for_report import ResultForReport, SimulationContext, ResultByWindSpeed
+from .result_for_report import ResultByWindSpeed, ResultForReport, SimulationContext
 
 
 @dataclass
@@ -172,13 +172,14 @@ def rotation_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
-def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed], data: pd.DataFrame, site: LaunchSite) -> Figure:
+def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
+                           data: pd.DataFrame, site: LaunchSite) -> Figure:
     fig, ax = plt.subplots()
-    ax.plot(0, 0, 'o', label="launch point")
+    ax.plot(0, 0, "o", label="launch point")
     ax.plot(
         [*site.points_east(), site.points_east()[0]],
         [*site.points_north(), site.points_north()[0]],
-        label="allowed area"
+        label="allowed area",
     )
     for speed_result in result_by_wind_speed:
         wind_speed = speed_result.wind_speed
@@ -212,7 +213,7 @@ def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSi
         fig = fall_dispersion_figure(
             result_by_wind_speed=wind_results,
             data=data,
-            site=site
+            site=site,
         )
         fig.suptitle(f"Fall Dispersion (Elevation: {elevation}°)")
         figures[elevation] = fig
