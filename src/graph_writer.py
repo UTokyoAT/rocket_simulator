@@ -52,6 +52,6 @@ def write(path: Path, graphs: Graphs) -> None:
     graphs.nominal_rotation_figure.savefig(
         path / "nominal_rotation_figure.png",
     )
-    graphs.nominal_wind_figure.savefig(
-        path / "ideal_wind_figure.png",
-    )
+    for elevation, fig in graphs.nominal_fall_dispersion_figure.items():
+        filename = f"nominal_fall_despersion_{elevation:.1f}deg.png"
+        fig.savefig(path / filename)
