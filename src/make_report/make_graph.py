@@ -191,10 +191,10 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
             y = last_row["position_n"]
             x_vals.append(x)
             y_vals.append(y)
-            start_x = x_vals[0]
-            start_y = y_vals[0]
-            x_vals.append(start_x)
-            y_vals.append(start_y)
+        start_x = x_vals[0]
+        start_y = y_vals[0]
+        x_vals.append(start_x)
+        y_vals.append(start_y)
         ax.plot(x_vals, y_vals, label=f"{wind_speed} m/s")
     landing = data.iloc[-1]
     ax.scatter(landing["position_e"], landing["position_n"], color="red", label="landing point")
