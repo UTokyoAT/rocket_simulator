@@ -173,7 +173,7 @@ def rotation_figure(data: pd.DataFrame) -> Figure:
     return fig
 
 def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
-                           data: pd.DataFrame, site: LaunchSite) -> Figure:
+                        site: LaunchSite) -> Figure:
     fig, ax = plt.subplots()
     ax.plot(0, 0, "o", label="launch point")
     ax.plot(
@@ -196,8 +196,6 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
         x_vals.append(start_x)
         y_vals.append(start_y)
         ax.plot(x_vals, y_vals, label=f"{wind_speed} m/s")
-    landing = data.iloc[-1]
-    ax.scatter(landing["position_e"], landing["position_n"], color="red", label="landing point")
     ax.legend()
     ax.grid(which="both")
     ax.set_xlabel("East [m]")
@@ -209,10 +207,8 @@ def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSi
     for result_by_elevation in result.result_by_launcher_elevation:
         elevation = result_by_elevation.launcher_elevation
         wind_results = result_by_elevation.result
-        data = result.result_nominal_parachute_off
         fig = fall_dispersion_figure(
             result_by_wind_speed=wind_results,
-            data=data,
             site=site,
         )
         fig.suptitle(f"Fall Dispersion (Elevation: {elevation}°)")
