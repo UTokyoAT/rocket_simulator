@@ -28,7 +28,8 @@ class Graphs:
     nominal_acceleration_figure: Figure
     nominal_rotation_figure: Figure
     nominal_wind_figure: Figure
-    nominal_fall_dispersion_figure: dict[float, Figure]
+    nominal_fall_dispersion_figure_parachute_off: dict[float, Figure]
+    nominal_fall_dispersion_figure_parachute_on: dict[float, Figure]
 
 def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
     burning = data[data["burning"]]
@@ -173,7 +174,7 @@ def rotation_figure(data: pd.DataFrame) -> Figure:
     return fig
 
 def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
-                        site: LaunchSite) -> Figure:
+                        site: LaunchSite, parachute: int) -> Figure:
     fig, ax = plt.subplots()
     ax.plot(0, 0, "o", label="launch point")
     ax.plot(
@@ -186,7 +187,10 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
         x_vals = []
         y_vals = []
         for direction_result in speed_result.result:
-            last_row = direction_result.result_parachute_off.iloc[-1]
+            if(parachute):
+                last_row = direction_result.result_parachute_on.iloc[-1]
+            else:
+                last_row = direction_result.result_parachute_off.iloc[-1]
             x = last_row["position_e"]
             y = last_row["position_n"]
             x_vals.append(x)
@@ -202,7 +206,8 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
     ax.set_ylabel("North [m]")
     return fig
 
-def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSite) -> dict[float, Figure]:
+def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSite,
+                                         parachute: int) -> dict[float, Figure]:
     figures = {}
     for result_by_elevation in result.result_by_launcher_elevation:
         elevation = result_by_elevation.launcher_elevation
@@ -210,8 +215,12 @@ def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSi
         fig = fall_dispersion_figure(
             result_by_wind_speed=wind_results,
             site=site,
+            parachute = parachute,
         )
-        fig.suptitle(f"Fall Dispersion (Elevation: {elevation}°)")
+        if(parachute):
+            fig.suptitle(f"Fall Dispersion Parachute_on(Elevation: {elevation}°)")
+        else:
+            fig.suptitle(f"Fall Dispersion Parachute_off(Elevation: {elevation}°)")
         figures[elevation] = fig
     return figures
 
@@ -233,5 +242,6 @@ def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
         nominal_acceleration_figure = acceleration_figure(result.result_nominal_parachute_off),
         nominal_rotation_figure = rotation_figure(result.result_nominal_parachute_off),
         nominal_wind_figure = wind_figure(result.context_nominal),
-        nominal_fall_dispersion_figure = generate_all_fall_dispersion_figures(result,site),
+        nominal_fall_dispersion_figure_parachute_off = generate_all_fall_dispersion_figures(result,site,0),
+        nominal_fall_dispersion_figure_parachute_on = generate_all_fall_dispersion_figures(result,site,1),
         )
