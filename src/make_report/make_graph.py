@@ -112,10 +112,10 @@ def stability_figure(result: ResultForReport, data:pd.DataFrame) -> Figure:
     times_burning = burning["time"]
     times_coasting = coasting["time"]
     # 各時刻における重心位置を取得
-    gravity_centers_burning = np.array([result.context.gravity_center(t)[0] for t in times_burning])
-    gravity_centers_coasting = np.array([result.context.gravity_center(t)[0] for t in times_coasting])
-    wind_center = result.context.wind_center[0]
-    length = result.config.length
+    gravity_centers_burning = np.array([result.context_nominal.gravity_center(t)[0] for t in times_burning])
+    gravity_centers_coasting = np.array([result.context_nominal.gravity_center(t)[0] for t in times_coasting])
+    wind_center = result.context_nominal.wind_center[0]
+    length = result.config_nominal.length
     # 安定性 = 相対距離（風圧中心 - 重心） / 長さ × 100
     stability_burning = np.array([
     ((gc - wind_center) / length * 100) for gc in gravity_centers_burning
@@ -232,6 +232,6 @@ def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
         nominal_landing_figure = landing_figure(result.result_nominal_parachute_off, site),
         nominal_acceleration_figure = acceleration_figure(result.result_nominal_parachute_off),
         nominal_rotation_figure = rotation_figure(result.result_nominal_parachute_off),
-        nominal_wind_figure = wind_figure(result.context),
+        nominal_wind_figure = wind_figure(result.context_nominal),
         nominal_fall_dispersion_figure = generate_all_fall_dispersion_figures(result,site),
         )

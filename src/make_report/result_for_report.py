@@ -61,8 +61,8 @@ class ResultByLauncherElevation:
 
 @dataclass
 class ResultForReport:
-    config: Config
-    context: SimulationContext
+    config_nominal: Config
+    context_nominal: SimulationContext
     result_ideal_parachute_off: pd.DataFrame
     result_ideal_parachute_on: pd.DataFrame
     result_nominal_parachute_off: pd.DataFrame
