@@ -4,10 +4,10 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from ..core import simple_simulation
-from ..core.config import Config
-from ..core.simulation_context import SimulationContext
-from .result_for_report import ResultForReport
+from src.core import simple_simulation
+from src.core.config import Config
+from src.core.simulation_context import SimulationContext
+from src.make_report.result_for_report import ResultForReport
 
 
 @dataclass
@@ -49,8 +49,7 @@ def run_concurrent(
             wind_speed_direction_pairsの順番に対応している。
     """
     with ProcessPoolExecutor() as executor:
-        results = list(executor.map(run, [config] * len(settings), settings))
-    return results
+        return list(executor.map(run, [config] * len(settings), settings))
 
 
 def make_result_for_report(
@@ -83,7 +82,7 @@ def make_result_for_report(
         )
         for launcher_elevation, wind_speed, wind_direction in settings_list
     ]
-    settings = [setting_ideal, setting_nominal] + settings_wind
+    settings = [setting_ideal, setting_nominal, *settings_wind]
     results = run_concurrent(config, settings)
     result_ideal = results[0]
     result_nominal = results[1]
