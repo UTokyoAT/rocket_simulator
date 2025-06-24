@@ -119,12 +119,12 @@ def stability_figure(result: ResultForReport, data:pd.DataFrame) -> Figure:
     wind_center = result.context_nominal.wind_center[0]
     length = result.config_nominal.length
     # 安定性 = 相対距離（風圧中心 - 重心） / 長さ × 100
-    stability_burning = np.array([
-    ((gc - wind_center) / length * 100) for gc in gravity_centers_burning
-    ])
-    stability_coasting = np.array([
-    ((gc - wind_center) / length * 100) for gc in gravity_centers_coasting
-    ])
+    stability_burning = np.array(
+    (gravity_centers_burning - wind_center) / length * 100,
+    )
+    stability_coasting = np.array(
+    (gravity_centers_coasting - wind_center) / length * 100,
+    )
     ax.plot(times_burning,  stability_burning, label="burning")
     ax.plot(times_coasting,  stability_coasting, label="coasting")
     ax.legend()
@@ -185,17 +185,12 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
     )
     for speed_result in result_by_wind_speed:
         wind_speed = speed_result.wind_speed
-        x_vals = []
-        y_vals = []
-        for direction_result in speed_result.result:
-            if(parachute):
-                last_row = direction_result.result_parachute_on.iloc[-1]
-            else:
-                last_row = direction_result.result_parachute_off.iloc[-1]
-            x = last_row["position_e"]
-            y = last_row["position_n"]
-            x_vals.append(x)
-            y_vals.append(y)
+        x_vals = [direction_result.result_parachute_on.iloc[-1]["position_e"] if(parachute)
+                  else direction_result.result_parachute_off.iloc[-1]["position_e"]
+                  for direction_result in speed_result.result]
+        y_vals = [direction_result.result_parachute_on.iloc[-1]["position_n"] if(parachute)
+                  else direction_result.result_parachute_off.iloc[-1]["position_n"]
+                  for direction_result in speed_result.result]
         start_x = x_vals[0]
         start_y = y_vals[0]
         x_vals.append(start_x)
