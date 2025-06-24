@@ -96,12 +96,12 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
 
 def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     fig, ax = plt.subplots()
-    ax.plot(0,0, label="launch point")
+    ax.plot(0,0, label="射点")
     ax.plot([*site.points_east(), site.points_east()[0]],
             [*site.points_north(), site.points_north()[0]],
-            label="allowed area", linestyle="--", color="gray")
+            label="落下可能域", linestyle="--", color="gray")
     landing = data.iloc[-1]
-    ax.scatter(landing["position_e"], landing["position_n"], label="landing point")
+    ax.scatter(landing["position_e"], landing["position_n"], label="着地点")
     ax.legend()
     ax.grid(which="both")
     ax.set_xlabel("東/m")
@@ -177,11 +177,11 @@ def rotation_figure(data: pd.DataFrame) -> Figure:
 def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
                         site: LaunchSite, parachute: int) -> Figure:
     fig, ax = plt.subplots()
-    ax.plot(0, 0, "o", label="launch point")
+    ax.plot(0, 0, "o", label="射点")
     ax.plot(
         [*site.points_east(), site.points_east()[0]],
         [*site.points_north(), site.points_north()[0]],
-        label="allowed area",
+        label="落下可能域",
     )
     for speed_result in result_by_wind_speed:
         wind_speed = speed_result.wind_speed
