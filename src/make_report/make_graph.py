@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+import japanize_matplotlib
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -43,8 +44,8 @@ def dynamic_pressure_figure(data: pd.DataFrame) -> Figure:
     ax.plot(burning["time"], burning["dynamic_pressure"], label="burning")
     ax.plot(coasting["time"], coasting["dynamic_pressure"], label="coasting")
     ax.legend()
-    ax.set_xlabel("time/s")
-    ax.set_ylabel("dynamic pressure/Pa")
+    ax.set_xlabel("時刻/s")
+    ax.set_ylabel("動圧/Pa")
     ax.grid(which="both")
     return fig
 
@@ -58,8 +59,8 @@ def air_velocity_figure(data: pd.DataFrame) -> Figure:
     ax.plot(coasting["time"], coasting["velocity_air_body_frame_y"], label="y coasting")
     ax.plot(coasting["time"], coasting["velocity_air_body_frame_z"], label="z coasting")
     ax.legend()
-    ax.set_ylabel("velocity/(m/s)")
-    ax.set_xlabel("time/s")
+    ax.set_ylabel("大気速度/(m/s)")
+    ax.set_xlabel("時刻/s")
     ax.grid(which="both")
     return fig
 
@@ -68,8 +69,8 @@ def time_altitude_figure(data: pd.DataFrame) -> Figure:
     fig, ax = plt.subplots()
     ax.plot(burning["time"], -burning["position_d"], label="burning")
     ax.plot(coasting["time"], -coasting["position_d"], label="coasting")
-    ax.set_xlabel("time/s")
-    ax.set_ylabel("altitude/m")
+    ax.set_xlabel("時刻/s")
+    ax.set_ylabel("高度/m")
     ax.legend()
     ax.grid(which="both")
     return fig
@@ -88,8 +89,8 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     ax.plot(burning.apply(downrange, axis=1), burning.apply(altitude, axis=1), label="burning")
     ax.plot(coasting.apply(downrange, axis=1), coasting.apply(altitude, axis=1), label="coasting")
     ax.legend()
-    ax.set_xlabel("downrange/m")
-    ax.set_ylabel("altitude/m")
+    ax.set_xlabel("ダウンレンジ/m")
+    ax.set_ylabel("高度/m")
     ax.grid(which="both")
     return fig
 
@@ -103,8 +104,8 @@ def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     ax.scatter(landing["position_e"], landing["position_n"], label="landing point")
     ax.legend()
     ax.grid(which="both")
-    ax.set_xlabel("East/m")
-    ax.set_ylabel("North/m")
+    ax.set_xlabel("東/m")
+    ax.set_ylabel("北/m")
     return fig
 
 def stability_figure(result: ResultForReport, data:pd.DataFrame) -> Figure:
@@ -127,8 +128,8 @@ def stability_figure(result: ResultForReport, data:pd.DataFrame) -> Figure:
     ax.plot(times_burning,  stability_burning, label="burning")
     ax.plot(times_coasting,  stability_coasting, label="coasting")
     ax.legend()
-    ax.set_xlabel("time/s")
-    ax.set_ylabel("static stability [%]")
+    ax.set_xlabel("時刻/s")
+    ax.set_ylabel("安定比/%")
     ax.grid(which="both")
     return fig
 
@@ -138,8 +139,8 @@ def wind_figure(context: SimulationContext) -> Figure:
     wind_speed = np.array([np.linalg.norm(context.wind(alt)) for alt in altitude])
     fig, ax = plt.subplots()
     ax.plot(altitude, wind_speed)
-    ax.set_xlabel("altitude/m")
-    ax.set_ylabel("wind speed/m/s")
+    ax.set_xlabel("高度/m")
+    ax.set_ylabel("風速/(m/s)")
     ax.grid(which="both")
     return fig
 
@@ -153,8 +154,8 @@ def acceleration_figure(data: pd.DataFrame) -> Figure:
     ax.plot(coasting["time"], coasting["acceleration_body_frame_y"], label="y coasting")
     ax.plot(coasting["time"], coasting["acceleration_body_frame_z"], label="z coasting")
     ax.legend()
-    ax.set_ylabel("accelaration body flame/(m/s^2)")
-    ax.set_xlabel("time/s")
+    ax.set_ylabel("加速度/(m/s^2)")
+    ax.set_xlabel("時刻/s")
     ax.grid(which="both")
     return fig
 
@@ -168,8 +169,8 @@ def rotation_figure(data: pd.DataFrame) -> Figure:
     ax.plot(coasting["time"], coasting["rotation_e"], label="e coasting")
     ax.plot(coasting["time"], coasting["rotation_d"], label="d coasting")
     ax.legend()
-    ax.set_ylabel("rotation/(rad/s)")
-    ax.set_xlabel("time/s")
+    ax.set_ylabel("角速度/(rad/s)")
+    ax.set_xlabel("時刻/s")
     ax.grid(which="both")
     return fig
 
@@ -202,8 +203,8 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
         ax.plot(x_vals, y_vals, label=f"{wind_speed} m/s")
     ax.legend()
     ax.grid(which="both")
-    ax.set_xlabel("East [m]")
-    ax.set_ylabel("North [m]")
+    ax.set_xlabel("東/m")
+    ax.set_ylabel("北/m")
     return fig
 
 def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSite,
