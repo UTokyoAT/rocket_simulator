@@ -70,11 +70,11 @@ def write(path: Path, graphs: Graphs) -> None:
         path / "nominal_wind_figure.png",
     )
     plt.close(graphs.nominal_wind_figure)
-    for elevation, fig in graphs.nominal_fall_dispersion_figure_parachute_off.items():
-        filename = f"nominal_fall_dispersion_parachute_off{elevation:.1f}deg.png"
+    for elevation, fig in graphs.fall_dispersion_figure_parachute_off.items():
+        filename = f"fall_dispersion_parachute_off{elevation:.1f}deg.png"
         fig.savefig(path / filename)
         plt.close(fig)
-    for elevation, fig in graphs.nominal_fall_dispersion_figure_parachute_on.items():
-        filename = f"nominal_fall_dispersion_parachute_on{elevation:.1f}deg.png"
+    for elevation, fig in graphs.fall_dispersion_figure_parachute_on.items():
+        filename = f"fall_dispersion_parachute_on{elevation:.1f}deg.png"
         fig.savefig(path / filename)
         plt.close(fig)

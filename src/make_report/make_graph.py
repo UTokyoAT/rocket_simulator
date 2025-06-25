@@ -29,8 +29,8 @@ class Graphs:
     nominal_acceleration_figure: Figure
     nominal_rotation_figure: Figure
     nominal_wind_figure: Figure
-    nominal_fall_dispersion_figure_parachute_off: dict[float, Figure]
-    nominal_fall_dispersion_figure_parachute_on: dict[float, Figure]
+    fall_dispersion_figure_parachute_off: dict[float, Figure]
+    fall_dispersion_figure_parachute_on: dict[float, Figure]
 
 def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
     burning = data[data["burning"]]
@@ -234,6 +234,6 @@ def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
         nominal_acceleration_figure = acceleration_figure(result.result_nominal_parachute_off),
         nominal_rotation_figure = rotation_figure(result.result_nominal_parachute_off),
         nominal_wind_figure = wind_figure(result.context_nominal),
-        nominal_fall_dispersion_figure_parachute_off = generate_all_fall_dispersion_figures(result,site,0),
-        nominal_fall_dispersion_figure_parachute_on = generate_all_fall_dispersion_figures(result,site,1),
+        fall_dispersion_figure_parachute_off = generate_all_fall_dispersion_figures(result,site,0),
+        fall_dispersion_figure_parachute_on = generate_all_fall_dispersion_figures(result,site,1),
         )
