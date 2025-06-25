@@ -37,7 +37,7 @@ class Graphs:
     fall_dispersion_figure_parachute_on: dict[float, Figure]
 
 
-def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
+def burning_coasting_division(data: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     burning = data[data["burning"]]
     coasting = data[~data["burning"]]
     return burning, coasting
