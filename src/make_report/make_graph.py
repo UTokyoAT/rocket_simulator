@@ -138,9 +138,9 @@ def wind_figure(context: SimulationContext) -> Figure:
     # 各高度における風速ベクトルの絶対値（速さ）を計算
     wind_speed = np.array([np.linalg.norm(context.wind(alt)) for alt in altitude])
     fig, ax = plt.subplots()
-    ax.plot(altitude, wind_speed)
-    ax.set_xlabel("高度/m")
-    ax.set_ylabel("風速/(m/s)")
+    ax.plot(wind_speed, altitude)
+    ax.set_ylabel("高度/m")
+    ax.set_xlabel("風速/(m/s)")
     ax.grid(which="both")
     return fig
 
