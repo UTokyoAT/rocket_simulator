@@ -119,12 +119,8 @@ def stability_figure(result: ResultForReport, data:pd.DataFrame) -> Figure:
     wind_center = result.context_nominal.wind_center[0]
     length = result.config_nominal.length
     # 安定性 = 相対距離（風圧中心 - 重心） / 長さ × 100
-    stability_burning = np.array(
-    (gravity_centers_burning - wind_center) / length * 100,
-    )
-    stability_coasting = np.array(
-    (gravity_centers_coasting - wind_center) / length * 100,
-    )
+    stability_burning = (gravity_centers_burning - wind_center) / length * 100
+    stability_coasting = (gravity_centers_coasting - wind_center) / length * 100
     ax.plot(times_burning,  stability_burning, label="burning")
     ax.plot(times_coasting,  stability_coasting, label="coasting")
     ax.legend()
