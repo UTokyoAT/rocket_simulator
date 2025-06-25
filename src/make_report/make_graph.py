@@ -184,13 +184,13 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
     )
     for speed_result in result_by_wind_speed:
         wind_speed = speed_result.wind_speed
-        x_vals = to_cycle([direction_result.result_parachute_on.iloc[-1]["position_e"] if(parachute)
+        landing_point_east = to_cycle([direction_result.result_parachute_on.iloc[-1]["position_e"] if(parachute)
                   else direction_result.result_parachute_off.iloc[-1]["position_e"]
                   for direction_result in speed_result.result])
-        y_vals = to_cycle([direction_result.result_parachute_on.iloc[-1]["position_n"] if(parachute)
+        landing_point_north = to_cycle([direction_result.result_parachute_on.iloc[-1]["position_n"] if(parachute)
                   else direction_result.result_parachute_off.iloc[-1]["position_n"]
                   for direction_result in speed_result.result])
-        ax.plot(x_vals, y_vals, label=f"{wind_speed} m/s")
+        ax.plot(landing_point_east, landing_point_north, label=f"{wind_speed} m/s")
     ax.legend()
     ax.grid(which="both")
     ax.set_xlabel("東/m")
