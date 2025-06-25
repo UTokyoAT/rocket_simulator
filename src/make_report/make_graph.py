@@ -11,6 +11,9 @@ from src.geography.launch_site import LaunchSite
 from .result_for_report import ResultByLauncherElevation, ResultByWindSpeed, ResultForReport, SimulationContext
 
 
+def to_cycle(x: list[float]) -> list[float]:
+    return [*x, x[0]]
+
 @dataclass
 class Graphs:
     ideal_dynamic_pressure: Figure
@@ -97,8 +100,8 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
 def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     fig, ax = plt.subplots()
     ax.scatter(0,0, label="射点")
-    ax.plot([*site.points_east(), site.points_east()[0]],
-            [*site.points_north(), site.points_north()[0]],
+    ax.plot(to_cycle(site.points_east()),
+            to_cycle(site.points_north()),
             label="落下可能域")
     landing = data.iloc[-1]
     ax.scatter(landing["position_e"], landing["position_n"], label="着地点")
@@ -175,22 +178,18 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
     fig, ax = plt.subplots()
     ax.scatter(0, 0, label="射点")
     ax.plot(
-        [*site.points_east(), site.points_east()[0]],
-        [*site.points_north(), site.points_north()[0]],
+        to_cycle(site.points_east()),
+        to_cycle(site.points_north()),
         label="落下可能域",
     )
     for speed_result in result_by_wind_speed:
         wind_speed = speed_result.wind_speed
-        x_vals = [direction_result.result_parachute_on.iloc[-1]["position_e"] if(parachute)
+        x_vals = to_cycle([direction_result.result_parachute_on.iloc[-1]["position_e"] if(parachute)
                   else direction_result.result_parachute_off.iloc[-1]["position_e"]
-                  for direction_result in speed_result.result]
-        y_vals = [direction_result.result_parachute_on.iloc[-1]["position_n"] if(parachute)
+                  for direction_result in speed_result.result])
+        y_vals = to_cycle([direction_result.result_parachute_on.iloc[-1]["position_n"] if(parachute)
                   else direction_result.result_parachute_off.iloc[-1]["position_n"]
-                  for direction_result in speed_result.result]
-        start_x = x_vals[0]
-        start_y = y_vals[0]
-        x_vals.append(start_x)
-        y_vals.append(start_y)
+                  for direction_result in speed_result.result])
         ax.plot(x_vals, y_vals, label=f"{wind_speed} m/s")
     ax.legend()
     ax.grid(which="both")
