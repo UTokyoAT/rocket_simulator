@@ -174,7 +174,7 @@ def rotation_figure(data: pd.DataFrame) -> Figure:
     return fig
 
 def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
-                        site: LaunchSite, parachute: int) -> Figure:
+                        site: LaunchSite, *, parachute: bool) -> Figure:
     fig, ax = plt.subplots()
     ax.scatter(0, 0, label="射点")
     ax.plot(
@@ -198,7 +198,7 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
     return fig
 
 def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSite,
-                                         parachute: int) -> dict[float, Figure]:
+                                         *,parachute: bool) -> dict[float, Figure]:
     def figure(result_by_elevation: ResultByLauncherElevation) -> Figure:
         wind_results = result_by_elevation.result
         return fall_dispersion_figure(
@@ -230,6 +230,6 @@ def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
         nominal_acceleration_figure = acceleration_figure(result.result_nominal_parachute_off),
         nominal_rotation_figure = rotation_figure(result.result_nominal_parachute_off),
         nominal_wind_figure = wind_figure(result.context_nominal),
-        fall_dispersion_figure_parachute_off = generate_all_fall_dispersion_figures(result,site,0),
-        fall_dispersion_figure_parachute_on = generate_all_fall_dispersion_figures(result,site,1),
+        fall_dispersion_figure_parachute_off = generate_all_fall_dispersion_figures(result,site,parachute=False),
+        fall_dispersion_figure_parachute_on = generate_all_fall_dispersion_figures(result,site,parachute=True),
         )
