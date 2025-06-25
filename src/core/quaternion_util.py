@@ -1,5 +1,5 @@
 import numpy as np
-import quaternion as quart
+import quaternion as quart  # ty: ignore
 
 
 def square_norm(q: quart.quaternion) -> float:

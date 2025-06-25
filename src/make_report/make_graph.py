@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import japanize_matplotlib  # noqa: F401
+import japanize_matplotlib  # noqa: F401 # ty: ignore
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
