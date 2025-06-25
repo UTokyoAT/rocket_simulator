@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-import quaternion as quart
+import quaternion as quart  # ty: ignore
 
 from src.core.rocket_state import RocketState
 

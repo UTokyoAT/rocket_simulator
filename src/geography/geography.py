@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import pymap3d as pm
+import pymap3d as pm  # ty: ignore
 
 
 def from_north_east_to_lat_lon(north: float, east: float, lat_0: float, lon_0: float) -> tuple[float, float]:

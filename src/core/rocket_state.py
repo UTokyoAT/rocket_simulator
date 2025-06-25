@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 import numpy as np
-import quaternion as quart
+import quaternion as quart  # ty: ignore
 
 from . import quaternion_util
 

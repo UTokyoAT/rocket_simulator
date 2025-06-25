@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
-import quaternion
+import quaternion  # ty: ignore
 
 if TYPE_CHECKING:
     from .air_force import AirForceResult

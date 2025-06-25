@@ -1,7 +1,7 @@
 import unittest
 
 import numpy as np
-import quaternion
+import quaternion  # ty: ignore
 
 from src.core import simulation_result
 
