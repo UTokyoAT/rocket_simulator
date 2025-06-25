@@ -173,7 +173,7 @@ def rotation_figure(data: pd.DataFrame) -> Figure:
 def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
                         site: LaunchSite, parachute: int) -> Figure:
     fig, ax = plt.subplots()
-    ax.plot(0, 0, "o", label="射点")
+    ax.scatter(0, 0, label="射点")
     ax.plot(
         [*site.points_east(), site.points_east()[0]],
         [*site.points_north(), site.points_north()[0]],
