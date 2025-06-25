@@ -50,12 +50,10 @@ class SimulationContext:
             config.wind.wind_direction,
         )
         self.thrust = interpolation.df_to_function_1d(config.thrust)
-        self.gravity_center = (
-            gravity_center.create_gravity_center_function_from_dataframe(
-                config.first_gravity_center,
-                config.end_gravity_center,
-                config.thrust,
-            )
+        self.gravity_center = gravity_center.create_gravity_center_function_from_dataframe(
+            config.first_gravity_center,
+            config.end_gravity_center,
+            config.thrust,
         )
         self.CA = config.CA
         self.CN_alpha = config.CN_alpha

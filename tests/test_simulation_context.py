@@ -20,7 +20,10 @@ class TestSimulationContext(unittest.TestCase):
 
         # WindPowerLowの設定
         self.wind_config = WindPowerLow(
-            reference_height=10.0, wind_speed=5.0, exponent=7.0, wind_direction=45.0,
+            reference_height=10.0,
+            wind_speed=5.0,
+            exponent=7.0,
+            wind_direction=45.0,
         )
 
         # 重心位置の設定
@@ -80,7 +83,8 @@ class TestSimulationContext(unittest.TestCase):
 
         # 重心位置関数のテスト
         np.testing.assert_array_almost_equal(
-            sim_context.gravity_center(0.0), self.first_gravity_center,
+            sim_context.gravity_center(0.0),
+            self.first_gravity_center,
         )
 
         # 風速関数のテスト
@@ -98,7 +102,8 @@ class TestSimulationContext(unittest.TestCase):
         # 慣性テンソルのテスト
         expected_tensor = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.1]])
         np.testing.assert_array_almost_equal(
-            sim_context.inertia_tensor.tensor, expected_tensor,
+            sim_context.inertia_tensor.tensor,
+            expected_tensor,
         )
 
 

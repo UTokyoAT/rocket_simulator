@@ -123,19 +123,19 @@ def normal_force_coefficient(angle_of_attack: float, cn_alpha: float) -> float:
 
 
 def parachute_force(
-    velocity_air: np.ndarray, parachute_terminal_velocity: float, mass: float,
+    velocity_air: np.ndarray,
+    parachute_terminal_velocity: float,
+    mass: float,
 ) -> np.ndarray:
-    return (
-        -9.8
-        * mass
-        / parachute_terminal_velocity**2
-        * np.linalg.norm(velocity_air, ord=2)
-        * velocity_air
-    )
+    return -9.8 * mass / parachute_terminal_velocity**2 * np.linalg.norm(velocity_air, ord=2) * velocity_air
 
 
 def calculate(
-    rocket_state: RocketState, context: SimulationContext, t: float, *, parachute_on: bool,
+    rocket_state: RocketState,
+    context: SimulationContext,
+    t: float,
+    *,
+    parachute_on: bool,
 ) -> AirForceResult:
     """空気力を計算する
 

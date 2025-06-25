@@ -66,10 +66,12 @@ class TestLandingRange(unittest.TestCase):
     def test_get_last_position(self) -> None:
         """get_last_position関数のテスト"""
         # テスト用のDataFrameを作成
-        test_result = pd.DataFrame({
-            "position_n": [100, 200, 300],
-            "position_e": [400, 500, 600],
-        })
+        test_result = pd.DataFrame(
+            {
+                "position_n": [100, 200, 300],
+                "position_e": [400, 500, 600],
+            }
+        )
 
         # 最後の位置を取得
         position = get_last_position(test_result)
@@ -87,14 +89,18 @@ class TestLandingRange(unittest.TestCase):
         # 風向0度の結果を追加
         wind_direction_result = ResultByWindDirection(
             wind_direction=0,
-            result_parachute_off=pd.DataFrame({
-                "position_n": [100, 200, 300],
-                "position_e": [400, 500, 600],
-            }),
-            result_parachute_on=pd.DataFrame({
-                "position_n": [150, 250, 350],
-                "position_e": [450, 550, 650],
-            }),
+            result_parachute_off=pd.DataFrame(
+                {
+                    "position_n": [100, 200, 300],
+                    "position_e": [400, 500, 600],
+                }
+            ),
+            result_parachute_on=pd.DataFrame(
+                {
+                    "position_n": [150, 250, 350],
+                    "position_e": [450, 550, 650],
+                }
+            ),
         )
         wind_speed_result.result.append(wind_direction_result)
         result.result.append(wind_speed_result)
@@ -116,10 +122,10 @@ class TestLandingRange(unittest.TestCase):
         loop = landing_range.loops[1]
         self.assertEqual(loop.name, "wind speed = 5 m/s, parachute on")
 
-        self.assertEqual(landing_range.loops[0].points[0].north, 300) #パラシュートなしの結果
-        self.assertEqual(landing_range.loops[0].points[0].east, 600) #パラシュートなしの結果
-        self.assertEqual(landing_range.loops[1].points[0].north, 350) #パラシュートありの結果
-        self.assertEqual(landing_range.loops[1].points[0].east, 650) #パラシュートありの結果
+        self.assertEqual(landing_range.loops[0].points[0].north, 300)  # パラシュートなしの結果
+        self.assertEqual(landing_range.loops[0].points[0].east, 600)  # パラシュートなしの結果
+        self.assertEqual(landing_range.loops[1].points[0].north, 350)  # パラシュートありの結果
+        self.assertEqual(landing_range.loops[1].points[0].east, 650)  # パラシュートありの結果
 
 
 if __name__ == "__main__":
