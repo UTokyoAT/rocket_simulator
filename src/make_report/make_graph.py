@@ -99,7 +99,7 @@ def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     ax.scatter(0,0, label="射点")
     ax.plot([*site.points_east(), site.points_east()[0]],
             [*site.points_north(), site.points_north()[0]],
-            label="落下可能域", linestyle="--", color="gray")
+            label="落下可能域")
     landing = data.iloc[-1]
     ax.scatter(landing["position_e"], landing["position_n"], label="着地点")
     ax.legend()
