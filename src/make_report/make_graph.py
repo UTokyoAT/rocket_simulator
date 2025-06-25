@@ -8,7 +8,7 @@ from matplotlib.figure import Figure
 
 from src.geography.launch_site import LaunchSite
 
-from .result_for_report import ResultByWindSpeed, ResultForReport, SimulationContext
+from .result_for_report import ResultByLauncherElevation, ResultByWindSpeed, ResultForReport, SimulationContext
 
 
 @dataclass
@@ -204,17 +204,18 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
 
 def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSite,
                                          parachute: int) -> dict[float, Figure]:
-    figures = {}
-    for result_by_elevation in result.result_by_launcher_elevation:
-        elevation = result_by_elevation.launcher_elevation
+    def figure(result_by_elevation: ResultByLauncherElevation) -> Figure:
         wind_results = result_by_elevation.result
-        fig = fall_dispersion_figure(
+        return fall_dispersion_figure(
             result_by_wind_speed=wind_results,
             site=site,
             parachute = parachute,
         )
-        figures[elevation] = fig
-    return figures
+
+    return {
+        result_by_elevation.launcher_elevation: figure(result_by_elevation)
+        for result_by_elevation in result.result_by_launcher_elevation
+        }
 
 def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
     return Graphs(
