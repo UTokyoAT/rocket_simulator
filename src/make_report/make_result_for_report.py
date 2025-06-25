@@ -8,17 +8,8 @@ import pandas as pd
 from src.core import simple_simulation
 from src.core.config import Config
 from src.core.simulation_context import SimulationContext
+from src.make_report.report_config import ReportConfig
 from src.make_report.result_for_report import ResultForReport
-
-
-@dataclass
-class ReportConfig:
-    launcher_elevation: float
-    wind_speed_nominal: float
-    wind_direction_nominal: float
-    wind_speed_list: list[float]
-    wind_direction_list: list[float]
-    launcher_elevation_list: list[float]
 
 
 @dataclass
