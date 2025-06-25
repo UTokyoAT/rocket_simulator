@@ -1,13 +1,14 @@
+import copy
 import itertools
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 
 import pandas as pd
 
-from ..core import simple_simulation
-from ..core.config import Config
-from ..core.simulation_context import SimulationContext
-from .result_for_report import ResultForReport
+from src.core import simple_simulation
+from src.core.config import Config
+from src.core.simulation_context import SimulationContext
+from src.make_report.result_for_report import ResultForReport
 
 
 @dataclass
@@ -27,10 +28,15 @@ class Setting:
     wind_direction: float
 
 
-def run(config: Config, setting: Setting) -> tuple[pd.DataFrame, pd.DataFrame]:
+def changed_config(original: Config, setting: Setting) -> Config:
+    config = copy.deepcopy(original)
     config.first_elevation = setting.launcher_elevation
     config.wind.wind_speed = setting.wind_speed
     config.wind.wind_direction = setting.wind_direction
+    return config
+
+def run(config: Config, setting: Setting) -> tuple[pd.DataFrame, pd.DataFrame]:
+    config = changed_config(config, setting)
     results = simple_simulation.simulate(config)
     return (results[0].to_df(), results[1].to_df())
 
@@ -49,14 +55,12 @@ def run_concurrent(
             wind_speed_direction_pairsの順番に対応している。
     """
     with ProcessPoolExecutor() as executor:
-        results = list(executor.map(run, [config] * len(settings), settings))
-    return results
+        return list(executor.map(run, [config] * len(settings), settings))
 
 
 def make_result_for_report(
     config: Config, report_config: ReportConfig,
 ) -> ResultForReport:
-    context = SimulationContext(config)
     setting_ideal = Setting(
         launcher_elevation=report_config.launcher_elevation,
         wind_speed=0,
@@ -83,13 +87,17 @@ def make_result_for_report(
         )
         for launcher_elevation, wind_speed, wind_direction in settings_list
     ]
-    settings = [setting_ideal, setting_nominal] + settings_wind
+    settings = [setting_ideal, setting_nominal, *settings_wind]
     results = run_concurrent(config, settings)
     result_ideal = results[0]
     result_nominal = results[1]
+
+    config_nominal = changed_config(config, setting_nominal)
+    context_nominal = SimulationContext(config_nominal)
+
     body = ResultForReport(
-        config=config,
-        context=context,
+        config_nominal=config_nominal,
+        context_nominal=context_nominal,
         result_ideal_parachute_off=result_ideal[0],
         result_ideal_parachute_on=result_ideal[1],
         result_nominal_parachute_off=result_nominal[0],

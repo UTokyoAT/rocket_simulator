@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 import pandas as pd
 
-from ..core.config import Config
-from ..core.simulation_context import SimulationContext
+from src.core.config import Config
+from src.core.simulation_context import SimulationContext
 
 
 @dataclass
@@ -23,7 +23,7 @@ class ResultByWindSpeed:
         wind_direction: float,
         result_parachute_off: pd.DataFrame,
         result_parachute_on: pd.DataFrame,
-    ):
+    ) -> None:
 
         self.result.append(
             ResultByWindDirection(
@@ -45,7 +45,7 @@ class ResultByLauncherElevation:
         wind_direction: float,
         result_parachute_off: pd.DataFrame,
         result_parachute_on: pd.DataFrame,
-    ):
+    ) -> None:
         for result_by_wind_speed in self.result:
             if result_by_wind_speed.wind_speed == wind_speed:
                 result_by_wind_speed.append(
@@ -60,8 +60,8 @@ class ResultByLauncherElevation:
 
 @dataclass
 class ResultForReport:
-    config: Config
-    context: SimulationContext
+    config_nominal: Config
+    context_nominal: SimulationContext
     result_ideal_parachute_off: pd.DataFrame
     result_ideal_parachute_on: pd.DataFrame
     result_nominal_parachute_off: pd.DataFrame
@@ -75,7 +75,7 @@ class ResultForReport:
         launcher_elevation: float,
         result_parachute_off: pd.DataFrame,
         result_parachute_on: pd.DataFrame,
-    ):
+    ) -> None:
         for result_by_launcher_elevation in self.result_by_launcher_elevation:
             if result_by_launcher_elevation.launcher_elevation == launcher_elevation:
                 result_by_launcher_elevation.append(
