@@ -213,10 +213,6 @@ def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSi
             site=site,
             parachute = parachute,
         )
-        if(parachute):
-            fig.suptitle(f"Fall Dispersion Parachute_on(Elevation: {elevation}°)")
-        else:
-            fig.suptitle(f"Fall Dispersion Parachute_off(Elevation: {elevation}°)")
         figures[elevation] = fig
     return figures
 
