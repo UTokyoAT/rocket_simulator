@@ -1,7 +1,18 @@
 from collections.abc import Callable
-from typing import TypeVar
+from typing import Protocol, TypeVar
 
-T = TypeVar("T")  # 状態を表す型変数
+
+class Vector(Protocol):
+    """スカラー演算をサポートする型のプロトコル"""
+
+    def __add__(self, other: "Vector") -> "Vector":
+        raise NotImplementedError
+
+    def __mul__(self, other: float) -> "Vector":
+        raise NotImplementedError
+
+
+T = TypeVar("T", bound=Vector)  # スカラー演算をサポートする型変数
 
 
 def runge_kutta4(
@@ -24,7 +35,7 @@ def runge_kutta4(
         List[Tuple[float, T]]: 時刻と状態のリスト
     """
     result = [(initial_time, initial_state)]
-    while not end_condition(*result[-1]):
+    while not end_condition(result[-1][0], result[-1][1]):
         t_n, y_n = result[-1]
         k1 = f(t_n, y_n)
         k2 = f(t_n + time_step / 2, y_n + k1 * (time_step / 2))
