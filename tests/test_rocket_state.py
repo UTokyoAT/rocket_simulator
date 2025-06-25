@@ -22,8 +22,12 @@ class TestRocketState(unittest.TestCase):
         )
 
     def assert_rocket_state_equal(
-        self, rs: RocketState, position: np.ndarray, velocity: np.ndarray,
-        posture: quart.quaternion, rotation: np.ndarray,
+        self,
+        rs: RocketState,
+        position: np.ndarray,
+        velocity: np.ndarray,
+        posture: quart.quaternion,
+        rotation: np.ndarray,
     ) -> None:
         np.testing.assert_array_equal(rs.position, position)
         np.testing.assert_array_equal(rs.velocity, velocity)
@@ -43,7 +47,11 @@ class TestRocketState(unittest.TestCase):
     def test_mul(self) -> None:
         result = self.rs1 * 2
         self.assert_rocket_state_equal(
-            result, [2, 4, 6], [4, 6, 8], quart.quaternion(2, 4, 6, 8), [8, 10, 12],
+            result,
+            [2, 4, 6],
+            [4, 6, 8],
+            quart.quaternion(2, 4, 6, 8),
+            [8, 10, 12],
         )
 
 

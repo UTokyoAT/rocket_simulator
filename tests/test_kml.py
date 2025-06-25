@@ -61,6 +61,7 @@ expected_landing_range_kml = """<?xml version="1.0" encoding="UTF-8"?>
 </Document>
 </kml>"""  # noqa: E501
 
+
 class TestKml(unittest.TestCase):
     """KMLファイルのテスト"""
 

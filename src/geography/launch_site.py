@@ -16,7 +16,10 @@ class LaunchSite:
         allowed_area: list[tuple[float, float]],
     ) -> "LaunchSite":
         launch_point = Point.from_lat_lon(
-            latitude_launch_point, longitude_launch_point, latitude_launch_point, longitude_launch_point,
+            latitude_launch_point,
+            longitude_launch_point,
+            latitude_launch_point,
+            longitude_launch_point,
         )
         allowed_area = [
             Point.from_lat_lon(

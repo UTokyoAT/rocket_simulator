@@ -19,8 +19,8 @@ ignore = [
     "D415", #ピリオドで終わる
     "D203",  # one-blank-line-before-class (競合するルール)
     "D212",  # multi-line-summary-first-line (競合するルール)
-    "ANN101",  # Missing type annotation for `self` in method
     "FIX002",  # Line contains TODO, consider resolving the issue
+    "COM812"
 ]
 
 # flake8互換の設定
