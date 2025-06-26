@@ -2,9 +2,10 @@ import copy
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-import numpy as np
 import pandas as pd
 import quaternion  # ty: ignore
+
+from src.util.type import NPVector
 
 if TYPE_CHECKING:
     from .air_force import AirForceResult
@@ -17,15 +18,15 @@ class SimulationResultRow:
     """ある時刻でのロケットの状態を表す"""
 
     time: float
-    position: np.ndarray
-    velocity: np.ndarray
+    position: NPVector
+    velocity: NPVector
     posture: quaternion.quaternion
-    rotation: np.ndarray
+    rotation: NPVector
     dynamic_pressure: float
     burning: bool
     on_launcher: bool
-    velocity_air_body_frame: np.ndarray
-    acceleration_body_frame: np.ndarray
+    velocity_air_body_frame: NPVector
+    acceleration_body_frame: NPVector
 
     @classmethod
     def from_state(
@@ -33,7 +34,7 @@ class SimulationResultRow:
         time: float,
         state: "RocketState",
         context: "SimulationContext",
-        acceleration_body_frame: np.ndarray,
+        acceleration_body_frame: NPVector,
         air_force_result: "AirForceResult",
         *,
         on_launcher: bool,
@@ -45,7 +46,7 @@ class SimulationResultRow:
             state (RocketState): ロケットの状態
             context (SimulationContext): シミュレーションコンテキスト
             on_launcher (bool): ランチャー上にあるかどうか
-            acceleration_body_frame (np.ndarray): ボディフレーム座標系での加速度
+            acceleration_body_frame (NPVector): ボディフレーム座標系での加速度
             air_force_result (AirForceResult): 空気力の計算結果
 
         Returns:

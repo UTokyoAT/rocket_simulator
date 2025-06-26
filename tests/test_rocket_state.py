@@ -4,6 +4,7 @@ import numpy as np
 import quaternion as quart  # ty: ignore
 
 from src.core.rocket_state import RocketState
+from src.util.type import NPVector
 
 
 class TestRocketState(unittest.TestCase):
@@ -24,10 +25,10 @@ class TestRocketState(unittest.TestCase):
     def assert_rocket_state_equal(
         self,
         rs: RocketState,
-        position: np.ndarray,
-        velocity: np.ndarray,
+        position: NPVector,
+        velocity: NPVector,
         posture: quart.quaternion,
-        rotation: np.ndarray,
+        rotation: NPVector,
     ) -> None:
         np.testing.assert_array_equal(rs.position, position)
         np.testing.assert_array_equal(rs.velocity, velocity)

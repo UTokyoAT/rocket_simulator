@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
-import numpy as np
 import quaternion as quart  # ty: ignore
+
+from src.util.type import NPVector
 
 from . import quaternion_util
 
@@ -10,13 +11,13 @@ from . import quaternion_util
 class RocketState:
     """ある時刻におけるロケットの状態を表すクラス"""
 
-    position: np.ndarray
+    position: NPVector
     """慣性系でのロケットの位置"""
-    velocity: np.ndarray
+    velocity: NPVector
     """慣性系でのロケットの速度"""
     posture: quart.quaternion
     """慣性系でのロケットの姿勢"""
-    rotation: np.ndarray
+    rotation: NPVector
     """剛体系でのロケットの角速度"""
 
     def __add__(self, other: "RocketState") -> "RocketState":
@@ -39,15 +40,15 @@ class RocketState:
     def derivative(
         cls,
         rocket_state: "RocketState",
-        acceleration: np.ndarray,
-        angular_acceleration: np.ndarray,
+        acceleration: NPVector,
+        angular_acceleration: NPVector,
     ) -> "RocketState":
         """時間微分を計算する
 
         Args:
             rocket_state (RocketState): ロケットの状態
-            acceleration (np.ndarray): 慣性系での加速度
-            angular_acceleration (np.ndarray): 剛体系での角加速度
+            acceleration (NPVector): 慣性系での加速度
+            angular_acceleration (NPVector): 剛体系での角加速度
         """
         dq_dt = quaternion_util.quaternion_derivative(
             rocket_state.posture,

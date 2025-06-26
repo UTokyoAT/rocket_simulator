@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 import src.core.interpolation as i
+from src.util.type import NPVector
 
 
 class TestInterpolation(unittest.TestCase):
@@ -13,7 +14,7 @@ class TestInterpolation(unittest.TestCase):
         np.testing.assert_array_almost_equal(f(1.5), np.array([2.5]))
 
     def test_linear_interpolation_array(self) -> None:
-        # テスト用データフレーム(値がnp.ndarray)を作成
+        # テスト用データフレーム(値がNPVector)を作成
         data = pd.DataFrame(
             {
                 "gravity_center": [
@@ -30,7 +31,7 @@ class TestInterpolation(unittest.TestCase):
 
         # 補間結果がnumpy配列であることを確認
         result = f(1.5)
-        self.assertIsInstance(result, np.ndarray)
+        self.assertIsInstance(result, NPVector)
 
         # 値が正しく補間されていることを確認
         expected = np.array([1.5, 0.0, 0.0])

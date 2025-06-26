@@ -2,13 +2,15 @@ import typing as t
 
 import numpy as np
 
+from src.util.type import NPVector
+
 
 def wind_velocity_power(
     reference_height: float,
     wind_speed: float,
     exponent: float,
     wind_direction: float,
-) -> t.Callable[[float], np.ndarray]:
+) -> t.Callable[[float], NPVector]:
     """風速を計算する関数を生成する
 
     Args:
@@ -18,17 +20,17 @@ def wind_velocity_power(
         wind_direction (float): 風上の方位角[deg]
 
     Returns:
-        t.Callable[[float],np.ndarray]: 高度から風速への関数
+        t.Callable[[float],NPVector]: 高度から風速への関数
     """
 
-    def f(height: float) -> np.ndarray:
+    def f(height: float) -> NPVector:
         """高度から風速を計算する
 
         Args:
             height (float): 高度
 
         Returns:
-            np.ndarray: 風速
+            NPVector: 風速
         """
         theta = np.deg2rad(wind_direction)
         if height < 0:

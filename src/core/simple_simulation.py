@@ -2,6 +2,8 @@ import typing
 
 import numpy as np
 
+from src.util.type import NPVector
+
 from . import air_force, equation_of_motion, ode_solver, quaternion_util, simulation_result
 from .config import Config
 from .rocket_state import RocketState
@@ -14,7 +16,7 @@ def to_simulation_result_row(
     time: float,
     state: RocketState,
     context: SimulationContext,
-    acceleration_body_frame: np.ndarray,
+    acceleration_body_frame: NPVector,
     *,
     on_launcher: bool,
 ) -> simulation_result.SimulationResultRow:
@@ -36,7 +38,7 @@ def acceleration_inertial_frame(
     context: SimulationContext,
     *,
     parachute_on: bool,
-) -> np.ndarray:
+) -> NPVector:
     air_force_result = air_force.calculate(state, context, t, parachute_on=parachute_on)
     thrust = np.array([context.thrust(t), 0, 0])
     force = quaternion_util.sum_vector_inertial_frame(
@@ -51,7 +53,7 @@ def angular_acceleration(
     air_force_result: air_force.AirForceResult,
     context: SimulationContext,
     state: RocketState,
-) -> np.ndarray:
+) -> NPVector:
     return equation_of_motion.angular_acceleration(
         air_force_result.moment,
         context.inertia_tensor,
@@ -75,7 +77,7 @@ def simulate_launcher(
         simulation_result.SimulationResult: シミュレーション結果
     """
 
-    def acceleration_body_frame(t: float, state: RocketState) -> np.ndarray:
+    def acceleration_body_frame(t: float, state: RocketState) -> NPVector:
         acceleration_body_frame_no_constraints = quaternion_util.inertial_to_body(
             state.posture,
             acceleration_inertial_frame(t, state, context, parachute_on=False),

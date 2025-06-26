@@ -1,6 +1,8 @@
 import numpy as np
 import quaternion as quart  # ty: ignore
 
+from src.util.type import NPVector
+
 
 def square_norm(q: quart.quaternion) -> float:
     """クォータニオンのノルムの二乗を計算する
@@ -16,13 +18,13 @@ def square_norm(q: quart.quaternion) -> float:
 
 def quaternion_derivative(
     q: quart.quaternion,
-    angular_velocity: np.ndarray,
+    angular_velocity: NPVector,
 ) -> quart.quaternion:
     """クォータニオンの時間微分を計算する
 
     Args:
         q (quart.quaternion): クォータニオン
-        angular_velocity (np.ndarray): 剛体系での角速度
+        angular_velocity (NPVector): 剛体系での角速度
 
     Returns:
         quart.quaternion: クォータニオンの時間微分
@@ -30,28 +32,28 @@ def quaternion_derivative(
     return 0.5 * q * quart.quaternion(0, *angular_velocity)
 
 
-def inertial_to_body(q: quart.quaternion, v: np.ndarray) -> np.ndarray:
+def inertial_to_body(q: quart.quaternion, v: NPVector) -> NPVector:
     """慣性系から剛体系への座標変換を行う
 
     Args:
         q (quart.quaternion): クォータニオン
-        v (np.ndarray): 慣性系でのベクトル
+        v (NPVector): 慣性系でのベクトル
 
     Returns:
-        np.ndarray: 剛体系でのベクトル
+        NPVector: 剛体系でのベクトル
     """
     return (q.conj() * quart.quaternion(0, *v) * q).vec / square_norm(q)
 
 
-def body_to_inertial(q: quart.quaternion, v: np.ndarray) -> np.ndarray:
+def body_to_inertial(q: quart.quaternion, v: NPVector) -> NPVector:
     """剛体系から慣性系への座標変換を行う
 
     Args:
         q (quart.quaternion): クォータニオン
-        v (np.ndarray): 剛体系でのベクトル
+        v (NPVector): 剛体系でのベクトル
 
     Returns:
-        np.ndarray: 慣性系でのベクトル
+        NPVector: 慣性系でのベクトル
     """
     return (q * quart.quaternion(0, *v) * q.conj()).vec / square_norm(q)
 
@@ -99,19 +101,19 @@ def from_euler_angle(elevation: float, azimuth: float, roll: float) -> quart.qua
 
 
 def sum_vector_inertial_frame(
-    vectors_body_frame: list[np.ndarray],
-    vectors_inertial_frame: list[np.ndarray],
+    vectors_body_frame: list[NPVector],
+    vectors_inertial_frame: list[NPVector],
     posture: quart.quaternion,
-) -> np.ndarray:
+) -> NPVector:
     """剛体座標系でのベクトルと慣性座標系でのベクトルを合成して慣性座標系でのベクトルを返す
 
     Args:
-        vectors_body_frame (list[np.ndarray]): 機体座標系でのベクトル
-        vectors_inertial_frame (list[np.ndarray]): 慣性系でのベクトル
+        vectors_body_frame (list[NPVector]): 機体座標系でのベクトル
+        vectors_inertial_frame (list[NPVector]): 慣性系でのベクトル
         posture (quart.quaternion): 機体の姿勢
 
     Returns:
-        np.ndarray: 慣性系でのベクトルの和
+        NPVector: 慣性系でのベクトルの和
     """
     vectors_body_frame_sum = np.sum(vectors_body_frame, axis=0)
     vectors_inertial_frame_sum = np.sum(vectors_inertial_frame, axis=0)
@@ -122,19 +124,19 @@ def sum_vector_inertial_frame(
 
 
 def sum_vector_body_frame(
-    vectos_body_frame: list[np.ndarray],
-    vectors_inertial_frame: list[np.ndarray],
+    vectos_body_frame: list[NPVector],
+    vectors_inertial_frame: list[NPVector],
     posture: quart.quaternion,
-) -> np.ndarray:
+) -> NPVector:
     """慣性座標系でのベクトルと機体座標系でのベクトルを合成して機体座標系でのベクトルを返す
 
     Args:
-        vectos_body_frame (list[np.ndarray]): 機体座標系でのベクトル
-        vectors_inertial_frame (list[np.ndarray]): 慣性系でのベクトル
+        vectos_body_frame (list[NPVector]): 機体座標系でのベクトル
+        vectors_inertial_frame (list[NPVector]): 慣性系でのベクトル
         posture (quart.quaternion): 機体の姿勢
 
     Returns:
-        np.ndarray: 機体座標系でのベクトルの和
+        NPVector: 機体座標系でのベクトルの和
     """
     vectors_body_frame_sum = np.sum(vectos_body_frame, axis=0)
     vectors_inertial_frame_sum = np.sum(vectors_inertial_frame, axis=0)

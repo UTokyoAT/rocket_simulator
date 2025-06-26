@@ -1,7 +1,8 @@
 import typing
 
-import numpy as np
 import pandas as pd
+
+from src.util.type import NPVector
 
 from . import interpolation
 
@@ -12,19 +13,19 @@ def thrust_end_time(thrust_df: pd.DataFrame) -> float:
 
 
 def create_gravity_center_function_from_dataframe(
-    first_gravity_center: np.ndarray,
-    end_gravity_center: np.ndarray,
+    first_gravity_center: NPVector,
+    end_gravity_center: NPVector,
     thrust_df: pd.DataFrame,
-) -> typing.Callable[[float], np.ndarray]:
+) -> typing.Callable[[float], NPVector]:
     """DataFrameから重心位置を計算する関数を作成する
 
     Args:
-        first_gravity_center (np.ndarray): 初期重心位置
-        end_gravity_center (np.ndarray): 最終重心位置
+        first_gravity_center (NPVector): 初期重心位置
+        end_gravity_center (NPVector): 最終重心位置
         thrust_df (pd.DataFrame): 推力データフレーム
 
     Returns:
-        typing.Callable[[float], np.ndarray]: 時間から重心位置を計算する関数
+        typing.Callable[[float], NPVector]: 時間から重心位置を計算する関数
     """
     # 閾値
     thrust_end_time_ = thrust_end_time(thrust_df)
@@ -45,7 +46,7 @@ def create_gravity_center_function_from_dataframe(
     interp_func = interpolation.df_to_function_1d_array(gravity_center_df)
 
     # エラー処理を追加
-    def gravity_center_func(time: float) -> np.ndarray:
+    def gravity_center_func(time: float) -> NPVector:
         try:
             return interp_func(time)
         except ValueError:

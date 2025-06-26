@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from src.util.type import NPVector
+
 from . import quaternion_util
 from .rocket_state import RocketState
 from .simulation_context import SimulationContext
@@ -11,24 +13,24 @@ from .simulation_context import SimulationContext
 class AirForceResult:
     """空気力の計算結果を表すクラス"""
 
-    force: np.ndarray
+    force: NPVector
     """剛体系での力"""
 
-    moment: np.ndarray
+    moment: NPVector
     """剛体系でのモーメント"""
 
     dynamic_pressure: float
     """動圧"""
 
-    velocity_air_body_frame: np.ndarray
+    velocity_air_body_frame: NPVector
     """剛体系での対気速度"""
 
 
-def dynamic_pressure(airspeed: np.ndarray, air_density: float) -> float:
+def dynamic_pressure(airspeed: NPVector, air_density: float) -> float:
     """動圧を計算する
 
     Args:
-        airspeed (np.ndarray): 剛体系での機体速度
+        airspeed (NPVector): 剛体系での機体速度
         air_density (float): 空気密度
 
     Returns:
@@ -38,15 +40,15 @@ def dynamic_pressure(airspeed: np.ndarray, air_density: float) -> float:
 
 
 def axial_force(
-    airspeed: np.ndarray,
+    airspeed: NPVector,
     air_density: float,
     body_area: float,
     axial_force_coefficient: float,
-) -> np.ndarray:
+) -> NPVector:
     """軸方向の力を計算する
 
     Args:
-        airspeed (np.ndarray): 剛体系での機体の対気速度
+        airspeed (NPVector): 剛体系での機体の対気速度
         air_density (float): 空気密度
         body_area (float): 断面積
         axial_force_coefficient (float): 軸方向の力係数CA
@@ -59,15 +61,15 @@ def axial_force(
 
 
 def normal_force(
-    airspeed: np.ndarray,
+    airspeed: NPVector,
     air_density: float,
     body_area: float,
     normal_force_coefficient: float,
-) -> np.ndarray:
+) -> NPVector:
     """法線方向の力を計算する
 
     Args:
-        airspeed (np.ndarray): 剛体系での機体の対気速度
+        airspeed (NPVector): 剛体系での機体の対気速度
         air_density (float): 空気密度
         body_area (float): 断面積
         normal_force_coefficient (float): 法線方向の力係数CN
@@ -84,11 +86,11 @@ def normal_force(
     return p * body_area * normal_force_coefficient * direction
 
 
-def angle_of_attack(airspeed: np.ndarray) -> float:
+def angle_of_attack(airspeed: NPVector) -> float:
     """迎角を計算する
 
     Args:
-        airspeed (np.ndarray): 剛体系での機体速度
+        airspeed (NPVector): 剛体系での機体速度
 
     Returns:
         float: 迎角[rad](速度ベクトルと機体軸とのなす角度)
@@ -96,15 +98,15 @@ def angle_of_attack(airspeed: np.ndarray) -> float:
     return np.arctan2(np.linalg.norm(airspeed[1:], ord=2), airspeed[0])
 
 
-def air_force_moment(force: np.ndarray, wind_center: np.ndarray) -> np.ndarray:
+def air_force_moment(force: NPVector, wind_center: NPVector) -> NPVector:
     """力のモーメントを計算する
 
     Args:
-        force (np.ndarray): 剛体系での力
-        wind_center (np.ndarray): 重心から見た風圧中心
+        force (NPVector): 剛体系での力
+        wind_center (NPVector): 重心から見た風圧中心
 
     Returns:
-        np.ndarray: モーメント
+        NPVector: モーメント
     """
     return np.cross(wind_center, force)
 
@@ -123,10 +125,10 @@ def normal_force_coefficient(angle_of_attack: float, cn_alpha: float) -> float:
 
 
 def parachute_force(
-    velocity_air: np.ndarray,
+    velocity_air: NPVector,
     parachute_terminal_velocity: float,
     mass: float,
-) -> np.ndarray:
+) -> NPVector:
     return -9.8 * mass / parachute_terminal_velocity**2 * np.linalg.norm(velocity_air, ord=2) * velocity_air
 
 

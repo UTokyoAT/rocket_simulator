@@ -8,6 +8,7 @@ import src.core.quaternion_util as qu
 from src.core.config import Config, WindPowerLow
 from src.core.rocket_state import RocketState
 from src.core.simulation_context import SimulationContext
+from src.util.type import NPVector
 
 
 class TestAirForce(unittest.TestCase):
@@ -144,10 +145,10 @@ class TestAirForce(unittest.TestCase):
 
         # 結果の検証
         self.assertIsInstance(result, af.AirForceResult)
-        self.assertIsInstance(result.force, np.ndarray)
-        self.assertIsInstance(result.moment, np.ndarray)
+        self.assertIsInstance(result.force, NPVector)
+        self.assertIsInstance(result.moment, NPVector)
         self.assertIsInstance(result.dynamic_pressure, float)
-        self.assertIsInstance(result.velocity_air_body_frame, np.ndarray)
+        self.assertIsInstance(result.velocity_air_body_frame, NPVector)
 
         # 風速が考慮された対気速度になっているか確認
         wind_at_100m = self.context.wind(100.0)

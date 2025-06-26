@@ -1,6 +1,6 @@
 import typing
 
-import numpy as np
+from src.util.type import NPVector
 
 from . import gravity_center, interpolation, wind
 from .config import Config
@@ -10,11 +10,11 @@ from .inertia_tensor import InertiaTensor
 class SimulationContext:
     mass: typing.Callable[[float], float]
     """時間->質量"""
-    wind: typing.Callable[[float], np.ndarray]
+    wind: typing.Callable[[float], NPVector]
     """高度->風速ベクトル"""
     thrust: typing.Callable[[float], float]
     """時間->推力"""
-    gravity_center: typing.Callable[[float], np.ndarray]
+    gravity_center: typing.Callable[[float], NPVector]
     """時間->重心位置"""
     CA: float
     """軸力係数"""
@@ -22,7 +22,7 @@ class SimulationContext:
     """単位なす角あたりの法線力係数"""
     body_area: float
     """断面積"""
-    wind_center: np.ndarray
+    wind_center: NPVector
     """風圧中心"""
     dt: float
     """時間刻み"""

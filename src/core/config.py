@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
-import numpy as np
 import pandas as pd
+
+from src.util.type import NPVector
 
 
 @dataclass
@@ -20,7 +21,7 @@ class Config:
     CA: float
     CN_alpha: float
     body_area: float
-    wind_center: np.ndarray
+    wind_center: NPVector
     dt: float
     launcher_length: float
     inertia_tensor_xx: float
@@ -34,6 +35,6 @@ class Config:
     first_roll: float
     parachute_terminal_velocity: float
     parachute_delay_time: float
-    first_gravity_center: np.ndarray
-    end_gravity_center: np.ndarray
+    first_gravity_center: NPVector
+    end_gravity_center: NPVector
     length: float
