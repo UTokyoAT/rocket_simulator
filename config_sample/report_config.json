@@ -4,7 +4,5 @@
     "wind_direction_nominal": 45,
     "wind_speed_list": [3, 4, 5, 6],
     "wind_direction_list": [0, 45, 90, 135, 180, 225, 270, 315],
-    "launcher_elevation_list": [70, 80],
-    "launch_point_latitude": 36,
-    "launch_point_longitude": 140
+    "launcher_elevation_list": [70, 80]
 }
