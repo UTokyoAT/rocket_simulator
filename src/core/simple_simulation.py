@@ -177,12 +177,13 @@ simulate_on_rise = simulate_flight(lambda _, state: state.velocity[2] > 0, parac
 
 def simulate_waiting_parachute_delay(
     time_fall_start: float,
+    delay_time: float,
 ) -> typing.Callable[
     [RocketState, SimulationContext, float],
     simulation_result.SimulationResult,
 ]:
     def end_condition(t: float, _: RocketState) -> bool:
-        return t > time_fall_start
+        return t > time_fall_start + delay_time
 
     return simulate_flight(end_condition, parachute_on=False)
 
@@ -226,7 +227,7 @@ def simulate(
     result_on_rise = simulate_on_rise(first_state, context, last.time)
     last = result_on_rise.last()
     first_state = last.to_rocket_state()
-    result_waiting_parachute_delay = simulate_waiting_parachute_delay(last.time)(
+    result_waiting_parachute_delay = simulate_waiting_parachute_delay(last.time, context.parachute_delay_time)(
         first_state,
         context,
         last.time,
