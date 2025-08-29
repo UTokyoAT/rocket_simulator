@@ -45,3 +45,14 @@ def launch_clear(data: pd.DataFrame) -> dict:
         "風速制限/(m/s)": round(min(w_alpha, w_beta), 2),
     }
 
+def max_altitude(data: pd.DataFrame) -> dict:
+    print("最高高度")
+    max_altitude = data.loc[data["position_d"].idxmin()]
+    print(
+        f"t={max_altitude.time}s,altitude={-(max_altitude.altitude)}m,velocity_air={air_velocity_norm(max_altitude)}m/s"
+    )
+    return {
+        "時刻/s": round(max_altitude.time, 2),
+        "高度/m": round(max_altitude.altitude, 2),
+        "対気速度/(m/s)": round(air_velocity_norm(max_altitude), 2),
+    }
