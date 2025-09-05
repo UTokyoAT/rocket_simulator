@@ -24,6 +24,10 @@ def air_velocity_norm(row) -> float:
         row.velocity_air_body_frame_x**2 + row.velocity_air_body_frame_y**2 + row.velocity_air_body_frame_z**2
     ) ** 0.5
 
+def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
+    burning = data[data["burning"]]
+    coasting = data[~data["burning"]]
+    return burning, coasting
 
 def launch_clear(data: pd.DataFrame) -> dict:
     """ランチクリア時の情報"""
@@ -45,6 +49,19 @@ def launch_clear(data: pd.DataFrame) -> dict:
         "風速制限/(m/s)": round(min(w_alpha, w_beta), 2),
     }
 
+def dynamic_pressure(data: pd.DataFrame, all=False) -> dict:
+    burning, coasting = burning_coasting_division(data)
+    if all:
+        pressure_max = data.loc[data["dynamic_pressure"].idxmax()]
+    else:
+        pressure_max = burning.loc[burning["dynamic_pressure"].idxmax()]
+    return {
+        "時刻/s": round(pressure_max.time, 2),
+        "高度/m": round(pressure_max.altitude, 2),
+        "動圧/kPa": round(pressure_max.dynamic_pressure / 1000, 2),
+        "対気速度/(m/s)": round(air_velocity_norm(pressure_max), 2),
+    }
+
 def max_altitude(data: pd.DataFrame) -> dict:
     print("最高高度")
     max_altitude = data.loc[data["position_d"].idxmin()]
@@ -56,3 +73,4 @@ def max_altitude(data: pd.DataFrame) -> dict:
         "高度/m": round(max_altitude.altitude, 2),
         "対気速度/(m/s)": round(air_velocity_norm(max_altitude), 2),
     }
+
