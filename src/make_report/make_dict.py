@@ -51,16 +51,20 @@ def launch_clear(data: pd.DataFrame) -> dict:
     }
 
 def dynamic_pressure(data: pd.DataFrame, all=False) -> dict:
-    burning, coasting = burning_coasting_division(data)
+    burning = data[data["burning"]]
     if all:
-        pressure_max = data.loc[data["dynamic_pressure"].idxmax()]
+        pressure_max = data.loc[data["dynamic_pressure"].idxmax()]  #燃料を噴射している最中の圧力の最大値
     else:
         pressure_max = burning.loc[burning["dynamic_pressure"].idxmax()]
+    air_velocity_norm = (
+        pressure_max.velosity_air_body_frame_x**2
+        + pressure_max.velosity_air_body_frame_y**2
+        + pressure_max.velosity_air_body_frame_z**2) ** 0.5
     return {
         "時刻/s": round(pressure_max.time, 2),
-        "高度/m": round(pressure_max.altitude, 2),
+        "高度/m": round(pressure_max.position_d, 2),
         "動圧/kPa": round(pressure_max.dynamic_pressure / 1000, 2),
-        "対気速度/(m/s)": round(air_velocity_norm(pressure_max), 2),
+        "対気速度/(m/s)": round(air_velocity_norm, 2),
     }
 
 def max_altitude(data: pd.DataFrame) -> dict:
@@ -92,3 +96,11 @@ def landing(data: pd.DataFrame) -> dict:
             2,
         ),
     }
+
+def make_dict(result: ResultForReport, site: LaunchSite) -> dict:
+    ideal_launch_clear = launch_clear(result.result_ideal_parachute_off)
+    ideal_dynamic_pressure = dynamic_pressure(result.result_ideal_parachute_off)
+    ideal_max_altitude = max_altitude(result.result_ideal_parachute_off)
+    ideal_landing = landing(result.result_ideal_parachute_off)
+
+    return 
