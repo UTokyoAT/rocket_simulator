@@ -1,11 +1,12 @@
 import shutil
+import json
 from pathlib import Path
 
 from src import config_read, graph_writer, report_config_read
 from src.geography.kml import landing_range_to_kml, parse_launch_site
 from src.geography.landing_range import LandingRange
 from src.geography.launch_site import LaunchSite
-from src.make_report import make_graph, make_result_for_report
+from src.make_report import make_graph, make_dict, make_result_for_report
 from src.make_report.result_for_report import ResultForReport
 
 
@@ -79,6 +80,12 @@ def run() -> None:
 
     result = make_result_for_report.make_result_for_report(config, report_config)
     write_row_data(result)
+
+    result_dict = make_dict.make_dict(result, launch_site)
+    output_dir = Path("output") / "report"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    path_dict = output_dir / "result_text.json"
+    path_dict.write_text(json.dumps(result_dict, indent=4, ensure_ascii=False), encoding="utf-8")
 
     graphs = make_graph.make_graph(result, launch_site)
     path_graph = Path("output") / "report" / "graph"
