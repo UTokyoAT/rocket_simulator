@@ -79,14 +79,14 @@ def max_altitude(data: pd.DataFrame) -> dict:
         "対気速度/(m/s)": round(air_velocity_norm(max_altitude), 2),
     }
 
-def landing(data: pd.DataFrame) -> dict:
+def landing(data: pd.DataFrame, site: LaunchSite) -> dict:
     landing = data.iloc[-1]
     print("着地")
     print(
         f"t={landing.time}s, downrange={math.sqrt(landing.position_n**2 + landing.position_e**2)}m"
     )
     p = Point.from_north_east(landing.position_n, landing.position_e,
-                              LaunchSite.launch_point.latitude, LaunchSite.launch_point.longitude)
+                              site.launch_point.latitude, site.launch_point.longitude)
     return {
         "時刻/s": round(landing.time, 2),
         "着地点緯度": p.latitude,
@@ -97,10 +97,26 @@ def landing(data: pd.DataFrame) -> dict:
         ),
     }
 
+
 def make_dict(result: ResultForReport, site: LaunchSite) -> dict:
     ideal_launch_clear = launch_clear(result.result_ideal_parachute_off)
     ideal_dynamic_pressure = dynamic_pressure(result.result_ideal_parachute_off)
     ideal_max_altitude = max_altitude(result.result_ideal_parachute_off)
-    ideal_landing = landing(result.result_ideal_parachute_off)
+    ideal_landing = landing(result.result_ideal_parachute_off, site)
 
-    return 
+    nominal_launch_clear = launch_clear(result.result_nominal_parachute_off)
+    nominal_dynamic_pressure = dynamic_pressure(result.result_nominal_parachute_off)
+    nominal_max_altitude = max_altitude(result.result_nominal_parachute_off)
+    nominal_landing = landing(result.result_nominal_parachute_off, site)
+
+    text = dict(**ideal_launch_clear,
+                **ideal_dynamic_pressure,
+                **ideal_max_altitude,
+                **ideal_landing,
+
+                **nominal_launch_clear,
+                **nominal_dynamic_pressure,
+                **nominal_max_altitude,
+                **nominal_landing,
+                )
+    return text
