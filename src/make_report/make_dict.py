@@ -115,27 +115,46 @@ def stability(config: Config) ->dict:
         "最大値/%": round(max(first_stability, end_stability), 2),
     }
 
+def acceleration(data: pd.DataFrame) ->dict:
+    acc_norm = (data["acceleration_body_frame_x"]**2
+                + data["acceleration_body_frame_y"]**2
+                + data["acceleration_body_frame_z"]**2) ** 0.5
+    max_idx = acc_norm.idxmax()    #acc_normが最大のインデックス
+    max_acc = data.loc[max_idx]  #acc_normが最大の行のデータを取得
+    print("最大加速度")
+    print(
+        f"t={max_acc.time}, max_acc={acc_norm[max_idx]}m/s^2, altitude={-(max_acc.position_d)}m"
+    )
+    return {
+        "時刻/s": round(max_acc.time, 2),
+        "最大加速度/(m/s^2)": round(acc_norm[max_idx], 2),
+        "高度/m": round(-(max_acc.position_d), 2),
+    }
+
 def make_dict(result: ResultForReport, site: LaunchSite, config: Config) -> dict:
     ideal_launch_clear = launch_clear(result.result_ideal_parachute_off, result.context_nominal)
     ideal_dynamic_pressure = dynamic_pressure(result.result_ideal_parachute_off)
     ideal_max_altitude = max_altitude(result.result_ideal_parachute_off)
     ideal_landing = landing(result.result_ideal_parachute_off, site)
-
+    ideal_acceleration = acceleration(result.result_ideal_parachute_off)
     nominal_launch_clear = launch_clear(result.result_nominal_parachute_off, result.context_nominal)
     nominal_dynamic_pressure = dynamic_pressure(result.result_nominal_parachute_off)
     nominal_max_altitude = max_altitude(result.result_nominal_parachute_off)
     nominal_landing = landing(result.result_nominal_parachute_off, site)
     nominal_stability = stability(config)
+    nominal_acceleration = acceleration(result.result_nominal_parachute_off)
 
     result_dict = {
     "ideal_launch_clear": ideal_launch_clear,
     "ideal_dynamic_pressure": ideal_dynamic_pressure,
     "ideal_max_altitude": ideal_max_altitude,
     "ideal_landing": ideal_landing,
+    "ideal_acceleration": ideal_acceleration,
     "nominal_launch_clear": nominal_launch_clear,
     "nominal_dynamic_pressure": nominal_dynamic_pressure,
     "nominal_max_altitude": nominal_max_altitude,
     "nominal_landing": nominal_landing,
-    "nominal_stability": nominal_stability
+    "nominal_stability": nominal_stability,
+    "nominal_acceleration": nominal_acceleration
     }
     return result_dict
