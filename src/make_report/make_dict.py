@@ -3,11 +3,12 @@ from dataclasses import dataclass
 import japanize_matplotlib  # noqa: F401
 import numpy as np
 import pandas as pd
+import math
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 
 from src.geography.launch_site import LaunchSite
-
+from src.geography.geography import Point
 from .result_for_report import ResultByLauncherElevation, ResultByWindSpeed, ResultForReport, SimulationContext
 
 
@@ -74,3 +75,20 @@ def max_altitude(data: pd.DataFrame) -> dict:
         "対気速度/(m/s)": round(air_velocity_norm(max_altitude), 2),
     }
 
+def landing(data: pd.DataFrame) -> dict:
+    landing = data.iloc[-1]
+    print("着地")
+    print(
+        f"t={landing.time}s, downrange={math.sqrt(landing.position_n**2 + landing.position_e**2)}m"
+    )
+    p = Point.from_north_east(landing.position_n, landing.position_e,
+                              LaunchSite.launch_point.latitude, LaunchSite.launch_point.longitude)
+    return {
+        "時刻/s": round(landing.time, 2),
+        "着地点緯度": p.latitude,
+        "着地点経度": p.longitude,
+        "ダウンレンジ/m": round(
+            math.sqrt(landing.position_n**2 + landing.position_e**2),
+            2,
+        ),
+    }
