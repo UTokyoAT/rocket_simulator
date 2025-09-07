@@ -7,6 +7,7 @@ import math
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 
+from src.core.config import Config
 from src.geography.launch_site import LaunchSite
 from src.geography.geography import Point
 from .result_for_report import ResultByLauncherElevation, ResultByWindSpeed, ResultForReport, SimulationContext
@@ -97,8 +98,24 @@ def landing(data: pd.DataFrame, site: LaunchSite) -> dict:
         ),
     }
 
+def _stability(config: Config):
+    length = config.length
+    wind_center = config.wind_center[0]
+    cg_first = config.first_gravity_center[0]
+    cg_end = config.end_gravity_center[0]
+    first_stability = (cg_first - wind_center) / length * 100
+    end_stability = (cg_end - wind_center) / length * 100
+    return first_stability, end_stability
 
-def make_dict(result: ResultForReport, site: LaunchSite) -> dict:
+
+def stability(config: Config) ->dict:
+    first_stability, end_stability = _stability(config)
+    return {
+        "最小値/%": round(min(first_stability, end_stability), 2),
+        "最大値/%": round(max(first_stability, end_stability), 2),
+    }
+
+def make_dict(result: ResultForReport, site: LaunchSite, config: Config) -> dict:
     ideal_launch_clear = launch_clear(result.result_ideal_parachute_off, result.context_nominal)
     ideal_dynamic_pressure = dynamic_pressure(result.result_ideal_parachute_off)
     ideal_max_altitude = max_altitude(result.result_ideal_parachute_off)
@@ -108,6 +125,7 @@ def make_dict(result: ResultForReport, site: LaunchSite) -> dict:
     nominal_dynamic_pressure = dynamic_pressure(result.result_nominal_parachute_off)
     nominal_max_altitude = max_altitude(result.result_nominal_parachute_off)
     nominal_landing = landing(result.result_nominal_parachute_off, site)
+    nominal_stability = stability(config)
 
     result_dict = {
     "ideal_launch_clear": ideal_launch_clear,
@@ -117,6 +135,7 @@ def make_dict(result: ResultForReport, site: LaunchSite) -> dict:
     "nominal_launch_clear": nominal_launch_clear,
     "nominal_dynamic_pressure": nominal_dynamic_pressure,
     "nominal_max_altitude": nominal_max_altitude,
-    "nominal_landing": nominal_landing
+    "nominal_landing": nominal_landing,
+    "nominal_stability": nominal_stability
     }
     return result_dict

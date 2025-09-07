@@ -81,7 +81,7 @@ def run() -> None:
     result = make_result_for_report.make_result_for_report(config, report_config)
     write_row_data(result)
 
-    result_dict = make_dict.make_dict(result, launch_site)
+    result_dict = make_dict.make_dict(result, launch_site, config)
     output_dir = Path("output") / "report"
     output_dir.mkdir(parents=True, exist_ok=True)
     path_dict = output_dir / "result_text.json"
