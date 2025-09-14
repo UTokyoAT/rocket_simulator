@@ -50,14 +50,10 @@ def dynamic_pressure(data: pd.DataFrame, *, all: bool) -> dict:
     }
 
 def max_altitude(data: pd.DataFrame) -> dict:
-    print("最高高度")
     max_altitude = data.loc[data["position_d"].idxmin()]
     velocity_air = np.sqrt(max_altitude.velocity_n**2
                           + max_altitude.velocity_e**2
                           + max_altitude.velocity_d**2)
-    print(
-        f"t={max_altitude.time}s,altitude={-(max_altitude.position_d)}m,velocity_air={air_velocity_norm(max_altitude)}m/s"
-    )
     return {
         "時刻/s": round(max_altitude.time, 2),
         "高度/m": round(-(max_altitude.position_d), 2),
