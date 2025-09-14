@@ -105,7 +105,7 @@ def acceleration(data: pd.DataFrame) ->dict:
 
 def make_dict(result: ResultForReport, site: LaunchSite, config: Config) -> dict:
     ideal_launch_clear = launch_clear(result.result_ideal_parachute_off, result.context_nominal)
-    ideal_dynamic_pressure = dynamic_pressure(result.result_ideal_parachute_off, all=False)
+    ideal_dynamic_pressure = dynamic_pressure(result.result_ideal_parachute_off, through_all_time=False)
     ideal_max_altitude = max_altitude(result.result_ideal_parachute_off)
     ideal_landing = landing(result.result_ideal_parachute_off, site)
     ideal_acceleration = acceleration(result.result_ideal_parachute_off)
