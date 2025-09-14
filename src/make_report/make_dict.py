@@ -97,10 +97,6 @@ def acceleration(data: pd.DataFrame) ->dict:
                 + data["acceleration_body_frame_z"]**2)
     max_idx = acc_norm.idxmax()    #acc_normが最大のインデックス
     max_acc = data.loc[max_idx]  #acc_normが最大の行のデータを取得
-    print("最大加速度")
-    print(
-        f"t={max_acc.time}, max_acc={acc_norm[max_idx]}m/s^2, altitude={-(max_acc.position_d)}m",
-    )
     return {
         "時刻/s": round(max_acc.time, 2),
         "最大加速度/(m/s^2)": round(acc_norm[max_idx], 2),
