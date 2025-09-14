@@ -1,17 +1,14 @@
-from dataclasses import dataclass
+import math
 
 import japanize_matplotlib  # noqa: F401
 import numpy as np
 import pandas as pd
-import math
-from matplotlib import pyplot as plt
-from matplotlib.figure import Figure
 
 from src.core.config import Config
-from src.geography.launch_site import LaunchSite
 from src.geography.geography import Point
-from .result_for_report import ResultByLauncherElevation, ResultByWindSpeed, ResultForReport, SimulationContext
+from src.geography.launch_site import LaunchSite
 
+from .result_for_report import ResultForReport, SimulationContext
 
 
 
@@ -22,7 +19,6 @@ def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
 
 def launch_clear(data: pd.DataFrame, context: SimulationContext) -> dict:
     """ランチクリア時の情報"""
-
     launch_clear = data[~data["on_launcher"]].iloc[0]
     v = (launch_clear.velocity_n**2 + launch_clear.velocity_e**2 + launch_clear.velocity_d**2) ** 0.5
     theta = np.deg2rad(context.first_elevation)
@@ -30,8 +26,6 @@ def launch_clear(data: pd.DataFrame, context: SimulationContext) -> dict:
     beta = np.deg2rad(20)
     w_alpha = v * np.tan(alpha) / (np.sin(theta) + np.cos(theta) * np.tan(alpha))
     w_beta = v * np.tan(beta)
-    if v < 15:
-        print("ランチクリア速度が遅すぎます.打ち上げできません")
     return {
         "時刻/s": round(launch_clear.time, 2),
         "速度/(m/s)": round(v, 2),
@@ -40,10 +34,10 @@ def launch_clear(data: pd.DataFrame, context: SimulationContext) -> dict:
         "風速制限/(m/s)": round(min(w_alpha, w_beta), 2),
     }
 
-def dynamic_pressure(data: pd.DataFrame, all=False) -> dict:
+def dynamic_pressure(data: pd.DataFrame, *, all: bool) -> dict:
     burning = data[data["burning"]]
     if all:
-        pressure_max = data.loc[data["dynamic_pressure"].idxmax()]  #燃料を噴射している最中の圧力の最大値
+        pressure_max = data.loc[data["dynamic_pressure"].idxmax()]
     else:
         pressure_max = burning.loc[burning["dynamic_pressure"].idxmax()]
     air_velocity_norm = (
@@ -64,7 +58,7 @@ def max_altitude(data: pd.DataFrame) -> dict:
                           + max_altitude.velocity_e**2
                           + max_altitude.velocity_d**2)
     print(
-        f"t={max_altitude.time}s,altitude={-(max_altitude.position_d)}m,velocity_air={velocity_air}m/s"
+        f"t={max_altitude.time}s,altitude={-(max_altitude.position_d)}m,velocity_air={air_velocity_norm(max_altitude)}m/s"
     )
     return {
         "時刻/s": round(max_altitude.time, 2),
@@ -76,7 +70,7 @@ def landing(data: pd.DataFrame, site: LaunchSite) -> dict:
     landing = data.iloc[-1]
     print("着地")
     print(
-        f"t={landing.time}s, downrange={math.sqrt(landing.position_n**2 + landing.position_e**2)}m"
+        f"t={landing.time}s, downrange={math.sqrt(landing.position_n**2 + landing.position_e**2)}m",
     )
     p = Point.from_north_east(landing.position_n, landing.position_e,
                               site.launch_point.latitude, site.launch_point.longitude)
@@ -90,7 +84,7 @@ def landing(data: pd.DataFrame, site: LaunchSite) -> dict:
         ),
     }
 
-def _stability(config: Config):
+def _stability(config: Config) -> tuple[float, float]:
     length = config.length
     wind_center = config.wind_center[0]
     cg_first = config.first_gravity_center[0]
@@ -115,7 +109,7 @@ def acceleration(data: pd.DataFrame) ->dict:
     max_acc = data.loc[max_idx]  #acc_normが最大の行のデータを取得
     print("最大加速度")
     print(
-        f"t={max_acc.time}, max_acc={acc_norm[max_idx]}m/s^2, altitude={-(max_acc.position_d)}m"
+        f"t={max_acc.time}, max_acc={acc_norm[max_idx]}m/s^2, altitude={-(max_acc.position_d)}m",
     )
     return {
         "時刻/s": round(max_acc.time, 2),
@@ -125,18 +119,18 @@ def acceleration(data: pd.DataFrame) ->dict:
 
 def make_dict(result: ResultForReport, site: LaunchSite, config: Config) -> dict:
     ideal_launch_clear = launch_clear(result.result_ideal_parachute_off, result.context_nominal)
-    ideal_dynamic_pressure = dynamic_pressure(result.result_ideal_parachute_off)
+    ideal_dynamic_pressure = dynamic_pressure(result.result_ideal_parachute_off, all=False)
     ideal_max_altitude = max_altitude(result.result_ideal_parachute_off)
     ideal_landing = landing(result.result_ideal_parachute_off, site)
     ideal_acceleration = acceleration(result.result_ideal_parachute_off)
     nominal_launch_clear = launch_clear(result.result_nominal_parachute_off, result.context_nominal)
-    nominal_dynamic_pressure = dynamic_pressure(result.result_nominal_parachute_off)
+    nominal_dynamic_pressure = dynamic_pressure(result.result_nominal_parachute_off, all=False)
     nominal_max_altitude = max_altitude(result.result_nominal_parachute_off)
     nominal_landing = landing(result.result_nominal_parachute_off, site)
     nominal_stability = stability(config)
     nominal_acceleration = acceleration(result.result_nominal_parachute_off)
 
-    result_dict = {
+    return {
     "ideal_launch_clear": ideal_launch_clear,
     "ideal_dynamic_pressure": ideal_dynamic_pressure,
     "ideal_max_altitude": ideal_max_altitude,
@@ -147,6 +141,5 @@ def make_dict(result: ResultForReport, site: LaunchSite, config: Config) -> dict
     "nominal_max_altitude": nominal_max_altitude,
     "nominal_landing": nominal_landing,
     "nominal_stability": nominal_stability,
-    "nominal_acceleration": nominal_acceleration
+    "nominal_acceleration": nominal_acceleration,
     }
-    return result_dict
