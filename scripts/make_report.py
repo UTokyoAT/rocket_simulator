@@ -1,12 +1,12 @@
-import shutil
 import json
+import shutil
 from pathlib import Path
 
 from src import config_read, graph_writer, report_config_read
 from src.geography.kml import landing_range_to_kml, parse_launch_site
 from src.geography.landing_range import LandingRange
 from src.geography.launch_site import LaunchSite
-from src.make_report import make_graph, make_dict, make_result_for_report
+from src.make_report import make_dict, make_graph, make_result_for_report
 from src.make_report.result_for_report import ResultForReport
 
 
