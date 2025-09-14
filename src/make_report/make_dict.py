@@ -62,16 +62,12 @@ def max_altitude(data: pd.DataFrame) -> dict:
 
 def landing(data: pd.DataFrame, site: LaunchSite) -> dict:
     landing = data.iloc[-1]
-    print("着地")
-    print(
-        f"t={landing.time}s, downrange={math.sqrt(landing.position_n**2 + landing.position_e**2)}m",
-    )
-    p = Point.from_north_east(landing.position_n, landing.position_e,
+    landing_position = Point.from_north_east(landing.position_n, landing.position_e,
                               site.launch_point.latitude, site.launch_point.longitude)
     return {
         "時刻/s": round(landing.time, 2),
-        "着地点緯度": p.latitude,
-        "着地点経度": p.longitude,
+        "着地点緯度": landing_position.latitude,
+        "着地点経度": landing_position.longitude,
         "ダウンレンジ/m": round(
             math.sqrt(landing.position_n**2 + landing.position_e**2),
             2,
