@@ -1,6 +1,5 @@
 import math
 
-import japanize_matplotlib  # noqa: F401
 import numpy as np
 import pandas as pd
 
@@ -9,7 +8,6 @@ from src.geography.geography import Point
 from src.geography.launch_site import LaunchSite
 
 from .result_for_report import ResultForReport, SimulationContext
-
 
 
 def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
