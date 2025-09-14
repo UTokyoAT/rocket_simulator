@@ -32,9 +32,9 @@ def launch_clear(data: pd.DataFrame, context: SimulationContext) -> dict:
         "風速制限/(m/s)": round(min(w_alpha, w_beta), 2),
     }
 
-def dynamic_pressure(data: pd.DataFrame, *, all: bool) -> dict:
+def dynamic_pressure(data: pd.DataFrame, *, through_all_time: bool) -> dict:
     burning = data[data["burning"]]
-    if all:
+    if through_all_time:
         pressure_max = data.loc[data["dynamic_pressure"].idxmax()]
     else:
         pressure_max = burning.loc[burning["dynamic_pressure"].idxmax()]
@@ -110,7 +110,7 @@ def make_dict(result: ResultForReport, site: LaunchSite, config: Config) -> dict
     ideal_landing = landing(result.result_ideal_parachute_off, site)
     ideal_acceleration = acceleration(result.result_ideal_parachute_off)
     nominal_launch_clear = launch_clear(result.result_nominal_parachute_off, result.context_nominal)
-    nominal_dynamic_pressure = dynamic_pressure(result.result_nominal_parachute_off, all=False)
+    nominal_dynamic_pressure = dynamic_pressure(result.result_nominal_parachute_off, through_all_time=False)
     nominal_max_altitude = max_altitude(result.result_nominal_parachute_off)
     nominal_landing = landing(result.result_nominal_parachute_off, site)
     nominal_stability = stability(config)
