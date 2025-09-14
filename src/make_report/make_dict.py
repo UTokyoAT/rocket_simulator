@@ -18,7 +18,7 @@ def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
 def launch_clear(data: pd.DataFrame, context: SimulationContext) -> dict:
     """ランチクリア時の情報"""
     launch_clear = data[~data["on_launcher"]].iloc[0]
-    v = (launch_clear.velocity_n**2 + launch_clear.velocity_e**2 + launch_clear.velocity_d**2) ** 0.5
+    v = np.sqrt(launch_clear.velocity_n**2 + launch_clear.velocity_e**2 + launch_clear.velocity_d**2)
     theta = np.deg2rad(context.first_elevation)
     alpha = np.deg2rad(21)
     beta = np.deg2rad(20)
@@ -38,10 +38,10 @@ def dynamic_pressure(data: pd.DataFrame, *, through_all_time: bool) -> dict:
         pressure_max = data.loc[data["dynamic_pressure"].idxmax()]
     else:
         pressure_max = burning.loc[burning["dynamic_pressure"].idxmax()]
-    air_velocity_norm = (
+    air_velocity_norm = np.sqrt(
         pressure_max.velocity_air_body_frame_x**2
         + pressure_max.velocity_air_body_frame_y**2
-        + pressure_max.velocity_air_body_frame_z**2) ** 0.5
+        + pressure_max.velocity_air_body_frame_z**2)
     return {
         "時刻/s": round(pressure_max.time, 2),
         "高度/m": round(-(pressure_max.position_d), 2),
