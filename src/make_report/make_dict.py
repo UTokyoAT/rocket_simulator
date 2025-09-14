@@ -13,18 +13,7 @@ from src.geography.geography import Point
 from .result_for_report import ResultByLauncherElevation, ResultByWindSpeed, ResultForReport, SimulationContext
 
 
-def velocity_norm(row) -> float:
-    return (row.velocity_n**2 + row.velocity_e**2 + row.velocity_d**2) ** 0.5
 
-
-def acc_norm(row) -> float:
-    return (row.acceleration_body_frame_x**2 + row.acceleration_body_frame_y**2 + row.acceleration_body_frame_z**2) ** 0.5
-
-
-def air_velocity_norm(row) -> float:
-    return (
-        row.velocity_air_body_frame_x**2 + row.velocity_air_body_frame_y**2 + row.velocity_air_body_frame_z**2
-    ) ** 0.5
 
 def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
     burning = data[data["burning"]]
@@ -71,13 +60,16 @@ def dynamic_pressure(data: pd.DataFrame, all=False) -> dict:
 def max_altitude(data: pd.DataFrame) -> dict:
     print("最高高度")
     max_altitude = data.loc[data["position_d"].idxmin()]
+    velocity_air = np.sqrt(max_altitude.velocity_n**2
+                          + max_altitude.velocity_e**2
+                          + max_altitude.velocity_d**2)
     print(
-        f"t={max_altitude.time}s,altitude={-(max_altitude.position_d)}m,velocity_air={air_velocity_norm(max_altitude)}m/s"
+        f"t={max_altitude.time}s,altitude={-(max_altitude.position_d)}m,velocity_air={velocity_air}m/s"
     )
     return {
         "時刻/s": round(max_altitude.time, 2),
         "高度/m": round(-(max_altitude.position_d), 2),
-        "対気速度/(m/s)": round(air_velocity_norm(max_altitude), 2),
+        "対気速度/(m/s)": round(velocity_air, 2),
     }
 
 def landing(data: pd.DataFrame, site: LaunchSite) -> dict:
@@ -116,9 +108,9 @@ def stability(config: Config) ->dict:
     }
 
 def acceleration(data: pd.DataFrame) ->dict:
-    acc_norm = (data["acceleration_body_frame_x"]**2
+    acc_norm = np.sqrt(data["acceleration_body_frame_x"]**2
                 + data["acceleration_body_frame_y"]**2
-                + data["acceleration_body_frame_z"]**2) ** 0.5
+                + data["acceleration_body_frame_z"]**2)
     max_idx = acc_norm.idxmax()    #acc_normが最大のインデックス
     max_acc = data.loc[max_idx]  #acc_normが最大の行のデータを取得
     print("最大加速度")
