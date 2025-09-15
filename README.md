@@ -105,12 +105,6 @@ I_xx, I_yy, I_zz, I_zy, I_xz, I_xy
 #### launcher_elevation_list
 発射角度のリスト[deg]
 
-####　launch_point_latitude
-ランチャーがある地点の緯度[deg]
-
-#### launch_point_longitude
-ランチャーがある地点の経度[deg]
-
 ### mass.csv
 必要なカラム
 - time: 燃焼開始からの時間[s]
