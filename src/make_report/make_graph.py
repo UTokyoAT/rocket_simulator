@@ -14,6 +14,7 @@ from .result_for_report import ResultByLauncherElevation, ResultByWindSpeed, Res
 def to_cycle(x: list[float]) -> list[float]:
     return [*x, x[0]]
 
+
 @dataclass
 class Graphs:
     ideal_dynamic_pressure: Figure
@@ -35,10 +36,12 @@ class Graphs:
     fall_dispersion_figure_parachute_off: dict[float, Figure]
     fall_dispersion_figure_parachute_on: dict[float, Figure]
 
+
 def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
     burning = data[data["burning"]]
     coasting = data[~data["burning"]]
     return burning, coasting
+
 
 def dynamic_pressure_figure(data: pd.DataFrame) -> Figure:
     fig, ax = plt.subplots()
@@ -51,6 +54,7 @@ def dynamic_pressure_figure(data: pd.DataFrame) -> Figure:
     ax.set_ylabel("動圧/Pa")
     ax.grid(which="both")
     return fig
+
 
 def air_velocity_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
@@ -66,6 +70,7 @@ def air_velocity_figure(data: pd.DataFrame) -> Figure:
     ax.set_xlabel("時刻/s")
     ax.grid(which="both")
     return fig
+
 
 def time_altitude_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
@@ -83,7 +88,7 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
 
     def downrange(row: pd.Series) -> float:
-        return (row["position_n"]**2 + row["position_e"]**2) ** 0.5
+        return (row["position_n"] ** 2 + row["position_e"] ** 2) ** 0.5
 
     def altitude(row: pd.Series) -> float:
         return -row["position_d"]
@@ -97,12 +102,11 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
+
 def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     fig, ax = plt.subplots()
-    ax.scatter(0,0, label="射点")
-    ax.plot(to_cycle(site.points_east()),
-            to_cycle(site.points_north()),
-            label="落下可能域")
+    ax.scatter(0, 0, label="射点")
+    ax.plot(to_cycle(site.points_east()), to_cycle(site.points_north()), label="落下可能域")
     landing = data.iloc[-1]
     ax.scatter(landing["position_e"], landing["position_n"], label="着地点")
     ax.legend()
@@ -111,7 +115,8 @@ def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     ax.set_ylabel("北/m")
     return fig
 
-def stability_figure(result: ResultForReport, data:pd.DataFrame) -> Figure:
+
+def stability_figure(result: ResultForReport, data: pd.DataFrame) -> Figure:
     fig, ax = plt.subplots()
     burning, coasting = burning_coasting_division(data)
     times_burning = burning["time"]
@@ -124,13 +129,14 @@ def stability_figure(result: ResultForReport, data:pd.DataFrame) -> Figure:
     # 安定性 = 相対距離（風圧中心 - 重心） / 長さ × 100
     stability_burning = (gravity_centers_burning - wind_center) / length * 100
     stability_coasting = (gravity_centers_coasting - wind_center) / length * 100
-    ax.plot(times_burning,  stability_burning, label="burning")
-    ax.plot(times_coasting,  stability_coasting, label="coasting")
+    ax.plot(times_burning, stability_burning, label="burning")
+    ax.plot(times_coasting, stability_coasting, label="coasting")
     ax.legend()
     ax.set_xlabel("時刻/s")
     ax.set_ylabel("安定比/%")
     ax.grid(which="both")
     return fig
+
 
 def wind_figure(context: SimulationContext) -> Figure:
     altitude = np.arange(0, 500, 1)
@@ -142,6 +148,7 @@ def wind_figure(context: SimulationContext) -> Figure:
     ax.set_xlabel("風速/(m/s)")
     ax.grid(which="both")
     return fig
+
 
 def acceleration_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
@@ -158,6 +165,7 @@ def acceleration_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
+
 def rotation_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
     fig, ax = plt.subplots()
@@ -173,8 +181,13 @@ def rotation_figure(data: pd.DataFrame) -> Figure:
     ax.grid(which="both")
     return fig
 
-def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
-                        site: LaunchSite, *, parachute: bool) -> Figure:
+
+def fall_dispersion_figure(
+    result_by_wind_speed: list[ResultByWindSpeed],
+    site: LaunchSite,
+    *,
+    parachute: bool,
+) -> Figure:
     fig, ax = plt.subplots()
     ax.scatter(0, 0, label="射点")
     ax.plot(
@@ -184,12 +197,22 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
     )
     for speed_result in result_by_wind_speed:
         wind_speed = speed_result.wind_speed
-        landing_point_east = to_cycle([direction_result.result_parachute_on.iloc[-1]["position_e"] if(parachute)
-                  else direction_result.result_parachute_off.iloc[-1]["position_e"]
-                  for direction_result in speed_result.result])
-        landing_point_north = to_cycle([direction_result.result_parachute_on.iloc[-1]["position_n"] if(parachute)
-                  else direction_result.result_parachute_off.iloc[-1]["position_n"]
-                  for direction_result in speed_result.result])
+        landing_point_east = to_cycle(
+            [
+                direction_result.result_parachute_on.iloc[-1]["position_e"]
+                if (parachute)
+                else direction_result.result_parachute_off.iloc[-1]["position_e"]
+                for direction_result in speed_result.result
+            ],
+        )
+        landing_point_north = to_cycle(
+            [
+                direction_result.result_parachute_on.iloc[-1]["position_n"]
+                if (parachute)
+                else direction_result.result_parachute_off.iloc[-1]["position_n"]
+                for direction_result in speed_result.result
+            ],
+        )
         ax.plot(landing_point_east, landing_point_north, label=f"{wind_speed} m/s")
     ax.legend()
     ax.grid(which="both")
@@ -197,39 +220,45 @@ def fall_dispersion_figure(result_by_wind_speed: list[ResultByWindSpeed],
     ax.set_ylabel("北/m")
     return fig
 
-def generate_all_fall_dispersion_figures(result: ResultForReport, site: LaunchSite,
-                                         *,parachute: bool) -> dict[float, Figure]:
+
+def generate_all_fall_dispersion_figures(
+    result: ResultForReport,
+    site: LaunchSite,
+    *,
+    parachute: bool,
+) -> dict[float, Figure]:
     def figure(result_by_elevation: ResultByLauncherElevation) -> Figure:
         wind_results = result_by_elevation.result
         return fall_dispersion_figure(
             result_by_wind_speed=wind_results,
             site=site,
-            parachute = parachute,
+            parachute=parachute,
         )
 
     return {
         result_by_elevation.launcher_elevation: figure(result_by_elevation)
         for result_by_elevation in result.result_by_launcher_elevation
-        }
+    }
+
 
 def make_graph(result: ResultForReport, site: LaunchSite) -> Graphs:
     return Graphs(
-        ideal_dynamic_pressure = dynamic_pressure_figure(result.result_ideal_parachute_off),
-        ideal_air_velocity_figure = air_velocity_figure(result.result_ideal_parachute_off),
-        ideal_altitude_downrange_figure = altitude_downrange_figure(result.result_ideal_parachute_off),
-        ideal_time_altitude_figure = time_altitude_figure(result.result_ideal_parachute_off),
-        ideal_landing_figure = landing_figure(result.result_ideal_parachute_off, site),
-        ideal_stability_figure = stability_figure(result,result.result_ideal_parachute_off),
-        ideal_acceleration_figure = acceleration_figure(result.result_ideal_parachute_off),
-        ideal_rotation_figure = rotation_figure(result.result_ideal_parachute_off),
-        nominal_dynamic_pressure = dynamic_pressure_figure(result.result_nominal_parachute_off),
-        nominal_air_velocity_figure = air_velocity_figure(result.result_nominal_parachute_off),
-        nominal_altitude_downrange_figure = altitude_downrange_figure(result.result_nominal_parachute_off),
-        nominal_time_altitude_figure = time_altitude_figure(result.result_nominal_parachute_off),
-        nominal_landing_figure = landing_figure(result.result_nominal_parachute_off, site),
-        nominal_acceleration_figure = acceleration_figure(result.result_nominal_parachute_off),
-        nominal_rotation_figure = rotation_figure(result.result_nominal_parachute_off),
-        nominal_wind_figure = wind_figure(result.context_nominal),
-        fall_dispersion_figure_parachute_off = generate_all_fall_dispersion_figures(result,site,parachute=False),
-        fall_dispersion_figure_parachute_on = generate_all_fall_dispersion_figures(result,site,parachute=True),
-        )
+        ideal_dynamic_pressure=dynamic_pressure_figure(result.result_ideal_parachute_off),
+        ideal_air_velocity_figure=air_velocity_figure(result.result_ideal_parachute_off),
+        ideal_altitude_downrange_figure=altitude_downrange_figure(result.result_ideal_parachute_off),
+        ideal_time_altitude_figure=time_altitude_figure(result.result_ideal_parachute_off),
+        ideal_landing_figure=landing_figure(result.result_ideal_parachute_off, site),
+        ideal_stability_figure=stability_figure(result, result.result_ideal_parachute_off),
+        ideal_acceleration_figure=acceleration_figure(result.result_ideal_parachute_off),
+        ideal_rotation_figure=rotation_figure(result.result_ideal_parachute_off),
+        nominal_dynamic_pressure=dynamic_pressure_figure(result.result_nominal_parachute_off),
+        nominal_air_velocity_figure=air_velocity_figure(result.result_nominal_parachute_off),
+        nominal_altitude_downrange_figure=altitude_downrange_figure(result.result_nominal_parachute_off),
+        nominal_time_altitude_figure=time_altitude_figure(result.result_nominal_parachute_off),
+        nominal_landing_figure=landing_figure(result.result_nominal_parachute_off, site),
+        nominal_acceleration_figure=acceleration_figure(result.result_nominal_parachute_off),
+        nominal_rotation_figure=rotation_figure(result.result_nominal_parachute_off),
+        nominal_wind_figure=wind_figure(result.context_nominal),
+        fall_dispersion_figure_parachute_off=generate_all_fall_dispersion_figures(result, site, parachute=False),
+        fall_dispersion_figure_parachute_on=generate_all_fall_dispersion_figures(result, site, parachute=True),
+    )

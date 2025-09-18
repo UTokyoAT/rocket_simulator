@@ -35,6 +35,7 @@ def changed_config(original: Config, setting: Setting) -> Config:
     config.wind.wind_direction = setting.wind_direction
     return config
 
+
 def run(config: Config, setting: Setting) -> tuple[pd.DataFrame, pd.DataFrame]:
     config = changed_config(config, setting)
     results = simple_simulation.simulate(config)
@@ -42,7 +43,8 @@ def run(config: Config, setting: Setting) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def run_concurrent(
-    config: Config, settings: list[Setting],
+    config: Config,
+    settings: list[Setting],
 ) -> list[tuple[pd.DataFrame, pd.DataFrame]]:
     """シミュレーションを並列で実行する
 
@@ -59,7 +61,8 @@ def run_concurrent(
 
 
 def make_result_for_report(
-    config: Config, report_config: ReportConfig,
+    config: Config,
+    report_config: ReportConfig,
 ) -> ResultForReport:
     setting_ideal = Setting(
         launcher_elevation=report_config.launcher_elevation,

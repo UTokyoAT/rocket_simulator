@@ -4,7 +4,10 @@ import numpy as np
 
 
 def wind_velocity_power(
-    reference_height: float, wind_speed: float, exponent: float, wind_direction: float,
+    reference_height: float,
+    wind_speed: float,
+    exponent: float,
+    wind_direction: float,
 ) -> t.Callable[[float], np.ndarray]:
     """風速を計算する関数を生成する
 
@@ -31,9 +34,7 @@ def wind_velocity_power(
         if height < 0:
             return np.zeros(3)
         return (
-            wind_speed
-            * (height / reference_height) ** (1 / exponent)
-            * np.array([-np.cos(theta), -np.sin(theta), 0])
+            wind_speed * (height / reference_height) ** (1 / exponent) * np.array([-np.cos(theta), -np.sin(theta), 0])
         )
 
     return f

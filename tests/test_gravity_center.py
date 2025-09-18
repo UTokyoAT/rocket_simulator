@@ -30,7 +30,9 @@ class TestGravityCenter(unittest.TestCase):
 
         # 関数を作成
         gc_func = gravity_center.create_gravity_center_function_from_dataframe(
-            first_gravity_center, end_gravity_center, thrust_df,
+            first_gravity_center,
+            end_gravity_center,
+            thrust_df,
         )
 
         # 補間が正しく機能していることを確認
