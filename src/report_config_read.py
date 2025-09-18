@@ -1,16 +1,7 @@
 import json
-from dataclasses import dataclass
 from pathlib import Path
 
-
-@dataclass
-class ReportConfig:
-    launcher_elevation: float
-    wind_speed_nominal: float
-    wind_direction_nominal: float
-    wind_speed_list: list[float]
-    wind_direction_list: list[float]
-    launcher_elevation_list: list[float]
+from src.make_report.make_result_for_report import ReportConfig
 
 
 def read(folder_path: Path) -> ReportConfig:
