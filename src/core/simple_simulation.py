@@ -1,6 +1,7 @@
 import typing
 
 import numpy as np
+import quaternion as quart
 
 from . import air_force, equation_of_motion, ode_solver, quaternion_util, simulation_result
 from .config import Config
@@ -28,6 +29,23 @@ def to_simulation_result_row(
         air_force_result=air_force_result,
         on_launcher=on_launcher,
     )
+
+
+def nongravitational_acceleration_body_frame(
+    posture: quart.quaternion,
+    kinematic_acceleration_body_frame: np.ndarray,
+) -> np.ndarray:
+    """運動学的加速度から重力を除いた機体座標系の加速度を返す
+
+    Args:
+        posture (quart.quaternion): 機体の姿勢
+        kinematic_acceleration_body_frame (np.ndarray): 機体座標系での運動学的加速度
+
+    Returns:
+        np.ndarray: 重力を含まない機体座標系での加速度
+    """
+    gravity_body_frame = quaternion_util.inertial_to_body(posture, Gravitational_acceleration)
+    return kinematic_acceleration_body_frame - gravity_body_frame
 
 
 def acceleration_inertial_frame(
@@ -104,7 +122,7 @@ def simulate_launcher(
         to_simulation_result_row(
             *row,
             context,
-            acceleration_body_frame(*row),
+            nongravitational_acceleration_body_frame(row[1].posture, acceleration_body_frame(*row)),
             on_launcher=True,
         )
         for row in result
@@ -159,9 +177,12 @@ def simulate_flight(
             to_simulation_result_row(
                 *row,
                 context,
-                quaternion_util.inertial_to_body(
+                nongravitational_acceleration_body_frame(
                     row[1].posture,
-                    acceleration_inertial_frame(row[0], row[1], context, parachute_on=parachute_on),
+                    quaternion_util.inertial_to_body(
+                        row[1].posture,
+                        acceleration_inertial_frame(row[0], row[1], context, parachute_on=parachute_on),
+                    ),
                 ),
                 on_launcher=False,
             )
