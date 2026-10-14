@@ -99,6 +99,7 @@ def altitude_downrange_figure(data: pd.DataFrame) -> Figure:
     ax.set_xlabel("ダウンレンジ/m")
     ax.set_ylabel("高度/m")
     ax.grid(which="both")
+    ax.set_aspect("equal", adjustable="box")
     return fig
 
 
@@ -112,6 +113,7 @@ def landing_figure(data: pd.DataFrame, site: LaunchSite) -> Figure:
     ax.grid(which="both")
     ax.set_xlabel("東/m")
     ax.set_ylabel("北/m")
+    ax.set_aspect("equal", adjustable="box")
     return fig
 
 
@@ -217,6 +219,7 @@ def fall_dispersion_figure(
     ax.grid(which="both")
     ax.set_xlabel("東/m")
     ax.set_ylabel("北/m")
+    ax.set_aspect("equal", adjustable="box")
     return fig
 
 
