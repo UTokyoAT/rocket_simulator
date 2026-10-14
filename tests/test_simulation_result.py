@@ -86,3 +86,50 @@ class TestSimulationResult(unittest.TestCase):
             self.sim_result1.result[0].time,
             copied_result.result[0].time,
         )
+
+    def test_to_df_rotation_columns(self) -> None:
+        row = simulation_result.SimulationResultRow(
+            time=1.5,
+            position=np.array([1.0, 2.0, 3.0]),
+            velocity=np.array([4.0, 5.0, 6.0]),
+            posture=quaternion.quaternion(1, 0, 0, 0),
+            rotation=np.array([0.1, 0.2, 0.3]),
+            dynamic_pressure=10.0,
+            burning=True,
+            on_launcher=False,
+            velocity_air_body_frame=np.array([7.0, 8.0, 9.0]),
+            acceleration_body_frame=np.array([1.0, 2.0, 3.0]),
+        )
+        result = simulation_result.SimulationResult(result=[row]).to_df()
+        self.assertEqual(
+            list(result.columns),
+            [
+                "time",
+                "position_n",
+                "position_e",
+                "position_d",
+                "velocity_n",
+                "velocity_e",
+                "velocity_d",
+                "posture_w",
+                "posture_x",
+                "posture_y",
+                "posture_z",
+                "rotation_x",
+                "rotation_y",
+                "rotation_z",
+                "dynamic_pressure",
+                "burning",
+                "on_launcher",
+                "velocity_air_body_frame_x",
+                "velocity_air_body_frame_y",
+                "velocity_air_body_frame_z",
+                "acceleration_body_frame_x",
+                "acceleration_body_frame_y",
+                "acceleration_body_frame_z",
+            ],
+        )
+        np.testing.assert_array_almost_equal(
+            result.loc[0, ["rotation_x", "rotation_y", "rotation_z"]],
+            [0.1, 0.2, 0.3],
+        )

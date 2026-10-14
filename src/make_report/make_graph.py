@@ -44,7 +44,6 @@ def burning_coasting_division(data: pd.DataFrame) -> pd.DataFrame:
 
 
 def dynamic_pressure_figure(data: pd.DataFrame) -> Figure:
-    fig, ax = plt.subplots()
     burning, coasting = burning_coasting_division(data)
     fig, ax = plt.subplots()
     ax.plot(burning["time"], burning["dynamic_pressure"], label="burning")
@@ -169,12 +168,12 @@ def acceleration_figure(data: pd.DataFrame) -> Figure:
 def rotation_figure(data: pd.DataFrame) -> Figure:
     burning, coasting = burning_coasting_division(data)
     fig, ax = plt.subplots()
-    ax.plot(burning["time"], burning["rotation_n"], label="n burning")
-    ax.plot(burning["time"], burning["rotation_e"], label="e burning")
-    ax.plot(burning["time"], burning["rotation_d"], label="d burning")
-    ax.plot(coasting["time"], coasting["rotation_n"], label="n coasting")
-    ax.plot(coasting["time"], coasting["rotation_e"], label="e coasting")
-    ax.plot(coasting["time"], coasting["rotation_d"], label="d coasting")
+    ax.plot(burning["time"], burning["rotation_x"], label="x burning")
+    ax.plot(burning["time"], burning["rotation_y"], label="y burning")
+    ax.plot(burning["time"], burning["rotation_z"], label="z burning")
+    ax.plot(coasting["time"], coasting["rotation_x"], label="x coasting")
+    ax.plot(coasting["time"], coasting["rotation_y"], label="y coasting")
+    ax.plot(coasting["time"], coasting["rotation_z"], label="z coasting")
     ax.legend()
     ax.set_ylabel("角速度/(rad/s)")
     ax.set_xlabel("時刻/s")
